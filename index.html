@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneo de Ping Pong</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">Torneo de Ping Pong</h1>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="active">Inicio</a></li>
+                    <li><a href="jugadores.html">Jugadores</a></li>
+                    <li><a href="partidos.html">Partidos</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="standings">
+            <h2>Tabla de Posiciones</h2>
+            <div class="table-container">
+                <table id="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Posición</th>
+                            <th>Jugador</th>
+                            <th>Partidos</th>
+                            <th>Victorias</th>
+                            <th>Derrotas</th>
+                            <th>Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos generados dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="recent-matches">
+            <h2>Últimos 5 Encuentros</h2>
+            <div id="recent-matches-container">
+                <!-- Datos generados dinámicamente con JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Torneo de Ping Pong. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="data/jugadores.js"></script>
+    <script src="data/partidos.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

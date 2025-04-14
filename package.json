@@ -1,0 +1,11 @@
+{
+  "name": "liga-de-ping-pong",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'no build script'"
+  },
+  "dependencies": {
+    "normalize.css": "^8.0.1"
+  }
+}
