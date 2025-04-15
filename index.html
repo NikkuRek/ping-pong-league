@@ -33,16 +33,80 @@
                 <table id="standings-table">
                     <thead>
                         <tr>
-                            <th>Posición</th>
-                            <th>Jugador</th>
-                            <th>Partidos</th>
-                            <th>Victorias</th>
-                            <th>Derrotas</th>
-                            <th>Puntos</th>
+                            <th class="nombre">Posición</th>
+                            <th>
+                                <ul class="header-list">
+                                    <li class="nombre">Jugador</li>
+                                    <li>PJ</li>
+                                    <li>PG</li>
+                                    <li>PP</li>
+                                    <li>Pts</li>
+                                </ul>
+                            </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="standings-body">
                         <!-- Datos generados dinámicamente con JavaScript -->
+                        <tr class="player-row">
+                            <td><div class="player-position">1</div></td>
+                            <td colspan="5">
+                                <ul class="player-list-row">
+                                    <li class="nombre" >edgar</li>
+                                    <li>5</li>
+                                    <li>3</li>
+                                    <li>2</li>
+                                    <li>6</li>
+                                </ul>
+                            </td>
+                        </tr> 
+                        <tr class="player-row">
+                            <td><div class="player-position">2</div></td>
+                            <td colspan="5">
+                                <ul class="player-list-row">
+                                    <li class="nombre" >edgar</li>
+                                    <li>5</li>
+                                    <li>3</li>
+                                    <li>2</li>
+                                    <li>6</li>
+                                </ul>
+                            </td>  
+                        </tr>
+                        <tr class="player-row">
+                            <td><div class="player-position">3</div></td>
+                            <td colspan="5">
+                                <ul class="player-list-row">
+                                    <li class="nombre">edgar</li>
+                                    <li>5</li>
+                                    <li>3</li>
+                                    <li>2</li>
+                                    <li>6</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="player-row">
+                            <td><div class="player-position">4</div></td>
+                            <td colspan="5">
+                                <ul class="player-list-row">
+                                    <li class="nombre" >edgar</li>
+                                    <li>5</li>
+                                    <li>3</li>
+                                    <li>2</li>
+                                    <li>6</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="player-row">
+                            <td><div class="player-position">5</div></td>
+                            <td colspan="5">
+                                <ul class="player-list-row">
+                                    <li class="nombre" >edgar</li>
+                                    <li>5</li>
+                                    <li>3</li>
+                                    <li>2</li>
+                                    <li>6</li>
+                                </ul>
+                            </td>   
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -50,8 +114,27 @@
 
         <section class="recent-matches">
             <h2>Últimos 5 Encuentros</h2>
-            <div id="recent-matches-container">
+            <div class="matche-card">
                 <!-- Datos generados dinámicamente con JavaScript -->
+                <div class="separador"></div>
+                <div class="card-partido">
+                    <h4 class="name-jugador">Edgar</h4>
+                    <ul class="sets">
+                        <li>7</li>
+                        <li>11</li>
+                        <li>11</li>
+                    </ul>
+                </div>
+                <div class="player-partido">
+                    <h4 class="name-jugador">Edgar</h4>
+                    <ul class="sets">
+                        <li>7</li>
+                        <li>11</li>
+                        <li>11</li>
+                    </ul>
+                </div>
+                <div class="separador"></div>
+                <p>22</p>
             </div>
         </section>
     </main>
@@ -65,5 +148,6 @@
     <script src="data/jugadores.js"></script>
     <script src="data/partidos.js"></script>
     <script src="js/main.js"></script>
+
 </body>
 </html>
