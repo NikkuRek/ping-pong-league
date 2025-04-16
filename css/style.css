@@ -25,14 +25,16 @@ body {
 
 .container {
   max-width: 1200px;
-  margin: 0 auto;
   padding: 0 20px;
-  /*
-  display: flex;
-  flex-direction: row;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
   gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;*/
+}
+@media (max-width: 1000px) {
+  .container {
+    display: block;
+  }
 }
 
 a {
@@ -109,6 +111,7 @@ header {
   background-color: var(--dark-color);
 }
 
+/*position table*/
 .table-container {
   overflow-x: auto;
 }
@@ -197,34 +200,81 @@ table th {
 }
 
 /*recent matches*/
-.matches-container{
-  height: 70px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+.recent-matches{
+  justify-self: center;
+  max-width: 400px;
+  padding: 20px;
+  height: 505px;
+  
+}
+@media (max-width: 400px) {
+  .recent-matches{
+    justify-self: normal;
+  }
+}
+.container-recent-matches{
+  overflow-x: auto;
+}
+
+.game-container{
+  margin-top: 10px;
+  width: 360px;
+  display: grid;
+  grid-template-columns: 2fr 10px 4fr 10px 0.5fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+    "phase separador player1 separador2 player1-pts"
+    "date separador player2 separador2 player2-pts";
+  
+  gap: 0 10px;
   background: var(--dark-color3);
   border-radius: 10px;
-  padding: 5px;
   transition: var(--transition);
+  padding: 10px;
 }
-.player-partido{
-  display: flex;
-  flex-direction: row;
-  gap: 50px;
-  flex: 1;
+.game-container .phase{
+  grid-area: phase;
 }
-.sets{
+.game-container .player1-pts{
+  grid-area: player1-pts;
+}
+
+.game-container .player1, .player2{
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  justify-content: space-between;
+  gap: 10px;
+
+  margin: 0;
+  background: var(--dark-color3);
+  border-radius: 0;
+  padding: 0;
+  text-align: center;
+}
+.name-player{
+  justify-self: start;
+}
+.player1{
+  grid-area: player1;
+}
+
+.game-container .player1 .sets,
+.game-container .player2 .sets{
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px; 
+  justify-self: center;
 }
-
-
-.separador{
+.separador,
+.separador2{
   width: 1px; 
   background-color: #f7f7f7;
   height: 70%; 
   margin: 10px;
+  grid-area: separador;
+  justify-self: center;
 }
-
+.separador2{
+  grid-area: separador2;
+}
