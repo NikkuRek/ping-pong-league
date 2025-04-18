@@ -124,9 +124,7 @@ table th {
   font-weight: 600;
 }
 
-table tr:nth-child(even) {
-  background-color: gainsboro;
-}
+
 
 table tr:hover {
   background-color: whitesmoke;

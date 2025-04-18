@@ -1,0 +1,177 @@
+[
+  {
+    "Nombre": "Carlos Mendoza",
+    "Carrera": "Ingeniería Mecánica",
+    "Semestre": 6,
+    "Nivel": "Avanzado",
+    "Posicion": "Delantero"
+  },
+  {
+    "Nombre": "Lucía Ramírez",
+    "Carrera": "Administración de Empresas",
+    "Semestre": 3,
+    "Nivel": "Intermedio",
+    "Posicion": "Centrocampista"
+  },
+  {
+    "Nombre": "Julián Torres",
+    "Carrera": "Arquitectura",
+    "Semestre": 8,
+    "Nivel": "Avanzado",
+    "Posicion": "Defensa"
+  },
+  {
+    "Nombre": "Mariana Silva",
+    "Carrera": "Psicología",
+    "Semestre": 2,
+    "Nivel": "Básico",
+    "Posicion": "Portera"
+  },
+  {
+    "Nombre": "Andrés López",
+    "Carrera": "Ingeniería en Sistemas",
+    "Semestre": 5,
+    "Nivel": "Intermedio",
+    "Posicion": "Lateral Derecho"
+  },
+  {
+    "Nombre": "Carlos Mendoza",
+    "Carrera": "Ingeniería Mecánica",
+    "Semestre": 6,
+    "Nivel": "Avanzado",
+    "Posicion": "Delantero"
+  },
+  {
+    "Nombre": "Lucía Ramírez",
+    "Carrera": "Administración de Empresas",
+    "Semestre": 3,
+    "Nivel": "Intermedio",
+    "Posicion": "Centrocampista"
+  },
+  {
+    "Nombre": "Julián Torres",
+    "Carrera": "Arquitectura",
+    "Semestre": 8,
+    "Nivel": "Avanzado",
+    "Posicion": "Defensa"
+  },
+  {
+    "Nombre": "Mariana Silva",
+    "Carrera": "Psicología",
+    "Semestre": 2,
+    "Nivel": "Básico",
+    "Posicion": "Portera"
+  },
+  {
+    "Nombre": "Andrés López",
+    "Carrera": "Ingeniería en Sistemas",
+    "Semestre": 5,
+    "Nivel": "Intermedio",
+    "Posicion": "Lateral Derecho"
+  },
+  {
+    "Nombre": "Valeria Gómez",
+    "Carrera": "Derecho",
+    "Semestre": 4,
+    "Nivel": "Intermedio",
+    "Posicion": "Delantera"
+  },
+  {
+    "Nombre": "Santiago Rivas",
+    "Carrera": "Contaduría",
+    "Semestre": 7,
+    "Nivel": "Avanzado",
+    "Posicion": "Mediocampista"
+  },
+  {
+    "Nombre": "Natalia Jiménez",
+    "Carrera": "Medicina",
+    "Semestre": 9,
+    "Nivel": "Avanzado",
+    "Posicion": "Defensa Central"
+  },
+  {
+    "Nombre": "Gabriel Castillo",
+    "Carrera": "Diseño Gráfico",
+    "Semestre": 1,
+    "Nivel": "Básico",
+    "Posicion": "Extremo Derecho"
+  },
+  {
+    "Nombre": "Daniela Paredes",
+    "Carrera": "Biología",
+    "Semestre": 3,
+    "Nivel": "Intermedio",
+    "Posicion": "Lateral Izquierdo"
+  },
+  {
+    "Nombre": "Tomás Herrera",
+    "Carrera": "Ingeniería Civil",
+    "Semestre": 6,
+    "Nivel": "Avanzado",
+    "Posicion": "Volante"
+  },
+  {
+    "Nombre": "Isabella Díaz",
+    "Carrera": "Educación Física",
+    "Semestre": 2,
+    "Nivel": "Básico",
+    "Posicion": "Portera"
+  },
+  {
+    "Nombre": "Emilio Vargas",
+    "Carrera": "Marketing",
+    "Semestre": 4,
+    "Nivel": "Intermedio",
+    "Posicion": "Delantero"
+  },
+  {
+    "Nombre": "Ximena Soto",
+    "Carrera": "Relaciones Internacionales",
+    "Semestre": 5,
+    "Nivel": "Intermedio",
+    "Posicion": "Centrocampista"
+  },
+  {
+    "Nombre": "Leonardo Peña",
+    "Carrera": "Informática",
+    "Semestre": 7,
+    "Nivel": "Avanzado",
+    "Posicion": "Defensa"
+  },
+  {
+    "Nombre": "Andrea Muñoz",
+    "Carrera": "Comunicación",
+    "Semestre": 3,
+    "Nivel": "Intermedio",
+    "Posicion": "Extremo Izquierdo"
+  },
+  {
+    "Nombre": "Héctor Morales",
+    "Carrera": "Ingeniería Electrónica",
+    "Semestre": 6,
+    "Nivel": "Avanzado",
+    "Posicion": "Lateral Derecho"
+  },
+  {
+    "Nombre": "Paula Ríos",
+    "Carrera": "Sociología",
+    "Semestre": 2,
+    "Nivel": "Básico",
+    "Posicion": "Delantera"
+  },
+  {
+    "Nombre": "Iván Castro",
+    "Carrera": "Química",
+    "Semestre": 8,
+    "Nivel": "Avanzado",
+    "Posicion": "Mediocampista"
+  },
+  {
+    "Nombre": "Camila Fuentes",
+    "Carrera": "Finanzas",
+    "Semestre": 5,
+    "Nivel": "Intermedio",
+    "Posicion": "Defensa"
+  }
+]
