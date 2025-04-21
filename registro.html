@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/registro.css">
 </head>
 <body>
     <header>
@@ -27,29 +28,109 @@
 
 
     <main class="container">
-        <section class="registration-form">
+
+
+        <form action="#" method="post">
+            <!-- Nombre-->
+            <label for="player-name">Nombre:</label>
+            <input type="text" id="player-name" name="player-name" required>
+            <!-- apellido-->
+            <label for="player-lastname">Apellido:</label>
+                    <input type="text" id="player-lastname" name="player-lastname" required>
+            <!-- Cedula-->
+            <label for="player-CI">Cedula:</label>
+            <input type="number" id="player-CI" name="player-CI" required>
+            <!-- semestre-->
+            <label for="player-semester">Semestre:</label>
+            <select name="player-semester" id="player-semester">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+            <!-- Carrera-->
+            <label for="player-career">Carrera:</label>
+            <select name="player-career" id="player-career">
+                <option value="Informática">Informática</option>
+                <option value="Contaduría">Contaduría</option>
+                <option value="Electrónica">Electrónica</option>
+                <option value="Mecánica">Mecánica</option>
+                <option value="Educación">Educación</option>
+                <option value="Electrotecnia">Electrotecnia</option>
+                <option value="Administración">Administración</option>
+            </select>
+            <!-- telefono-->
+            <label for="player-phone">Telefono:</label>
+            <input type="tel" id="player-phone" name="player-phone" required>
+    
+            <!-- tier-->
+            <label for="player-tier">Tier:</label>
+            <select name="player-tier" id="player-tier">
+                <option value="Principiante">Principiante</option>
+                <option value="Intermedio">Intermedio</option>
+                <option value="Avanzado">Avanzado</option>
+            </select>
+            <!-- disponibilidad-->
+            <label for="player-availability">Disponibilidad:</label>
+            <div class="avalability">
+                <input type="checkbox" id="monday" name="availability" value="Lunes">
+                <label for="monday">Lunes</label>
+                <input type="checkbox" id="tuesday" name="availability" value="Martes">
+                <label for="tuesday">Martes</label>
+                <input type="checkbox" id="wednesday" name="availability" value="Miércoles">
+                <label for="wednesday">Miércoles</label>
+                <input type="checkbox" id="thursday" name="availability" value="Jueves">
+                <label for="thursday">Jueves</label>
+                <input type="checkbox" id="friday" name="availability" value="Viernes">
+                <label for="friday">Viernes</label>
+            </div>
+
+            <button type="submit">Enviar</button>
+    
+        </form>
+
+        <!--section class="registration-form">
             <h2>Registro de Jugadores</h2>
-            <form id="registration-form">
+            <form id="registration-form" action="#" method="post">
                 <div class="form-group">
-                    <label for="player-name">Nombre del Jugador:</label>
+                    <label for="player-name">Nombre:</label>
                     <input type="text" id="player-name" name="player-name" required>
                 </div>  
                 <div class="form-group">
-                    <label for="player-age">Edad:</label>
-                    <input type="number" id="player-age" name="player-age" required>
+                    <label for="player-lastname">Apellido:</label>
+                    <input type="text" id="player-lastname" name="player-lastname" required>
+                </div> 
+                <div class="form-group">
+                    <label for="player-CI">Cedula:</label>
+                    <input type="number" id="player-CI" name="player-CI" required>
                 </div>
                 <div class="form-group">
-                    <label for="player-country">País:</label>
-                    <input type="text" id="player-country" name="player-country" required>
+                    <label for="player-semestre">Semestre:</label>
+                    <input type="text" id="player-semestre" name="player-semestre" required>
                 </div>
                 <div class="form-group">
-                    <label for="player-ranking">Ranking:</label>
-                    <input type="" id="player-ranking" name="player-ranking" required>
+                    <label for="player-career">Carrera:</label>
+                    <input type="" id="player-career" name="player-career" required>
                 </div>
-                
+                <div class="form-group">
+                    <label for="player-phone">Telefono:</label>
+                    <input type="tel" id="player-phone" name="player-phone" required>
+                </div>
+                <div class="form-tier">
+                    <label for="player-phone">Tier:</label>
+                    <input type="tel" id="player-tier" name="player-tier" required>
+                </div>
+                <div class="form-tier">
+                    <label for="player-availability">Disponivilidad:</label>
+                    <input type="tel" id="player-availability" name="player-availability" required>
+                </div>
+
+                <button type="submit" id="register-button">Registrar Jugador</button>
             </form>
-            <button id="register-button">Registrar Jugador</button>
-        </section>
+            
+        </section-->
     </main>
 </body>
 </html>
