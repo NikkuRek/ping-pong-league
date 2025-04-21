@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/global.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">Torneo de Ping Pong</h1>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="active">Inicio</a></li>
+                    <li><a href="jugadores.html">Jugadores</a></li>
+                    <li><a href="partidos.html">Partidos</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <main class="container">
+        <section class="registration-form">
+            <h2>Registro de Jugadores</h2>
+            <form id="registration-form">
+                <div class="form-group">
+                    <label for="player-name">Nombre del Jugador:</label>
+                    <input type="text" id="player-name" name="player-name" required>
+                </div>  
+                <div class="form-group">
+                    <label for="player-age">Edad:</label>
+                    <input type="number" id="player-age" name="player-age" required>
+                </div>
+                <div class="form-group">
+                    <label for="player-country">País:</label>
+                    <input type="text" id="player-country" name="player-country" required>
+                </div>
+                <div class="form-group">
+                    <label for="player-ranking">Ranking:</label>
+                    <input type="" id="player-ranking" name="player-ranking" required>
+                </div>
+                
+            </form>
+            <button id="register-button">Registrar Jugador</button>
+        </section>
+    </main>
+</body>
+</html>
