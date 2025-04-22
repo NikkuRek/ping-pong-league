@@ -30,66 +30,85 @@
     <main class="container">
 
 
-        <form action="#" method="post">
-            <!-- Nombre-->
-            <label for="player-name">Nombre:</label>
-            <input type="text" id="player-name" name="player-name" required>
-            <!-- apellido-->
-            <label for="player-lastname">Apellido:</label>
-                    <input type="text" id="player-lastname" name="player-lastname" required>
-            <!-- Cedula-->
-            <label for="player-CI">Cedula:</label>
-            <input type="number" id="player-CI" name="player-CI" required>
-            <!-- semestre-->
-            <label for="player-semester">Semestre:</label>
-            <select name="player-semester" id="player-semester">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </select>
-            <!-- Carrera-->
-            <label for="player-career">Carrera:</label>
-            <select name="player-career" id="player-career">
-                <option value="Informática">Informática</option>
-                <option value="Contaduría">Contaduría</option>
-                <option value="Electrónica">Electrónica</option>
-                <option value="Mecánica">Mecánica</option>
-                <option value="Educación">Educación</option>
-                <option value="Electrotecnia">Electrotecnia</option>
-                <option value="Administración">Administración</option>
-            </select>
-            <!-- telefono-->
-            <label for="player-phone">Telefono:</label>
-            <input type="tel" id="player-phone" name="player-phone" required>
-    
-            <!-- tier-->
-            <label for="player-tier">Tier:</label>
-            <select name="player-tier" id="player-tier">
-                <option value="Principiante">Principiante</option>
-                <option value="Intermedio">Intermedio</option>
-                <option value="Avanzado">Avanzado</option>
-            </select>
-            <!-- disponibilidad-->
-            <label for="player-availability">Disponibilidad:</label>
-            <div class="avalability">
-                <input type="checkbox" id="monday" name="availability" value="Lunes">
-                <label for="monday">Lunes</label>
-                <input type="checkbox" id="tuesday" name="availability" value="Martes">
-                <label for="tuesday">Martes</label>
-                <input type="checkbox" id="wednesday" name="availability" value="Miércoles">
-                <label for="wednesday">Miércoles</label>
-                <input type="checkbox" id="thursday" name="availability" value="Jueves">
-                <label for="thursday">Jueves</label>
-                <input type="checkbox" id="friday" name="availability" value="Viernes">
-                <label for="friday">Viernes</label>
-            </div>
+        <section>
+            <h2>Registro de Jugadores</h2>
+            <p>Por favor, complete el siguiente formulario para registrarse como jugador en el torneo de ping pong.</p>
+            <p>Recuerde que el registro es obligatorio para participar en el torneo.</p>
 
-            <button type="submit">Enviar</button>
+            <form action="#" method="post">
+                <!-- Nombre-->
+                <label for="player-name">Nombre:</label>
+                <input type="text" id="player-name" name="player-name" required>
+                <!-- apellido-->
+                <label for="player-lastname">Apellido:</label>
+                        <input type="text" id="player-lastname" name="player-lastname" required>
+                <!-- Cedula-->
+                <label for="player-CI">Cedula:</label>
+                <input type="number" id="player-CI" name="player-CI" required>
+                <!-- semestre-->
+                <label for="player-semester">Semestre:</label>
+                <select name="player-semester" id="player-semester">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+                <!-- Carrera-->
+                <label for="player-career">Carrera:</label>
+                <select name="player-career" id="player-career">
+                    <option value="Informática">Informática</option>
+                    <option value="Contaduría">Contaduría</option>
+                    <option value="Electrónica">Electrónica</option>
+                    <option value="Mecánica">Mecánica</option>
+                    <option value="Educación">Educación</option>
+                    <option value="Electrotecnia">Electrotecnia</option>
+                    <option value="Administración">Administración</option>
+                </select>
+                <!-- telefono-->
+                <label for="player-phone">Telefono:</label>
+                <input type="tel" id="player-phone" name="player-phone" required>
+        
+                <!-- tier-->
+                <label for="player-tier">Tier:</label>
+                <select name="player-tier" id="player-tier">
+                    <option value="Principiante">Principiante</option>
+                    <option value="Intermedio">Intermedio</option>
+                    <option value="Avanzado">Avanzado</option>
+                </select>
+                <!-- disponibilidad-->
+                <label for="player-availability">Disponibilidad:</label>
+                <div class="avalability">
+                    <div class="dia">
+                        <input type="checkbox" id="monday" name="availability" value="Lunes">
+                        <label for="monday">Lunes</label>
+                    </div>
+                    <div class="dia">
+                        <input type="checkbox" id="tuesday" name="availability" value="Martes">
+                        <label for="tuesday">Martes</label>
+                    </div>
+                    <div class="dia">
+                        <input type="checkbox" id="wednesday" name="availability" value="Miércoles">
+                        <label for="wednesday">Miércoles</label>
+                    </div>
+                    <div class="dia">
+                        <input type="checkbox" id="thursday" name="availability" value="Jueves">
+                        <label for="thursday">Jueves</label>
+                    </div>
+                    <div class="dia">
+                        <input type="checkbox" id="friday" name="availability" value="Viernes">
+                        <label for="friday">Viernes</label>
+                    </div>
+                    
+                </div>
     
-        </form>
+                <input type="submit">
+        
+            </form>
+
+        </section>
+
 
         <!--section class="registration-form">
             <h2>Registro de Jugadores</h2>

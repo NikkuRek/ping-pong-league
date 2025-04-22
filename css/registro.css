@@ -8,25 +8,129 @@
 }
 
 form{
-    position: absolute;
+    margin-top: 20px;
     color: rgb(255, 255, 255);
-    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 400px;
-    height: 600px;
+    padding: 20px 5px;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    background: var(--dark-color2);
+    background: #323838;;
 }
 
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="tel"],
+input[type="file"] {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    background-color: var(--dark-color);
+    color: gainsboro;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="tel"]:focus,
+input[type="file"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+input[type="submit"] {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+input[type="submit"]:hover {
+    background-color: var(--secondary-color);
+}
+input[type="submit"]:active {
+    background-color: var(--primary-color);
+    transform: scale(0.98);
+}
+
+label {
+    margin-top: 10px; ;
+    font-size: 1.2rem;
+    color: gainsboro;
+}
+
+select {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    background-color: var(--dark-color);
+    color: gainsboro;
+}
+select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+select option {
+    background-color: var(--dark-color);
+    color: gainsboro;
+}
+select option:hover {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+.avalability {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    width: 80%;
+    border-radius: 5px;
+    justify-items: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.avalability input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    transition: var(--transition);
+    cursor: pointer;
+}
+.dia {
+    display: flex;
+    align-items: center;
+}
+
+.avalability label {
+    font-size: 15px;
+    color: gainsboro;
+    cursor: pointer;
+    margin: 0;
+}
+.avalability input[type="checkbox"]:checked + label {
+    color: var(--primary-color);
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
 
