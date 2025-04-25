@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Galdeano&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
 /* Variables */
 :root {
---primary-color: #db3434;
---secondary-color: #7f1c1c;
---dark-color: #010101;
---dark-color2: #101616;
+--primary-color: #db3442;
+--secondary-color: #7f1c2b;
+--dark-color: #131315;
+--dark-color2: #1d1e1e;
 --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 --transition: all 0.3s ease;
 }
@@ -16,7 +18,7 @@ padding: 0;
 }
 
 body {
-font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+font-family: "Public Sans", Tahoma, Geneva, Verdana, sans-serif;
 line-height: 1.6;
 color: gainsboro;
 background-color: var(--dark-color);

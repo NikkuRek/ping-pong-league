@@ -1,39 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/registro.css">
-    <link rel="icon" href="assets/img/raqueta.ico">
+    <link rel="stylesheet" href="./node_modules/normalize.css/normalize.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/registro.css">
+    <link rel="icon" href="../../assets/img/raqueta.ico">
 
 </head>
+
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="container-header">
-                <div class="logo">
-                    <img src="assets/img/raqueta.ico" alt="Logo" class="logo-img">
-                    <h1 class="logo">Torneo de Ping Pong</h1>
-                </div>
-                <ul class="nav-links">
-                    <li><a href="index.html" class="active">Inicio</a></li>
-                    <li><a href="jugadores.html">Jugadores</a></li>
-                    <li><a href="partidos.html">Partidos</a></li>
-                </ul>
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-
     <main class="container">
-
 
         <section>
             <h2>Registro de Jugadores</h2>
@@ -46,7 +26,7 @@
                 <input type="text" id="player-name" name="player-name" required>
                 <!-- apellido-->
                 <label for="player-lastname">Apellido:</label>
-                        <input type="text" id="player-lastname" name="player-lastname" required>
+                <input type="text" id="player-lastname" name="player-lastname" required>
                 <!-- Cedula-->
                 <label for="player-CI">Cedula:</label>
                 <input type="number" id="player-CI" name="player-CI" required>
@@ -63,24 +43,16 @@
                 <!-- Carrera-->
                 <label for="player-career">Carrera:</label>
                 <select name="player-career" id="player-career">
-                    <option value="Informática">Informática</option>
-                    <option value="Contaduría">Contaduría</option>
-                    <option value="Electrónica">Electrónica</option>
-                    <option value="Mecánica">Mecánica</option>
-                    <option value="Educación">Educación</option>
-                    <option value="Electrotecnia">Electrotecnia</option>
-                    <option value="Administración">Administración</option>
+                    <!-- usar un for con el axios para llenar el select -->
                 </select>
                 <!-- telefono-->
                 <label for="player-phone">Telefono:</label>
                 <input type="tel" id="player-phone" name="player-phone" required>
-        
+
                 <!-- tier-->
                 <label for="player-tier">Tier:</label>
                 <select name="player-tier" id="player-tier">
-                    <option value="Principiante">Principiante</option>
-                    <option value="Intermedio">Intermedio</option>
-                    <option value="Avanzado">Avanzado</option>
+                    <!-- usar un for con el axios para llenar el select (aun pendiente la tabla) -->
                 </select>
                 <!-- disponibilidad-->
                 <label for="player-availability">Disponibilidad:</label>
@@ -107,12 +79,15 @@
                     </div>
 
                 </div>
-    
+
                 <input type="submit">
-        
+
             </form>
 
         </section>
     </main>
+    
+    <!-- <script src="../js/header.js"></script> -->
 </body>
+
 </html>

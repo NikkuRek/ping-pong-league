@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "echo 'no build script'"
+    "start": "ejemplo.js"
   },
   "dependencies": {
     "normalize.css": "^8.0.1"

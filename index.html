@@ -1,32 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Torneo de Ping Pong</title>
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/style.css">
-    
-</head>
-<body>
-    <header>
-        <nav class="navbar">
-            <div class="container">
-                <h1 class="logo">Torneo de Ping Pong</h1>
-                <ul class="nav-links">
-                    <li><a href="index.html" class="active">Inicio</a></li>
-                    <li><a href="jugadores.html">Jugadores</a></li>
-                    <li><a href="partidos.html">Partidos</a></li>
-                </ul>
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <link rel="stylesheet" href="./node_modules/normalize.css/normalize.css">
+    <link rel="stylesheet" href="/src/css/global.css">
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="icon" href="../../assets/img/raqueta.ico">
 
+</head>
+
+<body>
     <main class="container">
         <section class="standings">
             <h2>Tabla de Posiciones</h2>
@@ -55,16 +41,12 @@
                 <!-- Datos generados dinámicamente con JavaScript -->
             </div>
         </section>
+        <script src="js/jugadores.js"></script>
+        <script src="js/partidos.js"></script>
+        <script src="js/header.js"></script>
+        <script src="js/footer.js"></script>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Torneo de Ping Pong. Todos los derechos reservados.</p>
-        </div>
-    </footer>
-
-    <script src="data/jugadores.js"></script>
-    <script src="data/partidos.js"></script>
-    <script src="js/main.js"></script>
 </body>
+
 </html>
