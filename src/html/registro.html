@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
-    <link rel="stylesheet" href="../node_modules/normalize.css/normalize.css">
+    <link rel="stylesheet" href="../../node_modules/normalize.css/normalize.css">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/registro.css">
     <link rel="icon" href="../../assets/img/raqueta.ico">
@@ -13,6 +13,10 @@
 </head>
 
 <body>
+    <header-ping-pong>
+    </header-ping-pong>
+
+
     <main class="container">
 
         <section>
@@ -20,8 +24,7 @@
             <p>Por favor, complete el siguiente formulario para registrarse como jugador en el torneo de ping pong.</p>
             <p>Recuerde que el registro es obligatorio para participar en el torneo.</p>
 
-            <form id="form" action="#" method="post">
-
+            <form id="register" action="#" method="post">
                 <!-- Nombre-->
                 <div class="container-input">
                     <label for="player-name" >Nombre:</label>
@@ -111,14 +114,16 @@
                         <label for="friday">Viernes</label>
                     </div>
                 </div>
-
                 <button id="button-sent" type="submit" disabled>Enviar</button>
 
             </form>
 
         </section>
     </main>
-    
+
+    <script src="/src/js/footer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/src/js/registro.js"></script>
     <!-- <script src="../js/header.js"></script> -->
      <script src="../js/validate-inputs.js"></script>
 </body>
