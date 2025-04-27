@@ -1,6 +1,4 @@
-
-
-class registro{
+class registerRequest {
     constructor() {
         this.carreras = [];
         this.tiers = [];
@@ -27,7 +25,7 @@ class registro{
     };
 
     cargarCarreras = async()=> {
-        await getCarrer(); // Asegúrate de que los datos se obtengan antes de cargar las opciones
+        await this.getCarrer(); // Asegúrate de que los datos se obtengan antes de cargar las opciones
         const select = document.getElementById('player-career');
         
         if (!select) {
@@ -42,17 +40,17 @@ class registro{
             return;
         }
 
-        carreras.forEach((carrera) => {
+        this.carreras.forEach((carrera) => {
             const option = document.createElement('option');
-            option.value = this.carrera.id;
-            option.textContent = this.carrera.name_career;
+            option.value = carrera.id;
+            option.textContent = carrera.name_career;
             select.appendChild(option);
         });
         console.log("Carreras cargadas exitosamente");
     };
 
     cargarTier = async () => {
-        await getTier(); // Asegúrate de que los datos se obtengan antes de cargar las opciones
+        await this.getTier(); // Asegúrate de que los datos se obtengan antes de cargar las opciones
         const select = document.getElementById('player-tier');
         
         if (!select) {
@@ -62,15 +60,15 @@ class registro{
 
         select.innerHTML = ''; // Limpia las opciones existentes
 
-        if (tiers.length === 0) {
+        if (this.tiers.length === 0) {
             console.warn("No se encontraron tiers en la respuesta");
             return;
         }
         
-        tiers.forEach((tier) => {
+        this.tiers.forEach((tier) => {
             const option = document.createElement('option');
-            option.value = this.tier.id_tier;
-            option.textContent = this.tier.range;
+            option.value = tier.id_tier;
+            option.textContent = tier.range;
             select.appendChild(option);
         });
         console.log("Tiers cargados exitosamente");
@@ -141,4 +139,4 @@ class registro{
     }
 };
 
-registro = new registro(); // Instancia la clase registro
+registerRequest  = new registerRequest (); // Instancia la clase registro
