@@ -60,7 +60,6 @@ async function cargarTier() {
         return;
     }
     
-
     tiers.forEach((tier) => {
         const option = document.createElement('option');
         option.value = tier.id_tier;
@@ -75,20 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarCarreras();
     cargarTier();
 });
-
-
-
-//postData
-/*a = {[    "CI": "31366298",
-    "first_name": "Edgar",
-    "last_name": "Briceño",
-    "phone": "04262498651",
-    "semester": 3,
-    "id_career": 1,
-    "id_tier": 2,
-    "status": true,
-    "createdAt": "2025-04-25T03:48:11.000Z",
-    "updatedAt": "2025-04-25T03:48:11.000Z"]};*/
 
 document.getElementById('register').addEventListener('submit', async (event) => {
     event.preventDefault(); // Evita el envío del formulario por defecto
@@ -132,10 +117,9 @@ document.getElementById('register').addEventListener('submit', async (event) => 
     axios.post('http://localhost:3000/api/player', playerData)
         .then((response) => {
             console.log('Datos enviados exitosamente:', response.data);
+            document.getElementById('register').reset(); 
         })
         .catch((error) => {
             console.error('Error al enviar los datos:', error);
         });
 });
-// Limpiar el formulario después de enviar los datos
-//document.getElementById('register').reset(); // Limpia el formulario después de enviar los datos
