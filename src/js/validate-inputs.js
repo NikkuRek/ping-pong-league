@@ -3,22 +3,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const player = { //variable objeto player para usarlo para validar el boton enviar
         Nombre : '',
         Apellido : '',
-        Semestre : '',
-        Carrera : '',
         Teléfono : '',
-        Prefijo : '',
-        Nivel : '',
         diaSelecionado : ''
     }
     //creación de variables constante para pasarle los inputs
     const inputPlayerName = document.querySelector('#player-name');
     const inputPlayerLastName = document.querySelector('#player-lastname');
     const inputPlayerCI = document.querySelector('#player-CI');
-    const inputPlayerSemester = document.querySelector('#player-semester');
-    const inputPlayerCareer = document.querySelector('#player-career');
     const inputPlayerPhone = document.querySelector('#player-phone');
-    const inputPlayerPhonePrefix = document.querySelector('#player-phone-prefix');
-    const inputPlayerTier = document.querySelector('#player-tier');
     
     //creación de variables constantes para pasarles los checkboxs
     const checkBoxMonday = document.querySelector('#monday');
@@ -37,12 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
     inputPlayerLastName.addEventListener('input', validateInput);
     inputPlayerCI.addEventListener('input', validateInput);
     inputPlayerCI.addEventListener('blur', validateInput);
-    inputPlayerSemester.addEventListener('blur', validateInput);
-    inputPlayerCareer.addEventListener('blur', validateInput);
     inputPlayerPhone.addEventListener('blur', validateInput);
     inputPlayerPhone.addEventListener('input', validateInput);
-    inputPlayerPhonePrefix.addEventListener('blur', validateInput);
-    inputPlayerTier.addEventListener('blur', validateInput);
 
     //estos son los eventos que llaman a sus respectivas funciones cada que se clickea un checkbox
     checkBoxMonday.addEventListener('input', validateCheckBox1);
@@ -110,6 +98,8 @@ document.addEventListener('DOMContentLoaded', function() {
         player[event.target.name] = event.target.value.trim(); //asigna el valor a la variable objeto
 
         validatePlayer(); //función para habilitar o deshabilitar el botón
+
+        console.log(player);
     }
     
     function validateCheckBox1(event) {//una función para cada checkbox para determinar cual fue presionado especificamente
