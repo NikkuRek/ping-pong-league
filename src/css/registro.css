@@ -9,7 +9,8 @@ form{
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    background: #323838;;
+    background: #323838;
+    position: relative;
 }
 
 input[type="text"],
@@ -19,7 +20,7 @@ input[type="number"],
 input[type="date"],
 input[type="tel"],
 input[type="file"] {
-    width: 80%;
+    width: 100%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid var(--secondary-color);
@@ -64,7 +65,7 @@ label {
 }
 
 select {
-    width: 80%;
+    width: 100%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid var(--secondary-color);
@@ -88,20 +89,20 @@ select option:hover {
 }
 
 .avalability {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(2,2fr) ;
+    margin: 10px;
     margin-bottom: 20px;
-    width: 100%;
+    width: 80%;
     border-radius: 5px;
     justify-items: center;
-    align-items: center;
-    flex-wrap: wrap;
+    align-items: space-between;
 }
 .avalability input[type="checkbox"] {
     width: 20px;
     height: 20px;
+    margin: 8px;
     border-radius: 10px;
     transition: var(--transition);
     cursor: pointer;
@@ -132,12 +133,14 @@ input[type=number]::-webkit-outer-spin-button {
 /*style para los mensajes de error*/
 
 .container-input{
-    margin: 10px 0px;
-    width: 100%;
+    margin: 10px auto;
+    width: 80%;
     align-content: center;
     justify-content: space-between;
     display: flex;
     flex-direction: column;
+    left: 0;
+    right: 0;
 }
 
 button[type="submit"] {

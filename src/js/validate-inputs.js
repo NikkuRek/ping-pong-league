@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!event.target.checked) { //entra a la funcion si y solo si no está checked
             if(diasSeleccionados.length === 0) { //evalua si existe aunque sea un checkbox checked
                 player.diaSelecionado = '';
-                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement);
+                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement.parentElement);
                 validatePlayer();
                 return
             }
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             player.diaSelecionado = 'Yes';
         }
 
-        cleanAlert(event.target.parentElement.parentElement); //limpia el mensaje de alerta en dado caso que ya exista
+        cleanAlert(event.target.parentElement.parentElement.parentElement); //limpia el mensaje de alerta en dado caso que ya exista
         validatePlayer();//evalua el boton para habilitarlo o no 
     }//así funciona para todos lo demás
 
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!event.target.checked) { 
             if(diasSeleccionados.length === 0) {
                 player.diaSelecionado = '';
-                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement);
+                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement.parentElement);
                 validatePlayer();
                 return
             }
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
             player.diaSelecionado = 'Yes';
         }
 
-        cleanAlert(event.target.parentElement.parentElement);
+        cleanAlert(event.target.parentElement.parentElement.parentElement);
         validatePlayer();
     }
 
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!event.target.checked) { 
             if(diasSeleccionados.length === 0) {
                 player.diaSelecionado = '';
-                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement);
+                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement.parentElement);
                 validatePlayer();
                 return
             }
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
             player.diaSelecionado = 'Yes';
         }
 
-        cleanAlert(event.target.parentElement.parentElement);
+        cleanAlert(event.target.parentElement.parentElement.parentElement);
         validatePlayer();
     }
 
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!event.target.checked) { 
             if(diasSeleccionados.length === 0) {
                 player.diaSelecionado = '';
-                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement);
+                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement.parentElement);
                 validatePlayer();
                 return
             }
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
             player.diaSelecionado = 'Yes';
         }
 
-        cleanAlert(event.target.parentElement.parentElement);
+        cleanAlert(event.target.parentElement.parentElement.parentElement);
         validatePlayer();
     }
 
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!event.target.checked) { 
             if(diasSeleccionados.length === 0) {
                 player.diaSelecionado = '';
-                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement);
+                showAlert(`Debes seleccionar al menos un día`, event.target.parentElement.parentElement.parentElement);
                 validatePlayer();
                 return
             }
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
             player.diaSelecionado = 'Yes';
         }
 
-        cleanAlert(event.target.parentElement.parentElement);
+        cleanAlert(event.target.parentElement.parentElement.parentElement);
         validatePlayer();
     }
     function validateTrue() {

@@ -47,7 +47,6 @@
                 <div class="container-input">
                 <label for="player-semester">Semestre:</label>
                 <select name="Semestre" id="player-semester">
-                    <option value=""></option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -62,8 +61,6 @@
                     <label for="player-career">Carrera:</label>
                     <select name="Carrera" id="player-career">
                         <!-- usar un for con el axios para llenar el select -->
-                        <option value="0412">0412</option>
-                        <option value="0414">0414</option>
                     </select>
                 </div>
 
@@ -84,36 +81,36 @@
                 <div class="container-input">
                 <label for="player-tier">Nivel:</label>
                 <select name="Nivel" id="player-tier">
-                    <option value="0412">0412</option>
-                        <option value="0414">0414</option>
                     <!-- usar un for con el axios para llenar el select (aun pendiente la tabla) -->
                 </select>
                 </div>
 
                 <!-- disponibilidad-->
-                <label for="player-availability">Disponibilidad:</label>
-                <div class="avalability">
-                    <div class="dia">
-                        <input type="checkbox" id="monday" name="Lunes" >
-                        <label for="monday">Lunes</label>
-                    </div>
-                    <div class="dia">
-                        <input type="checkbox" id="tuesday" name="Martes" >
-                        <label for="tuesday">Martes</label>
-                    </div>
-                    <div class="dia">
-                        <input type="checkbox" id="wednesday" name="Miércoles" >
-                        <label for="wednesday">Miércoles</label>
-                    </div>
-                    <div class="dia">
-                        <input type="checkbox" id="thursday" name="Jueves" >
-                        <label for="thursday">Jueves</label>
-                    </div>
-                    <div class="dia">
-                        <input type="checkbox" id="friday" name="Viernes" >
-                        <label for="friday">Viernes</label>
-                    </div>
+                <div class="container-input">
+                    <label for="player-availability">Disponibilidad:</label>
+                    <div class="avalability">
+                        <div class="dia">
+                            <input type="checkbox" id="monday" name="Lunes" >
+                            <label for="monday">Lunes</label>
+                        </div>
+                        <div class="dia">
+                            <input type="checkbox" id="tuesday" name="Martes" >
+                            <label for="tuesday">Martes</label>
+                        </div>
+                        <div class="dia">
+                            <input type="checkbox" id="wednesday" name="Miércoles" >
+                            <label for="wednesday">Miércoles</label>
+                        </div>
+                        <div class="dia">
+                            <input type="checkbox" id="thursday" name="Jueves" >
+                            <label for="thursday">Jueves</label>
+                        </div>
+                        <div class="dia">
+                            <input type="checkbox" id="friday" name="Viernes" >
+                            <label for="friday">Viernes</label>
+                        </div>
                 </div>
+            </div>
                 <button id="button-sent" type="submit" disabled>Enviar</button>
 
             </form>
@@ -125,7 +122,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="/src/js/registro.js"></script>
     <!-- <script src="../js/header.js"></script> -->
-     <script src="../js/validate-inputs.js"></script>
+    <script src="../js/validate-inputs.js"></script>
 </body>
 
 </html>
