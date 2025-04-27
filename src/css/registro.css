@@ -93,7 +93,7 @@ select option:hover {
     align-items: center;
     margin-top: 10px;
     margin-bottom: 20px;
-    width: 80%;
+    width: 100%;
     border-radius: 5px;
     justify-items: center;
     align-items: center;
@@ -129,3 +129,96 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 
+/*style para los mensajes de error*/
+
+.container-input{
+    margin: 10px 0px;
+    width: 100%;
+    align-content: center;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+}
+
+button[type="submit"] {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+button[type="submit"]:hover {
+    background-color: var(--secondary-color);
+}
+button[type="submit"]:active {
+    background-color: var(--primary-color);
+    transform: scale(0.98);
+}
+
+/* Estilo para estado deshabilitado */
+button[type="submit"]:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    color: #666666;
+    position: relative;
+}
+
+/* Efecto de "no permitido" */
+button[type="submit"]:disabled::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.3),
+        rgba(255,255,255,0.3) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    animation: disabledAnimation 1s infinite linear;
+}
+
+/* Efecto de vibración sutil */
+button[type="submit"]:disabled {
+    animation: shakeDisabled 0.5s infinite alternate;
+}
+
+@keyframes disabledAnimation {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 8px 0;
+    }
+}
+
+@keyframes shakeDisabled {
+    0% {
+        transform: translateX(-1px);
+    }
+    100% {
+        transform: translateX(1px);
+    }
+}
+
+/* Opcional: Tooltip para explicar por qué está deshabilitado */
+button[type="submit"]:disabled:hover::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    margin-bottom: 10px;
+}

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
-    <link rel="stylesheet" href="./node_modules/normalize.css/normalize.css">
+    <link rel="stylesheet" href="../node_modules/normalize.css/normalize.css">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/registro.css">
     <link rel="icon" href="../../assets/img/raqueta.ico">
@@ -20,19 +20,31 @@
             <p>Por favor, complete el siguiente formulario para registrarse como jugador en el torneo de ping pong.</p>
             <p>Recuerde que el registro es obligatorio para participar en el torneo.</p>
 
-            <form action="#" method="post">
+            <form id="form" action="#" method="post">
+
                 <!-- Nombre-->
-                <label for="player-name">Nombre:</label>
-                <input type="text" id="player-name" name="player-name" required>
+                <div class="container-input">
+                    <label for="player-name" >Nombre:</label>
+                    <input type="text" id="player-name" name="Nombre" maxlength="20">
+                </div>
+                
                 <!-- apellido-->
+                <div class="container-input">
                 <label for="player-lastname">Apellido:</label>
-                <input type="text" id="player-lastname" name="player-lastname" required>
+                <input type="text" id="player-lastname" name="Apellido" maxlength="20">
+                </div>
+
                 <!-- Cedula-->
-                <label for="player-CI">Cedula:</label>
-                <input type="number" id="player-CI" name="player-CI" required>
+                <div class="container-input">
+                <label for="player-CI">Cédula:</label>
+                <input  type="text" pattern="[0-9]*" inputmode="numeric" maxlength="8" id="player-CI" name="Cédula">
+                </div>
+
                 <!-- semestre-->
+                <div class="container-input">
                 <label for="player-semester">Semestre:</label>
-                <select name="player-semester" id="player-semester">
+                <select name="Semestre" id="player-semester">
+                    <option value=""></option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -40,47 +52,67 @@
                     <option value="5">5</option>
                     <option value="6">6</option>
                 </select>
-                <!-- Carrera-->
-                <label for="player-career">Carrera:</label>
-                <select name="player-career" id="player-career">
-                    <!-- usar un for con el axios para llenar el select -->
-                </select>
-                <!-- telefono-->
-                <label for="player-phone">Telefono:</label>
-                <input type="tel" id="player-phone" name="player-phone" required>
+                </div>
 
+                <!-- Carrera-->
+                <div class="container-input">
+                    <label for="player-career">Carrera:</label>
+                    <select name="Carrera" id="player-career">
+                        <!-- usar un for con el axios para llenar el select -->
+                        <option value="0412">0412</option>
+                        <option value="0414">0414</option>
+                    </select>
+                </div>
+
+                <!-- telefono-->
+                <div class="container-input">
+                    <label for="player-phone">Telefono:</label>
+                    <select name="Prefijo" id="player-phone-prefix" >
+                        <option value="0412">0412</option>
+                        <option value="0414">0414</option>
+                        <option value="0424">0424</option>
+                        <option value="0416">0416</option>
+                        <option value="0426">0426</option>
+                    </select>
+                    <input type="tel" id="player-phone" name="Teléfono" maxlength="7" >
+                </div>
+                
                 <!-- tier-->
-                <label for="player-tier">Tier:</label>
-                <select name="player-tier" id="player-tier">
+                <div class="container-input">
+                <label for="player-tier">Nivel:</label>
+                <select name="Nivel" id="player-tier">
+                    <option value="0412">0412</option>
+                        <option value="0414">0414</option>
                     <!-- usar un for con el axios para llenar el select (aun pendiente la tabla) -->
                 </select>
+                </div>
+
                 <!-- disponibilidad-->
                 <label for="player-availability">Disponibilidad:</label>
                 <div class="avalability">
                     <div class="dia">
-                        <input type="checkbox" id="monday" name="availability" value="Lunes">
+                        <input type="checkbox" id="monday" name="Lunes" >
                         <label for="monday">Lunes</label>
                     </div>
                     <div class="dia">
-                        <input type="checkbox" id="tuesday" name="availability" value="Martes">
+                        <input type="checkbox" id="tuesday" name="Martes" >
                         <label for="tuesday">Martes</label>
                     </div>
                     <div class="dia">
-                        <input type="checkbox" id="wednesday" name="availability" value="Miércoles">
+                        <input type="checkbox" id="wednesday" name="Miércoles" >
                         <label for="wednesday">Miércoles</label>
                     </div>
                     <div class="dia">
-                        <input type="checkbox" id="thursday" name="availability" value="Jueves">
+                        <input type="checkbox" id="thursday" name="Jueves" >
                         <label for="thursday">Jueves</label>
                     </div>
                     <div class="dia">
-                        <input type="checkbox" id="friday" name="availability" value="Viernes">
+                        <input type="checkbox" id="friday" name="Viernes" >
                         <label for="friday">Viernes</label>
                     </div>
-
                 </div>
 
-                <input type="submit">
+                <button id="button-sent" type="submit" disabled>Enviar</button>
 
             </form>
 
@@ -88,6 +120,7 @@
     </main>
     
     <!-- <script src="../js/header.js"></script> -->
+     <script src="../js/validate-inputs.js"></script>
 </body>
 
 </html>
