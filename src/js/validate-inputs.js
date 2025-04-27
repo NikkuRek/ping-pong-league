@@ -98,8 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
         player[event.target.name] = event.target.value.trim(); //asigna el valor a la variable objeto
 
         validatePlayer(); //función para habilitar o deshabilitar el botón
-
-        console.log(player);
     }
     
     function validateCheckBox1(event) {//una función para cada checkbox para determinar cual fue presionado especificamente

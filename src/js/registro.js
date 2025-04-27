@@ -3,13 +3,13 @@ class registerRequest {
         this.carreras = [];
         this.tiers = [];
         this.setupEventListeners(); // Mover la configuración del evento aquí
+        this.setupFormSubmitListener(); // Mover la configuración del evento aquí
     };
 
     getCarrer = async () => {
         try {
             const response = await axios.get('http://localhost:3000/api/career');
             this.carreras = response.data.data;
-            console.log(response.data.data); // Verifica que los datos se hayan cargado correctamente
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -83,14 +83,15 @@ class registerRequest {
     };
     
     setupFormSubmitListener() {
+        console.log("setupFormSubmitListener called"); // Verifica si esta función se llama
         const form = document.getElementById('register');
         if (form) {
-            form.addEventListener('submit', async (event) => {
+                form.addEventListener('submit', async (event) => {
                 event.preventDefault(); // Evita el envío del formulario por defecto
 
                 const formData = new FormData(event.target); // Obtiene los datos del formulario
                 const data = Object.fromEntries(formData.entries()); // Convierte FormData a un objeto
-
+                console.log(data); // Muestra los datos del formulario en la consola
                 // Seleccionar todos los elementos tipo checkbox
                 const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
@@ -100,7 +101,8 @@ class registerRequest {
                 // Recorrer cada checkbox y verificar si está marcado y guardarlo en el arreglo
                 checkboxes.forEach((checkbox) => {
                     if (checkbox.checked) {
-                        checkboxesActivos.push(checkbox.value);
+                        checkboxesActivos.push(checkbox.value); // Agregar el valor del checkbox al arreglo
+
                     }
                 });
 
@@ -109,14 +111,13 @@ class registerRequest {
 
                 let playerData = {
                     playerData: {
-                        CI: data['player-CI'],
-                        first_name: data['player-name'],
-                        last_name: data['player-lastname'],
-                        phone: data['player-phone'],
-                        semester: data['player-semester'],
-                        id_career: data['player-career'],
-                        id_tier: data['player-tier'],
-                        status: true, // Cambia esto según tu lógica
+                        CI: data['Cédula'],
+                        first_name: data['Nombre'],
+                        last_name: data['Apellido'],
+                        phone: data['Prefijo'] + data['Teléfono'],
+                        semester: data['Semestre'],
+                        id_career: data['Carrera'],
+                        id_tier: data['Nivel'],
                     },
                     available_days: checkboxesActivos  // Aquí se asigna el arreglo de checkboxes activos
                 };
@@ -124,14 +125,14 @@ class registerRequest {
                 console.log(playerData); // Muestra el objeto en la consola para verificar su contenido
 
                 // Enviar los datos al servidor
-                axios.post('http://localhost:3000/api/player', playerData)
+                /*axios.post('http://localhost:3000/api/player', playerData)
                     .then((response) => {
                         console.log('Datos enviados exitosamente:', response.data);
                         document.getElementById('register').reset(); 
                     })
                     .catch((error) => {
                         console.error('Error al enviar los datos:', error);
-                    });
+                    });*/
             });
         } else {
             console.error("No se encontró el formulario con ID 'register'");
@@ -140,3 +141,4 @@ class registerRequest {
 };
 
 registerRequest  = new registerRequest (); // Instancia la clase registro
+
