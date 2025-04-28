@@ -83,7 +83,6 @@ class registerRequest {
     };
     
     setupFormSubmitListener() {
-        console.log("setupFormSubmitListener called"); // Verifica si esta función se llama
         const form = document.getElementById('register');
         if (form) {
                 form.addEventListener('submit', async (event) => {
@@ -91,7 +90,7 @@ class registerRequest {
 
                 const formData = new FormData(event.target); // Obtiene los datos del formulario
                 const data = Object.fromEntries(formData.entries()); // Convierte FormData a un objeto
-                console.log(data); // Muestra los datos del formulario en la consola
+
                 // Seleccionar todos los elementos tipo checkbox
                 const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
@@ -125,14 +124,14 @@ class registerRequest {
                 console.log(playerData); // Muestra el objeto en la consola para verificar su contenido
 
                 // Enviar los datos al servidor
-                /*axios.post('http://localhost:3000/api/player', playerData)
+                axios.post('http://localhost:3000/api/player', playerData)
                     .then((response) => {
                         console.log('Datos enviados exitosamente:', response.data);
                         document.getElementById('register').reset(); 
                     })
                     .catch((error) => {
                         console.error('Error al enviar los datos:', error);
-                    });*/
+                    });
             });
         } else {
             console.error("No se encontró el formulario con ID 'register'");
