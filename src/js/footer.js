@@ -2,7 +2,7 @@
 const footerHTML = `
     <footer>
         <div class="container">
-            <p>&copy; 2025 Torneo de Ping Pong. Todos los derechos reservados.</p>
+            <p>&copy; 2025 Torneo de Tenis de Mesa. Todos los derechos reservados.</p>
         </div>
     </footer>
 `;
