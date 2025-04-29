@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
         }
+        event.target.value = event.target.value.trim();
         
         cleanAlert(event.target.parentElement); //limpia el mensaje de alerta en dado caso que ya exista
 
