@@ -1,3 +1,4 @@
+/* General Styles */
 body {
     font-family: sans-serif;
     background-color: #121212;
@@ -9,6 +10,7 @@ body {
     color: var(--primary-color);
 }
 
+/* Container */
 .container {
     width: 95%;
     max-width: 1200px;
@@ -17,6 +19,7 @@ body {
     box-sizing: border-box;
 }
 
+/* Form Styles */
 form {
     margin: 20px auto;
     padding: 20px;
@@ -38,6 +41,7 @@ form {
     }
 }
 
+/* Input and Select Styles */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -74,14 +78,7 @@ select option:hover {
     transition: var(--transition);
 }
 
-.container-input {
-    display: flex;
-    flex-direction: column;
-    margin: 10px auto;
-    width: 90%;
-    max-width: 500px;
-}
-
+/* Labels */
 label {
     margin: 10px 0 5px;
     font-size: 1rem;
@@ -97,6 +94,7 @@ label {
     }
 }
 
+/* Availability Section */
 .avalability {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -157,18 +155,21 @@ label {
     }
 }
 
+/* Number Input Spin Button */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
+/* Error Message */
 .message-error {
     color: red;
     font-size: 0.9rem;
     margin-top: 5px;
 }
 
+/* Submit Button */
 input[type="submit"],
 button[type="submit"] {
     background-color: var(--primary-color);
@@ -254,6 +255,7 @@ button[type="submit"][data-tooltip]:disabled:hover::after {
     z-index: 1002;
 }
 
+/* Note Modal */
 #btn-note {
     display: none;
 }
@@ -317,7 +319,8 @@ button[type="submit"][data-tooltip]:disabled:hover::after {
     display: block;
 }
 
-@media (max-width: 428px) {
+/* Responsive Styles */
+@media (max-width: 400px) {
     form {
         padding: 15px;
     }
@@ -388,5 +391,47 @@ button[type="submit"][data-tooltip]:disabled:hover::after {
     .btn-accept {
         padding: 8px 15px;
         font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 399px) {
+    body {
+        font-size: 0.9rem;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    input[type="tel"],
+    input[type="file"],
+    select {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    label {
+        font-size: 0.85rem;
+    }
+
+    .avalability {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+
+    input[type="submit"],
+    button[type="submit"] {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .container-note {
+        font-size: 0.7rem;
+        width: 90%;
     }
 }
