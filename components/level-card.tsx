@@ -15,7 +15,7 @@ export function LevelCard({ level, count, color }: LevelCardProps) {
   }
 
   return (
-    <Card className={cn("border-2", colorClasses[color])}>
+    <Card className={cn("", colorClasses[color])}>
       <CardContent className="p-6 text-center">
         <div className="space-y-2">
           <p className="text-sm font-medium opacity-80">{level}</p>

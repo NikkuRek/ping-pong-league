@@ -13,8 +13,8 @@ interface LayoutProps {
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card border-b border-border">
-        <div className="container mx-auto px-6 py-4">
+      <header className="bg-background border-b border-border">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -31,9 +31,12 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
         </div>
       </header>
 
+      <div className="m-2 bg-primary-foreground pt-5 border border-border rounded-lg shadow-sm">
+
       <NavigationTabs activeTab={activeTab} onTabChange={onTabChange} />
 
       <main className="container mx-auto px-6 py-8">{children}</main>
+      </div>
     </div>
   )
 }

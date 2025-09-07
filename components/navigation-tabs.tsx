@@ -15,7 +15,7 @@ const tabs = [
 
 export function NavigationTabs({ activeTab, onTabChange }: NavigationTabsProps) {
   return (
-    <nav className="border-b border-border bg-card">
+    <nav className=" pl-4 pr-4 w-full overflow-x-auto scrollbar-hide border-b border-border bg-primary-foreground">
       <div className="container mx-auto px-6">
         <div className="flex space-x-8">
           {tabs.map((tab) => (

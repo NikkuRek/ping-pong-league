@@ -96,7 +96,7 @@ export function DashboardView() {
         </div>
 
         {/* Tournament Modalities */}
-        <div className="space-y-4">
+        <div className="space-y-4 bg-emerald-50 p-3 rounded-lg shadow-sm">
           <h3 className="text-lg font-semibold text-foreground">Modalidades de Torneos</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <TournamentModeCard mode="Amistosos" count={8} color="light-green" />
