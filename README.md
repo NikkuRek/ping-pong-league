@@ -2,55 +2,76 @@
 
 ## Descripción
 
-Esta plataforma está diseñada para gestionar torneos de ping pong de manera eficiente y organizada. Permite registrar jugadores, visualizar tablas de posiciones, consultar partidos recientes y administrar la disponibilidad de los participantes. 
+Aplicación web para la gestión eficiente de torneos de ping pong. Permite registrar jugadores, visualizar estadísticas, consultar partidos recientes y administrar la disponibilidad de los participantes, todo en una interfaz moderna y responsiva.
 
 ## Características
 
-- **Registro de Jugadores**: Los usuarios pueden registrarse proporcionando información como nombre, apellido, cédula, semestre, carrera, teléfono, tier y disponibilidad.
-- **Tabla de Posiciones**: Visualización dinámica de las posiciones de los jugadores, incluyendo estadísticas como partidos jugados, victorias, derrotas y puntos.
-- **Últimos Encuentros**: Consulta de los últimos cinco partidos jugados, generados dinámicamente.
-- **Diseño Responsivo**: Interfaz adaptada para dispositivos móviles y de escritorio.
-- **Navegación Intuitiva**: Menú de navegación para acceder rápidamente a las secciones principales.
+- **Registro y gestión de jugadores**: Alta de usuarios con datos personales y académicos.
+- **Tabla de posiciones**: Estadísticas en tiempo real de partidos, victorias, derrotas y puntos.
+- **Historial de partidos**: Consulta de encuentros recientes y detalles de torneos.
+- **Diseño responsivo**: Adaptado para dispositivos móviles y escritorio.
+- **Navegación intuitiva**: Menús y vistas organizadas por secciones.
 
 ## Estructura del Proyecto
 
-El proyecto está organizado de la siguiente manera:
-
 ```
 ping-pong-league/
-├── index.html          # Página principal con tabla de posiciones y últimos encuentros
-├── src/
-│   ├── html/
-│   │   └── register.html  # Página para el registro de jugadores
-│   ├── css/
-│   │   ├── global.css     # Estilos globales
-│   │   └── register.css   # Estilos específicos para el registro
-│   ├── js/
-│   │   └── main.js        # Lógica principal de la plataforma
-│   └── data/
-│       ├── players.js     # Datos de jugadores
-│       └── games.js       # Datos de partidos
-├── assets/
-│   └── img/              # Imágenes y recursos gráficos
-└── readme.md             # Documentación del proyecto
+├── app/                # Estructura principal de páginas y layouts (Next.js)
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── globals.css
+│   └── usuarios/
+│       └── [id]/page.tsx
+├── components/         # Componentes reutilizables y vistas
+│   ├── layout.tsx
+│   ├── user-card.tsx
+│   ├── ui/             # Componentes UI (botones, formularios, tablas, etc.)
+│   └── views/          # Vistas principales (dashboard, usuarios, torneos, partidos)
+├── hooks/              # Custom hooks (use-mobile, use-toast)
+├── lib/                # Funciones utilitarias
+├── public/             # Imágenes y recursos estáticos
+├── styles/             # Estilos globales (Tailwind CSS)
+│   └── globals.css
+├── package.json        # Dependencias y scripts
+└── README.md           # Documentación
 ```
 
 ## Tecnologías Utilizadas
 
-- **HTML5**: Estructura de las páginas.
-- **CSS3**: Estilización de la interfaz.
-- **JavaScript**: Generación dinámica de contenido y lógica de la plataforma.
-- **Normalize.css**: Normalización de estilos entre navegadores.
+- **Next.js**: Framework React para aplicaciones web modernas.
+- **React**: Librería principal para la UI.
+- **Tailwind CSS**: Estilización rápida y responsiva.
+- **Radix UI**: Componentes accesibles y personalizables.
+- **TypeScript**: Tipado estático para mayor robustez.
+- **Zod**: Validación de esquemas.
+- **date-fns**: Manipulación de fechas.
+- **Normalize.css**: Consistencia de estilos entre navegadores.
 
-## Instalación
+## Instalación y Ejecución
 
-1. Clona este repositorio en tu máquina local:
+1. Clona el repositorio:
     ```bash
     git clone https://github.com/usuario/ping-pong-league.git
     ```
-2. Navega al directorio del proyecto:
+2. Instala las dependencias:
     ```bash
-    cd ping-pong-league
+    npm install
     ```
-3. Abre el archivo `index.html` en tu navegador para iniciar la plataforma.
+3. Inicia el entorno de desarrollo:
+    ```bash
+    npm run dev
+    ```
+4. Accede a la aplicación en [http://localhost:3000](http://localhost:3000)
+
+## Scripts Disponibles
+
+- `dev`: Ejecuta el servidor de desarrollo.
+- `build`: Compila la aplicación para producción.
+- `start`: Inicia la aplicación en modo producción.
+- `lint`: Ejecuta el linter.
+
+## Créditos
+
+Desarrollado por el equipo de gestión de torneos de ping pong.
+
 
