@@ -1,0 +1,5 @@
+{
+  "name": "TorneoTT - Table Tennis Management",
+  "description": "A comprehensive dashboard for managing table tennis players, tournaments, matches, and teams. It provides system statistics, player rankings, and tournament schedules in a modern, dark-themed interface.",
+  "requestFramePermissions": []
+}
