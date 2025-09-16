@@ -2,28 +2,28 @@ import type React from "react"
 import type { Match, Player } from "@/types"
 
 const p1: Player = {
-  id: 3,
+  id: "V28456123",
   name: "Carlos Mendoza",
   avatar: "https://picsum.photos/seed/player3/48/48",
   rating: 2320,
   major: "Ing. Software - 6to",
 }
 const p2: Player = {
-  id: 2,
+  id: "V27890456",
   name: "Ana García",
   avatar: "https://picsum.photos/seed/player2/48/48",
   rating: 2380,
   major: "Ing. Industrial - 4to",
 }
 const p3: Player = {
-  id: 6,
+  id: "V26123789",
   name: "Luis Rodriguez",
   avatar: "https://picsum.photos/seed/player6/48/48",
   rating: 2200,
   major: "Ing. Sistemas - 8vo",
 }
 const p4: Player = {
-  id: 7,
+  id: "V25567123",
   name: "María López",
   avatar: "https://picsum.photos/seed/player7/48/48",
   rating: 2230,

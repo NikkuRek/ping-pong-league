@@ -1,36 +1,75 @@
 export interface Player {
-  id: number
-  name: string
-  avatar: string
-  rank?: number
-  rating: number
-  major: string
-  semester?: string
-  weeklyChange?: number
-  wins?: number
-  losses?: number
+  ci: string
+  first_name: string
+  last_name: string
+  phone: string
+  semester: number
+  career_id: number
+  aura?: number
+  status: boolean
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+export interface Day {
+  day_id: number;
+  day_name: string;
+  availabilities: {
+    player_ci: string;
+    day_id: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+export interface PlayerBackendResponse {
+  ci: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  semester: number;
+  career_id: number;
+  aura: number;
+  status: boolean;
+  createdAt: string;
+  updatedAt: string;
+  Days: Day[];
+}
+
+export interface PlayerProfile extends PlayerBackendResponse {
+  career_name: string;
+  avatar: string;
+  wins: number;
+  losses: number;
+  tournamentsWon: number;
+  podiums: number;
+  rank: number;
 }
 
 export interface Tournament {
-  id: number
+  tournament_id?: number
   name: string
-  type: "Individual" | "Dobles" | "Dobles Mixto"
-  participants: number
-  status: "En Curso" | "Cuartos" | "Próximo"
-  stage: string
-  progress: number
-  players: Player[]
+  description?: string | null
+  tournament_type: 'Individual' | 'Dobles'
+  format: string
+  start_date: Date
+  end_date?: Date | null
+  status: 'Próximo' | 'En Curso' | 'Finalizado' | 'Cancelado'
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface Match {
-  id: number
-  player1: Player
-  player2: Player
-  score1: number
-  score2: number
-  tournamentName: string
-  timeAgo: string
-  sets: { p1: number; p2: number }[]
+  match_id?: number;
+  tournament_id: number;
+  inscription1_id: number;
+  inscription2_id: number;
+  winner_inscription_id?: number | null;
+  match_datetime?: Date | null;
+  round: string;
+  status?: 'Pendiente' | 'En Juego' | 'Finalizado';
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface UpcomingTournament {
@@ -44,4 +83,9 @@ export interface UpcomingTournament {
   slots: number
   registered: number
   time: string
+}
+
+export interface Career {
+  career_id: number
+  name_career: string
 }

@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-4 text-center text-slate-400">
         <div className="flex flex-col items-center gap-4 mb-6">
           <AppLogo size="w-16 h-16" />
-          <h2 className="text-2xl font-bold text-white">TorneoTT</h2>
+          <h2 className="text-2xl font-bold text-white">LPP</h2>
           <p className="max-w-md">Sistema de gestión de torneos de tenis de mesa</p>
         </div>
         <div className="flex justify-center gap-6 mb-8">

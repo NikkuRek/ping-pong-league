@@ -5,11 +5,12 @@ import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
+import Header from "@/components/Header"
+import BottomNav from "@/components/BottomNav"
 
 export const metadata: Metadata = {
-  title: "TorneoTT - Gestión de Torneos de Tenis de Mesa",
+  title: "LPP - Gestión de Torneos de Tenis de Mesa",
   description: "Sistema completo de gestión de torneos de tenis de mesa",
-  generator: "v0.app",
 }
 
 export default function RootLayout({
@@ -20,8 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`bg-[#1C1C2E] font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <Suspense fallback={null}>{children}</Suspense>
+        className={`bg-[#1C1C2E] font-sans text-white selection:bg-purple-500/30 flex flex-col min-h-screen ${GeistSans.variable} ${GeistMono.variable}`}>
+        <Header />
+        <main className="container mx-auto px-4 flex-grow">{children}</main>
+        <BottomNav />
         <Analytics />
       </body>
     </html>
