@@ -32,7 +32,11 @@ export default function LoginPage() {
     setLoading(true); // Set loading to true
 
     try {
-      const response = await fetch('http://localhost:3000/api/credential/authenticate', {
+      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? '';
+      const cleaned = rawApiUrl.replace(/^["']+|["']+$/g, '').trim();
+      const apiUrl = cleaned.match(/^https?:\/\//) ? cleaned : `http://${cleaned}`;
+
+      const response = await fetch(`${apiUrl}/credential/authenticate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

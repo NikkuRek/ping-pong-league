@@ -11,6 +11,12 @@ export interface Player {
   updatedAt?: Date
 }
 
+export interface Career {
+  career_id: number;
+  name_career: string;
+}
+
+
 export interface Day {
   day_id: number;
   day_name: string;
@@ -41,35 +47,57 @@ export interface PlayerProfile extends PlayerBackendResponse {
   avatar: string;
   wins: number;
   losses: number;
-  tournamentsWon: number;
-  podiums: number;
-  rank: number;
 }
 
 export interface Tournament {
-  tournament_id?: number
+  tournament_id: number
   name: string
-  description?: string | null
+  description: string | null
   tournament_type: 'Individual' | 'Dobles'
   format: string
-  start_date: Date
-  end_date?: Date | null
+  start_date: string
+  end_date: string | null
   status: 'Próximo' | 'En Curso' | 'Finalizado' | 'Cancelado'
-  createdAt?: Date
-  updatedAt?: Date
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Set {
+  set_id: number;
+  match_id: number;
+  set_number: number;
+  score_participant1: number;
+  score_participant2: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Match {
-  match_id?: number;
+  match_id: number;
   tournament_id: number;
   inscription1_id: number;
   inscription2_id: number;
-  winner_inscription_id?: number | null;
-  match_datetime?: Date | null;
+  winner_inscription_id: number | null;
+  match_datetime: string;
   round: string;
-  status?: 'Pendiente' | 'En Juego' | 'Finalizado';
-  createdAt?: Date;
-  updatedAt?: Date;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  sets: Set[];
+}
+
+export interface Inscription {
+  inscription_id: number;
+  tournament_id: number;
+  player_ci: string;
+  team_id: null | number;
+  inscription_date: string;
+  seed: null | number;
+  createdAt: string;
+  updatedAt: string;
+  player: Player; // This Player type should be the one from the API response, not the local one.
+  team: null;
+  tournament: Tournament;
 }
 
 export interface UpcomingTournament {
@@ -85,7 +113,12 @@ export interface UpcomingTournament {
   time: string
 }
 
-export interface Career {
-  career_id: number
-  name_career: string
-}
+export type PlayerForList = {
+  ci: string;
+  first_name: string;
+  last_name: string;
+  avatar?: string | null;
+  career_name: string;
+  aura?: string | number;
+  semester: number;
+};

@@ -31,9 +31,13 @@ export const usePlayers = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? '';
+      const cleaned = rawApiUrl.replace(/^["']+|["']+$/g, '').trim();
+      const apiUrl = cleaned.match(/^https?:\/\//) ? cleaned : `http://${cleaned}`;
+ 
         const [playersResponse, careersResponse] = await Promise.all([
-          fetch("http://localhost:3000/api/player"),
-          fetch("http://localhost:3000/api/career"),
+          fetch(`${apiUrl}/player`),
+          fetch(`${apiUrl}/career`),
         ]);
 
         if (!playersResponse.ok) {

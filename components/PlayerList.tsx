@@ -2,7 +2,9 @@
 
 import type React from "react"
 import { useState, useMemo } from "react";
-import type { PlayerForList } from "@/types"
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { PlayerForList } from "@/types";
 import { usePlayers } from "@/hooks/usePlayers"
 import { Input } from "@/components/ui/input"
 import {
@@ -14,6 +16,12 @@ import {
 } from "@/components/ui/select"
 
 const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player, rank }) => {
+  const router = useRouter();
+
+  // Get only the first word before any whitespace for first and last names
+  const firstName = player.first_name?.trim().split(/\s+/)[0] ?? "";
+  const lastName = player.last_name?.trim().split(/\s+/)[0] ?? "";
+
   const rankGradients: { [key: number]: string } = {
     0: "bg-gradient-to-r from-[#FFD700] to-[#FFECB3]", // Gold
     1: "bg-gradient-to-r from-[#C0C0C0] to-[#E0E0E0]", // Silver
@@ -41,15 +49,38 @@ const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player,
   const detailsColorClass = rankDetailsColors[rank] || "text-slate-400";
   const borderClass = rankBorders[rank] || "border-violet-900";
 
+  const openProfile = () => {
+    // Ajusta la ruta según tu estructura (por ejemplo /player o /players)
+    router.push(`/players/${player.ci}`);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openProfile();
+    }
+  };
 
   return (
-    <div className={`flex items-center p-3 rounded-lg border ${borderClass} ${backgroundClass}`}>
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={openProfile}
+      onKeyDown={onKeyDown}
+      className={`flex items-center p-3 rounded-lg border ${borderClass} ${backgroundClass} cursor-pointer hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-purple-500`}
+    >
       <div className="flex items-center justify-between w-full">
         {/* Left side */}
-        <div className="flex items-center gap-4">
-          <img src={player.avatar || "/placeholder.svg"} alt={`${player.first_name} ${player.last_name}`} className="w-10 h-10 rounded-full" />
+          <Image
+            src={player.avatar || "/placeholder.svg"}
+            alt={`${firstName} ${lastName}`.trim()}
+            width={40}
+            height={40}
+            className="rounded-full object-cover"
+          />
           <div>
-            <p className={`font-semibold ${nameColorClass}`}>{`${player.first_name} ${player.last_name}`}</p>
+          <div>
+            <p className={`font-semibold ${nameColorClass}`}>{`${firstName} ${lastName}`.trim()}</p>
             <p className={`text-xs ${detailsColorClass}`}>{player.career_name}</p>
           </div>
         </div>
@@ -135,7 +166,7 @@ const PlayerList: React.FC = () => {
   const playersOnPage = filteredPlayers.slice(startIndex, endIndex);
 
   return (
-    <section>
+    <section className="mb-12 shadow-lg" >
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-white">Jugadores</h2>
       </div>

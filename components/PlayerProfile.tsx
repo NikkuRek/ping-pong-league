@@ -1,126 +1,140 @@
-import React from "react"
-import { notFound } from "next/navigation"
-import { TrophyIcon, PodiumIcon } from "../components/icons"
+'use client'
 
-type Player = {
+import React, { useEffect, useState } from "react"
+import Image from "next/image"
+import { TrophyIcon, PodiumIcon } from "./icons"
+import type { PlayerProfile, Career } from "@/types"
+
+
+interface PlayerProfileProps {
   ci: string
-  name: string
-  avatar?: string
-  major?: string
-  semester?: number | string
-  aura?: number
-  wins?: number
-  losses?: number
-  tournamentsWon?: number
-  podiums?: number
-  rank?: number
-  days?: number[]
 }
 
-import { calculatePlayerRank } from "../lib/playerRank"
+const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
+  const [profile, setProfile] = useState<PlayerProfile | null>(null)
+  const [careerMap, setCareerMap] = useState<Map<number, string>>(new Map())
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-async function fetchPlayer(ci: string): Promise<Player | null> {
-  try {
-    const res = await fetch(`http://localhost:3000/api/player/${ci}`)
-    if (!res.ok) return null
-    const body = await res.json()
+  useEffect(() => {
+    const fetchProfileAndCareers = async () => {
+      setLoading(true)
+      setError(null)
 
-    // La API responde { message, data: { ... } }
-    const data = body?.data
-    if (!data) return null
-
-    // Obtener días
-    const days: number[] = Array.isArray(data.Days)
-      ? data.Days.map((d: any) => d.day_id).filter((id: any) => typeof id === "number")
-      : []
-
-    // Obtener nombre de la carrera haciendo un GET a la API de career
-    let major = "—"
-    if (data.career_id) {
       try {
-        const careerRes = await fetch(`http://localhost:3000/api/career/${data.career_id}`)
-        if (careerRes.ok) {
-          const careerBody = await careerRes.json()
-          const careerData = careerBody?.data
-          // Adaptarse a distintos shapes: name_career, name o career_name
-          major =
-            careerData?.name_career ??
-            careerData?.name ??
-            careerData?.career_name ??
-            `Carrera ${data.career_id}`
+        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? ''
+        const cleaned = rawApiUrl.replace(/^["']+|["']+$/g, '').trim()
+        const apiUrl = cleaned.match(/^https?:\/\//) ? cleaned : `http://${cleaned}`
+
+        // Fetch profile
+        const [profileRes, careersRes] = await Promise.allSettled([
+          fetch(`${apiUrl}/player/${ci}`),
+          // many APIs expose careers at /career or /careers; PlayerRecentMatches used /player to get careers,
+          // try /career and fall back to /player
+          fetch(`${apiUrl}/career`).catch(() => fetch(`${apiUrl}/player`)),
+        ])
+
+        if (profileRes.status === "fulfilled") {
+          const res = profileRes.value
+          if (res.ok) {
+            const json = await res.json()
+            // API shape might be { data: ... } or direct object
+            const data = json?.data ?? json
+            setProfile(data as PlayerProfile)
+          } else {
+            setError("No se pudo cargar el perfil del jugador.")
+          }
         } else {
-          major = `Carrera ${data.career_id}`
+          setError("Error al solicitar el perfil del jugador.")
         }
-      } catch {
-        major = `Carrera ${data.career_id}`
+
+        if (careersRes.status === "fulfilled") {
+          const res = careersRes.value
+          if (res.ok) {
+            const json = await res.json()
+            const careersData: Career[] = json?.data ?? json ?? []
+            const map = new Map<number, string>()
+            careersData.forEach((c: Career) => {
+              if (c?.career_id != null) map.set(c.career_id, c.name_career)
+            })
+            setCareerMap(map)
+          }
+        }
+      } catch (err) {
+        console.error(err)
+        setError("Ocurrió un error al cargar los datos.")
+      } finally {
+        setLoading(false)
       }
     }
 
-    const playerAura = Number(data.aura ?? data.Aura ?? 0) || 0
-
-    const rank = await calculatePlayerRank(playerAura)
-
-    return {
-      ci: data.ci,
-      name: `${data.first_name ?? ""} ${data.last_name ?? ""}`.trim() || data.ci,
-      avatar: "https://picsum.photos/seed/player1/96/96",
-      major,
-      semester: data.semester ?? "—",
-      aura: playerAura,
-      wins: 0,
-      losses: 0,
-      tournamentsWon: 0,
-      podiums: 0,
-      rank,
-      days,
+    if (ci) fetchProfileAndCareers()
+    else {
+      setLoading(false)
+      setError("CI de jugador no provisto.")
     }
-  } catch {
-    return null
-  }
-}
+  }, [ci])
 
-export default async function Page({ params }: { params: { ci: string } }) {
-  const { ci } = params
-  const player = await fetchPlayer(ci)
-
-  if (!player) {
-    // If you prefer a custom error UI you can return JSX instead
-    notFound()
+  if (loading) {
+    return (
+      <section className="bg-[#2A2A3E] p-5 mt-5 rounded-2xl border border-slate-700/50">
+        <p className="text-sm text-slate-400">Cargando perfil...</p>
+      </section>
+    )
   }
 
-  const {
-    name,
-    avatar,
-    major = "—",
-    semester = "—",
-    aura = 0,
-    wins = 0,
-    losses = 0,
-    tournamentsWon = 0,
-    podiums = 0,
-    rank = 0,
-    days = [],
-  } = player!
+  if (error) {
+    return (
+      <section className="bg-[#2A2A3E] p-5 mt-5 rounded-2xl border border-slate-700/50">
+        <p className="text-sm text-red-500">{error}</p>
+      </section>
+    )
+  }
+
+  if (!profile) {
+    return (
+      <section className="bg-[#2A2A3E] p-5 mt-5 rounded-2xl border border-slate-700/50">
+        <p className="text-sm text-slate-400">Perfil no disponible.</p>
+      </section>
+    )
+  }
+
+  const fullName = `${profile.first_name} ${profile.last_name}`
+  const avatar = (profile as any).avatar ?? `/placeholder.svg`
+  const careerName = (profile as any).career_name ?? careerMap.get(profile.career_id) ?? "Desconocida"
+  const wins = (profile as any).wins ?? 0
+  const losses = (profile as any).losses ?? 0
+  const aura = profile.aura ?? 0
+  const rank = (profile as any).rank ?? 0
+  const daysAvailable = profile.Days?.map(d => d.day_id) ?? []
 
   return (
-    <section>
-      <div className="bg-[#2A2A3E] p-5 rounded-2xl border border-slate-700/50 space-y-4">
+    <section className="space-y-4">
+      <div className="bg-[#2A2A3E] p-5 rounded-2xl border border-slate-700/50">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <img src={avatar || "/placeholder.svg"} alt={name} className="w-20 h-20 rounded-full" />
+            <Image
+              src={avatar}
+              alt={fullName}
+              width={80}
+              height={80}
+              className="w-20 h-20 rounded-full"
+              unoptimized
+            />
             <span className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center font-bold text-white rounded-full bg-purple-600 border-2 border-[#2A2A3E]">
               #{rank}
             </span>
           </div>
           <div>
-            <h3 className="text-xl font-bold text-white">{name}</h3>
+            <h3 className="text-xl font-bold text-white">{fullName}</h3>
             <p className="text-sm text-slate-400">
-              {major} • {semester} Semestre
+              {careerName} • {profile.semester}º Semestre
             </p>
+            {/* <p className="text-xs text-slate-400">Tel: {profile.phone}</p> */}
           </div>
         </div>
 
-        <div className="grid grid-cols-3 text-center divide-x divide-slate-700">
+        <div className="grid grid-cols-3 text-center divide-x divide-slate-700 mt-4">
           <div>
             <p className="text-2xl font-bold text-purple-400">{aura}</p>
             <p className="text-xs text-slate-400">Aura</p>
@@ -135,27 +149,26 @@ export default async function Page({ params }: { params: { ci: string } }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 mt-4">
           <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-3">
             <TrophyIcon className="w-8 h-8 text-yellow-400" />
             <div>
-              <p className="font-bold text-white">{tournamentsWon}</p>
+              <p className="font-bold text-white">{(profile as any).tournamentsWon ?? 0}</p>
               <p className="text-xs text-slate-400">Torneos Ganados</p>
             </div>
           </div>
-
           <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-3">
             <PodiumIcon className="w-8 h-8 text-yellow-400" />
             <div>
-              <p className="font-bold text-white">{podiums}</p>
+              <p className="font-bold text-white">{(profile as any).podiums ?? 0}</p>
               <p className="text-xs text-slate-400">Podios</p>
             </div>
           </div>
         </div>
 
-        <div>
+        <div className="mt-4">
           <h4 className="text-sm font-semibold text-white mb-2">Días disponibles</h4>
-          <div className="flex justify-center space-x-4">
+          <div className="flex justify-center space-x-1">
             {[
               { id: 1, name: "Lun" },
               { id: 2, name: "Mar" },
@@ -163,13 +176,15 @@ export default async function Page({ params }: { params: { ci: string } }) {
               { id: 4, name: "Jue" },
               { id: 5, name: "Vie" },
             ].map((d) => {
-              const available = days.includes(d.id)
+              const available = daysAvailable.includes(d.id)
               return (
                 <span
                   key={d.id}
                   className={
                     "px-4 py-1 rounded-full text-xs font-medium " +
-                    (available ? "bg-green-500 text-white" : "border-b-gray-400 border-2 text-slate-400")
+                    (available
+                      ? "bg-green-500 text-white"
+                      : "border-b-gray-400 border-2 text-slate-400")
                   }
                 >
                   {d.name}
@@ -182,3 +197,5 @@ export default async function Page({ params }: { params: { ci: string } }) {
     </section>
   )
 }
+
+export default PlayerProfile

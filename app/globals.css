@@ -144,3 +144,12 @@
     background: #5a5a7a;
   }
 }
+
+@layer base {
+  /* Reduce base font size on small screens to scale down the UI */
+  @media (max-width: 499px) {
+    html {
+      font-size: 14px;
+    }
+  }
+}
