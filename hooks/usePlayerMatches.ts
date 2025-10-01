@@ -1,0 +1,189 @@
+'use client'
+
+import { useState, useEffect } from "react"
+import { Match, Inscription, Set as ApiSet } from "@/types" // Renamed Set to ApiSet to avoid conflict
+import { FormattedSet, MatchData, TournamentDetails } from "./usePlayerMatches.types" // Import interfaces
+
+export function usePlayerMatches(playerId: string) {
+  const [matches, setMatches] = useState<MatchData[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+  const [tournamentMap, setTournamentMap] = useState<Map<number, string>>(new Map());
+  const [loadingTournaments, setLoadingTournaments] = useState(true);
+
+  // Effect to fetch tournament data
+  useEffect(() => {
+    const fetchTournaments = async () => {
+      setLoadingTournaments(true);
+      try {
+        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? '';
+      const cleaned = rawApiUrl.replace(/^["']+|["']+$/g, '').trim();
+      const apiUrl = cleaned.match(/^https?:\/\//) ? cleaned : `http://${cleaned}`;
+
+      const response = await fetch(`${apiUrl}/tournament`); // Assuming this endpoint returns all tournaments
+        if (response.ok) {
+          const data = await response.json();
+          const newTournamentMap = new Map<number, string>();
+          data.data.forEach((tournament: TournamentDetails) => {
+            newTournamentMap.set(tournament.tournament_id, tournament.name);
+          });
+          setTournamentMap(newTournamentMap);
+        } else {
+          console.error("Failed to fetch tournament data");
+        }
+      } catch (err) {
+        console.error("Error fetching tournament data:", err);
+      } finally {
+        setLoadingTournaments(false);
+      }
+    };
+    fetchTournaments();
+  }, []); // Run once on mount
+
+  useEffect(() => {
+    if (!playerId) {
+      setLoading(false)
+      return
+    }
+
+    const fetchMatches = async () => {
+      try {
+        setLoading(true)
+        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? '';
+      const cleaned = rawApiUrl.replace(/^["']+|["']+$/g, '').trim();
+      const apiUrl = cleaned.match(/^https?:\/\//) ? cleaned : `http://${cleaned}`;
+        const [matchesRes, inscriptionsRes] = await Promise.all([
+          fetch(`${apiUrl}/match`),
+          fetch(`${apiUrl}/inscription`),
+        ])
+
+        if (!matchesRes.ok || !inscriptionsRes.ok) {
+          throw new Error("Failed to fetch data")
+        }
+
+        const matchesData = await matchesRes.json()
+        const inscriptionsData = await inscriptionsRes.json()
+
+        const allMatches: Match[] = matchesData.data
+        const allInscriptions: Inscription[] = inscriptionsData.data
+
+        const playerInscriptions = allInscriptions.filter(
+          (inscription) => inscription.player_ci === playerId
+        )
+        const playerInscriptionIds = playerInscriptions.map(
+          (inscription) => inscription.inscription_id
+        )
+
+        // Get current player's name and avatar (assuming first inscription is representative)
+        const currentPlayer = playerInscriptions.length > 0 ? playerInscriptions[0].player : null;
+        const currentPlayerName = currentPlayer ? `${currentPlayer.first_name} ${currentPlayer.last_name}` : "You";
+        const currentPlayerAvatar = "https://picsum.photos/seed/player1/40/40"; // Placeholder for now
+
+        const playerMatches = allMatches.filter((match) => {
+          const isP1 = playerInscriptionIds.includes(match.inscription1_id);
+          const isP2 = playerInscriptionIds.includes(match.inscription2_id);
+          // Ensure the player is part of the match, but not playing against themselves
+          return (isP1 || isP2) && match.inscription1_id !== match.inscription2_id;
+        });
+
+        const formattedMatches: MatchData[] = playerMatches
+          .map((match) => {
+            const isPlayerParticipant1 = playerInscriptionIds.includes(match.inscription1_id)
+
+            // Determine opponent's inscription and details
+            const opponentInscriptionId = isPlayerParticipant1
+              ? match.inscription2_id
+              : match.inscription1_id;
+            const opponentInscription = allInscriptions.find(
+              (inscription) => inscription.inscription_id === opponentInscriptionId
+            );
+
+            // Determine current player's inscription and details
+            const playerInscriptionId = isPlayerParticipant1
+              ? match.inscription1_id
+              : match.inscription2_id;
+            const playerInscription = allInscriptions.find(
+              (inscription) => inscription.inscription_id === playerInscriptionId
+            );
+
+            // If either inscription is not found, skip this match
+            if (!opponentInscription || !playerInscription) {
+              return null;
+            }
+
+            const currentPlayerName = `${playerInscription.player.first_name} ${playerInscription.player.last_name}`;
+            const opponentName = `${opponentInscription.player.first_name} ${opponentInscription.player.last_name}`;
+            const opponentAvatar = "https://picsum.photos/seed/player2/96/96"; // Placeholder
+
+            let playerSetsWon = 0
+            let opponentSetsWon = 0
+            const formattedSets: FormattedSet[] = [];
+
+            if (match.sets && match.sets.length > 0) {
+              match.sets.forEach((set) => {
+                const p1Score = set.score_participant1;
+                const p2Score = set.score_participant2;
+
+                if (isPlayerParticipant1) {
+                  if (p1Score > p2Score) playerSetsWon++;
+                  else opponentSetsWon++;
+                  formattedSets.push({ p1: p1Score, p2: p2Score });
+                } else {
+                  if (p2Score > p1Score) playerSetsWon++;
+                  else opponentSetsWon++;
+                  formattedSets.push({ p1: p2Score, p2: p1Score });
+                }
+              });
+            }
+
+            const result: "win" | "loss" = 
+              match.winner_inscription_id && playerInscriptionIds.includes(match.winner_inscription_id)
+              ? "win"
+              : "loss";
+
+            const matchDate = new Date(match.match_datetime);
+            const now = new Date();
+            const diffMs = now.getTime() - matchDate.getTime();
+            const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+            let timeAgo = `${diffHours} horas atrás`;
+            if (diffHours < 1) timeAgo = "Hace menos de una hora";
+            else if (diffHours >= 24) {
+                const diffDays = Math.round(diffHours / 24);
+                timeAgo = `${diffDays} días atrás`;
+            }
+
+            return {
+              id: match.match_id.toString(),
+              player1Name: currentPlayerName,
+              player1Avatar: currentPlayerAvatar,
+              player1Ci: playerInscription.player.ci,
+              player2Name: opponentName,
+              player2Avatar: opponentAvatar,
+              player2Ci: opponentInscription.player.ci,
+              score1: playerSetsWon,
+              score2: opponentSetsWon,
+              tournamentName: tournamentMap.get(match.tournament_id) || "Cargando Torneo...",
+              timeAgo: timeAgo,
+              sets: formattedSets,
+              result: result,
+            }
+          })
+          .filter((match): match is MatchData => match !== null) // Filter out null matches
+          .sort((a, b) => new Date(b.timeAgo).getTime() - new Date(a.timeAgo).getTime()) // Sort by date descending
+
+        setMatches(formattedMatches)
+      } catch (e: any) {
+        setError(e)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    // Only fetch matches if tournaments are loaded
+    if (!loadingTournaments) {
+      fetchMatches();
+    }
+  }, [playerId, loadingTournaments, tournamentMap]); // Add loadingTournaments and tournamentMap to dependencies
+
+  return { matches, loading: loading || loadingTournaments, error }
+}
