@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { PlayerForList, PlayerRaw, Career } from "@/types";
+import type { PlayerForList, Career } from "@/types";
 
 const transformPlayerData = (
   data: any,

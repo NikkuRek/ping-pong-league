@@ -122,3 +122,10 @@ export type PlayerForList = {
   aura?: string | number;
   semester: number;
 };
+
+export interface WelcomeData {
+  playerCount: number;
+  activeTournamentsCount: number;
+  loading: boolean;
+  error: Error | null;
+}

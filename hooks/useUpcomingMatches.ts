@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Match, Inscription, Player } from "@/types"
 import { FormattedSet, MatchData, TournamentDetails } from "./usePlayerMatches.types"
 
-export function useUpcomingMatches() {
+export function useUpcomingMatches(playerId: string) {
   const [matches, setMatches] = useState<MatchData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
@@ -43,6 +43,11 @@ export function useUpcomingMatches() {
 
   useEffect(() => {
     const fetchMatchesAndPlayers = async () => {
+      if (!playerId) {
+        setMatches([]);
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true)
         const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? '';
@@ -63,9 +68,13 @@ export function useUpcomingMatches() {
         const allMatches: Match[] = matchesData.data
         const allInscriptions: Inscription[] = inscriptionsData.data
 
-        // Filter for upcoming matches (status not "Finalizado")
+        // Filter for upcoming matches (status not "Finalizado") for the given player
         const upcomingMatches = allMatches.filter(
-          (match) => match.status !== "Finalizado"
+          (match) => {
+            const inscription1 = allInscriptions.find(i => i.inscription_id === match.inscription1_id);
+            const inscription2 = allInscriptions.find(i => i.inscription_id === match.inscription2_id);
+            return match.status !== "Finalizado" && (inscription1?.player_ci === playerId || inscription2?.player_ci === playerId);
+          }
         )
 
         const uniquePlayerCis = new Set<string>();
@@ -143,7 +152,7 @@ export function useUpcomingMatches() {
               tournamentName: tournamentMap.get(match.tournament_id) || "Cargando Torneo...",
               timeAgo: timeAgo,
               sets: formattedSets,
-              result: "win", // Placeholder, not relevant for upcoming
+              result: "", // Placeholder, not relevant for upcoming
             }
           })
           .sort((a, b) => new Date(a.timeAgo).getTime() - new Date(b.timeAgo).getTime()) // Sort by date ascending for upcoming
@@ -159,7 +168,7 @@ export function useUpcomingMatches() {
     if (!loadingTournaments) {
       fetchMatchesAndPlayers();
     }
-  }, [loadingTournaments, tournamentMap]);
+  }, [loadingTournaments, tournamentMap, playerId]);
 
   return { matches, loading: loading || loadingTournaments, error }
 }

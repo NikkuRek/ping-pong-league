@@ -8,8 +8,8 @@ const navItems = [
   { href: "/", label: "Inicio", icon: HomeIcon },
   { href: "/tournaments", label: "Torneos", icon: TrophyIcon },
   { href: "/players", label: "Jugadores", icon: UsersIcon },
-  { href: "/profile", label: "Perfil", icon: UsersIcon },
-  { href: "/settings", label: "Ajustes", icon: SettingsIcon },
+  // { href: "/profile", label: "Perfil", icon: UsersIcon },
+  // { href: "/settings", label: "Ajustes", icon: SettingsIcon },
 ]
 
 export default function BottomNav() {

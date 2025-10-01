@@ -5,27 +5,15 @@ import { ClockIcon, UsersIcon } from "./icons"
 const upcomingData: UpcomingTournament[] = [
   {
     id: 1,
-    name: "Torneo Intercareeras",
-    date: "15 Mar 2024",
-    day: "15",
-    month: "MAR",
+    name: "Liga Universitaria 2-2025",
+    date: "1 de Octubre",
+    day: "3",
+    month: "OCT",
     type: "Individual",
     details: "Inscripciones abiertas",
     slots: 64,
-    registered: 32,
-    time: "9:00 AM",
-  },
-  {
-    id: 2,
-    name: "Copa Veteranos",
-    date: "22 Mar 2024",
-    day: "22",
-    month: "MAR",
-    type: "Individual",
-    details: "+25 años",
-    slots: 32,
-    registered: 18,
-    time: "2:00 PM",
+    registered: 48,
+    time: "8/10 ~ 19/11",
   },
 ]
 
@@ -76,12 +64,12 @@ const UpcomingTournamentCard: React.FC<{ tournament: UpcomingTournament; isPrima
           {tournament.registered} / {tournament.slots} inscritos
         </p>
       </div>
-
+{/* 
       <button
         className={`w-full font-semibold py-2.5 rounded-lg transition-all ${isPrimary ? "bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg hover:scale-105" : "bg-slate-700/50 text-slate-300 hover:bg-slate-700"}`}
       >
         Inscribirse
-      </button>
+      </button> */}
     </div>
   )
 }
@@ -91,9 +79,9 @@ const UpcomingTournaments: React.FC = () => {
     <section>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-white">Próximos Torneos</h2>
-        <a href="#" className="text-sm text-blue-400 font-semibold hover:text-blue-300">
+        {/* <a href="#" className="text-sm text-blue-400 font-semibold hover:text-blue-300">
           Calendario
-        </a>
+        </a> */}
       </div>
       <div className="space-y-4">
         {upcomingData.map((t, index) => (

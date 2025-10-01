@@ -9,7 +9,7 @@ export default function Page({ params }: { params: { ci: string } }) {
   return (
     <div className="container mx-auto px-4 py-6">
       <PlayerProfile ci={ci} />
-      <UpcomingMatches />
+      <UpcomingMatches ci={ci} />
       <PlayerRecentMatches playerId={ci} />
     </div>
   )

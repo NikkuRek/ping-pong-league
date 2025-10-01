@@ -4,9 +4,11 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
+// @ts-ignore TS cannot find type declarations for side-effect CSS import
 import "./globals.css"
-import "../.env.local"
 import Header from "@/components/Header"
+// @ts-ignore TS cannot find type declarations for side-effect env import
+import "../.env.local"
 import BottomNav from "@/components/BottomNav"
 
 export const metadata: Metadata = {

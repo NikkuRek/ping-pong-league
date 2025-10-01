@@ -1,66 +1,106 @@
 'use client'
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import Image from "next/image"
 import { TrophyIcon, PodiumIcon } from "./icons"
-import type { PlayerProfile, Career } from "@/types"
-
+import { usePlayerMatches } from "@/hooks/usePlayerMatches"
+import type { PlayerProfile as PlayerProfileType, Career } from "@/types"
 
 interface PlayerProfileProps {
   ci: string
 }
 
-const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
-  const [profile, setProfile] = useState<PlayerProfile | null>(null)
+/**
+ * Normaliza y construye la URL base de la API a partir de variables de entorno.
+ */
+function getApiBase(): string {
+  const raw = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? ""
+  const cleaned = raw.replace(/^["']+|["']+$/g, "").trim()
+  if (!cleaned) return ""
+  return cleaned.match(/^https?:\/\//) ? cleaned : `http://${cleaned}`
+}
+
+/**
+ * Hook que encapsula toda la lógica de carga de perfil, carreras y cálculo de victorias/derrotas.
+ */
+function usePlayerProfile(ci: string) {
+  const [profile, setProfile] = useState<PlayerProfileType | null>(null)
   const [careerMap, setCareerMap] = useState<Map<number, string>>(new Map())
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
+  const {
+    matches,
+    loading: matchesLoading,
+    error: matchesError,
+  } = usePlayerMatches(ci)
+
+  const apiBase = useMemo(() => getApiBase(), [])
+
   useEffect(() => {
-    const fetchProfileAndCareers = async () => {
+    if (!ci) {
+      setError("CI de jugador no provisto.")
+      setLoading(false)
+      return
+    }
+    if (!apiBase) {
+      setError("URL de API no configurada.")
+      setLoading(false)
+      return
+    }
+
+    const controller = new AbortController()
+    const signal = controller.signal
+
+    async function fetchProfileAndCareers() {
       setLoading(true)
       setError(null)
 
       try {
-        const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? ''
-        const cleaned = rawApiUrl.replace(/^["']+|["']+$/g, '').trim()
-        const apiUrl = cleaned.match(/^https?:\/\//) ? cleaned : `http://${cleaned}`
+        const profileResPromise = fetch(`${apiBase}/player/${ci}`, { signal }).catch((e) => {
+          if (e.name === "AbortError") throw e
+          return null
+        })
 
-        // Fetch profile
-        const [profileRes, careersRes] = await Promise.allSettled([
-          fetch(`${apiUrl}/player/${ci}`),
-          // many APIs expose careers at /career or /careers; PlayerRecentMatches used /player to get careers,
-          // try /career and fall back to /player
-          fetch(`${apiUrl}/career`).catch(() => fetch(`${apiUrl}/player`)),
+        const careersResPromise = (async () => {
+          try {
+            const r = await fetch(`${apiBase}/career`, { signal })
+            if (r.ok) return r
+            return await fetch(`${apiBase}/player`, { signal })
+          } catch (e) {
+            if ((e as any).name === "AbortError") throw e
+            return null
+          }
+        })()
+
+        const [profileRes, careersRes] = await Promise.all([
+          profileResPromise,
+          careersResPromise,
         ])
 
-        if (profileRes.status === "fulfilled") {
-          const res = profileRes.value
-          if (res.ok) {
-            const json = await res.json()
-            // API shape might be { data: ... } or direct object
-            const data = json?.data ?? json
-            setProfile(data as PlayerProfile)
-          } else {
-            setError("No se pudo cargar el perfil del jugador.")
-          }
+        if (!profileRes) {
+          setError("No se pudo obtener el perfil del jugador.")
+          setProfile(null)
+        } else if (!profileRes.ok) {
+          setError("No se pudo cargar el perfil del jugador.")
+          setProfile(null)
         } else {
-          setError("Error al solicitar el perfil del jugador.")
+          const json = await profileRes.json()
+          const data = json?.data ?? json
+          setProfile(data as PlayerProfileType)
         }
 
-        if (careersRes.status === "fulfilled") {
-          const res = careersRes.value
-          if (res.ok) {
-            const json = await res.json()
-            const careersData: Career[] = json?.data ?? json ?? []
-            const map = new Map<number, string>()
-            careersData.forEach((c: Career) => {
-              if (c?.career_id != null) map.set(c.career_id, c.name_career)
-            })
-            setCareerMap(map)
-          }
+        if (careersRes && careersRes.ok) {
+          const json = await careersRes.json()
+          const careersData: Career[] = json?.data ?? json ?? []
+          const map = new Map<number, string>()
+          careersData.forEach((c) => {
+            if (c?.career_id != null) map.set(c.career_id, c.name_career)
+          })
+          setCareerMap(map)
         }
-      } catch (err) {
+      } catch (err: any) {
+        if (err.name === "AbortError") return
         console.error(err)
         setError("Ocurrió un error al cargar los datos.")
       } finally {
@@ -68,12 +108,40 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
       }
     }
 
-    if (ci) fetchProfileAndCareers()
-    else {
-      setLoading(false)
-      setError("CI de jugador no provisto.")
+    fetchProfileAndCareers()
+
+    return () => {
+      controller.abort()
     }
-  }, [ci])
+  }, [ci, apiBase])
+
+  const wins = useMemo(() => {
+    if (!matches) return 0
+    return matches.reduce((acc, m) => (m.result === "win" ? acc + 1 : acc), 0)
+  }, [matches])
+
+  const losses = useMemo(() => {
+    if (!matches) return 0
+    return matches.reduce((acc, m) => (m.result === "loss" ? acc + 1 : acc), 0)
+  }, [matches])
+
+  return {
+    profile,
+    careerMap,
+    wins,
+    losses,
+    loading: loading || matchesLoading,
+    error: error ?? matchesError?.message,
+  }
+}
+
+const parseNumber = (v: any) => {
+  const n = Number(v ?? 0)
+  return Number.isFinite(n) ? n : 0
+}
+
+const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
+  const { profile, careerMap, wins, losses, loading, error } = usePlayerProfile(ci)
 
   if (loading) {
     return (
@@ -100,13 +168,15 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
   }
 
   const fullName = `${profile.first_name} ${profile.last_name}`
-  const avatar = (profile as any).avatar ?? `/placeholder.svg`
+  const avatar = (profile as any).avatar ?? `https://picsum.photos/seed/player1/40/40`
   const careerName = (profile as any).career_name ?? careerMap.get(profile.career_id) ?? "Desconocida"
-  const wins = (profile as any).wins ?? 0
-  const losses = (profile as any).losses ?? 0
   const aura = profile.aura ?? 0
   const rank = (profile as any).rank ?? 0
-  const daysAvailable = profile.Days?.map(d => d.day_id) ?? []
+  const daysAvailable = profile.Days?.map((d: any) => d.day_id) ?? []
+
+  // Prioriza los wins/loses computados; si no están listos usa campos del profile o 0.
+  const winsDisplay = wins != null ? wins : parseNumber((profile as any).wins ?? (profile as any).victories ?? (profile as any).wins_total ?? 0)
+  const lossesDisplay = losses != null ? losses : parseNumber((profile as any).losses ?? (profile as any).defeats ?? (profile as any).losses_total ?? 0)
 
   return (
     <section className="space-y-4">
@@ -121,35 +191,35 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
               className="w-20 h-20 rounded-full"
               unoptimized
             />
-            <span className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center font-bold text-white rounded-full bg-purple-600 border-2 border-[#2A2A3E]">
+            {/* <span className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center font-bold text-white rounded-full bg-purple-600 border-2 border-[#2A2A3E]">
               #{rank}
-            </span>
+            </span> */}
           </div>
           <div>
             <h3 className="text-xl font-bold text-white">{fullName}</h3>
             <p className="text-sm text-slate-400">
               {careerName} • {profile.semester}º Semestre
             </p>
-            {/* <p className="text-xs text-slate-400">Tel: {profile.phone}</p> */}
           </div>
         </div>
 
-        <div className="grid grid-cols-3 text-center divide-x divide-slate-700 mt-4">
-          <div>
+        <div className="grid grid-cols-2 text-center divide-x divide-slate-700 mt-4">
+        {/* <div className="grid grid-cols-3 text-center divide-x divide-slate-700 mt-4"> */}
+          {/* <div>
             <p className="text-2xl font-bold text-purple-400">{aura}</p>
             <p className="text-xs text-slate-400">Aura</p>
-          </div>
+          </div> */}
           <div>
-            <p className="text-2xl font-bold text-green-400">{wins}</p>
+            <p className="text-2xl font-bold text-green-400">{winsDisplay}</p>
             <p className="text-xs text-slate-400">Victorias</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-red-400">{losses}</p>
+            <p className="text-2xl font-bold text-red-400">{lossesDisplay}</p>
             <p className="text-xs text-slate-400">Derrotas</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mt-4">
+        {/* <div className="grid grid-cols-2 gap-3 mt-4">
           <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-3">
             <TrophyIcon className="w-8 h-8 text-yellow-400" />
             <div>
@@ -164,7 +234,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
               <p className="text-xs text-slate-400">Podios</p>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="mt-4">
           <h4 className="text-sm font-semibold text-white mb-2">Días disponibles</h4>

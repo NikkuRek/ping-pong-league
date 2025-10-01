@@ -2,11 +2,11 @@ import type React from "react"
 import type { Tournament } from "@/types"
 import { ArrowRightIcon } from "./icons"
 
-const tournamentsData: Tournament[] = [
+const tournamentsData: any[] = [
   {
-    id: 1,
+    tournament_id: 1,
     name: "Copa Primavera 2024",
-    type: "Individual",
+    tournament_type: "Individual",
     participants: 32,
     status: "En Curso",
     stage: "Semifinales",
@@ -36,9 +36,9 @@ const tournamentsData: Tournament[] = [
     ],
   },
   {
-    id: 2,
+    tournament_id: 2,
     name: "Torneo Dobles Mixto",
-    type: "Dobles",
+    tournament_type: "Dobles",
     participants: 16,
     status: "Cuartos",
     stage: "8 equipos restantes",
@@ -69,7 +69,7 @@ const tournamentsData: Tournament[] = [
   },
 ]
 
-const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) => {
+const TournamentCard: React.FC<{ tournament: any }> = ({ tournament }) => {
   return (
     <div className="bg-[#2A2A3E] p-5 rounded-2xl border border-slate-700/50 space-y-4">
       <div className="flex justify-between items-start">

@@ -16,7 +16,7 @@ export interface MatchData {
   tournamentName: string; // Placeholder for now
   timeAgo: string; // Derived from match_datetime
   sets: FormattedSet[]; // Individual set scores
-  result: "win" | "loss";
+  result: string;
 }
 
 export interface TournamentDetails {
