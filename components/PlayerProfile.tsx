@@ -1,10 +1,11 @@
-'use client'
+"use client"
 
-import React, { useEffect, useMemo, useState } from "react"
+import type React from "react"
+import { useEffect, useMemo, useState } from "react"
 import Image from "next/image"
-import { TrophyIcon, PodiumIcon } from "./icons"
 import { usePlayerMatches } from "@/hooks/usePlayerMatches"
 import type { PlayerProfile as PlayerProfileType, Career } from "@/types"
+import { getApiUrl } from "@/lib/api-config"
 
 interface PlayerProfileProps {
   ci: string
@@ -14,10 +15,7 @@ interface PlayerProfileProps {
  * Normaliza y construye la URL base de la API a partir de variables de entorno.
  */
 function getApiBase(): string {
-  const raw = process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? ""
-  const cleaned = raw.replace(/^["']+|["']+$/g, "").trim()
-  if (!cleaned) return ""
-  return cleaned.match(/^https?:\/\//) ? cleaned : `http://${cleaned}`
+  return getApiUrl()
 }
 
 /**
@@ -28,12 +26,9 @@ function usePlayerProfile(ci: string) {
   const [careerMap, setCareerMap] = useState<Map<number, string>>(new Map())
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [rank, setRank] = useState<number>(0)
 
-  const {
-    matches,
-    loading: matchesLoading,
-    error: matchesError,
-  } = usePlayerMatches(ci)
+  const { matches, loading: matchesLoading, error: matchesError } = usePlayerMatches(ci)
 
   const apiBase = useMemo(() => getApiBase(), [])
 
@@ -62,20 +57,20 @@ function usePlayerProfile(ci: string) {
           return null
         })
 
-        const careersResPromise = (async () => {
-          try {
-            const r = await fetch(`${apiBase}/career`, { signal })
-            if (r.ok) return r
-            return await fetch(`${apiBase}/player`, { signal })
-          } catch (e) {
-            if ((e as any).name === "AbortError") throw e
-            return null
-          }
-        })()
+        const careersResPromise = fetch(`${apiBase}/career`, { signal }).catch((e) => {
+          if (e.name === "AbortError") throw e
+          return null
+        })
 
-        const [profileRes, careersRes] = await Promise.all([
+        const allPlayersResPromise = fetch(`${apiBase}/player`, { signal }).catch((e) => {
+          if (e.name === "AbortError") throw e
+          return null
+        })
+
+        const [profileRes, careersRes, allPlayersRes] = await Promise.all([
           profileResPromise,
           careersResPromise,
+          allPlayersResPromise,
         ])
 
         if (!profileRes) {
@@ -95,9 +90,19 @@ function usePlayerProfile(ci: string) {
           const careersData: Career[] = json?.data ?? json ?? []
           const map = new Map<number, string>()
           careersData.forEach((c) => {
-            if (c?.career_id != null) map.set(c.career_id, c.name_career)
+            if (c?.career_id != null && c?.name_career) {
+              map.set(c.career_id, c.name_career)
+            }
           })
           setCareerMap(map)
+        }
+
+        if (allPlayersRes && allPlayersRes.ok) {
+          const json = await allPlayersRes.json()
+          const allPlayers = Array.isArray(json) ? json : (json?.data ?? [])
+          const sortedPlayers = allPlayers.sort((a: any, b: any) => (b.aura ?? 0) - (a.aura ?? 0))
+          const playerRank = sortedPlayers.findIndex((p: any) => p.ci === ci)
+          setRank(playerRank >= 0 ? playerRank + 1 : 0)
         }
       } catch (err: any) {
         if (err.name === "AbortError") return
@@ -130,6 +135,7 @@ function usePlayerProfile(ci: string) {
     careerMap,
     wins,
     losses,
+    rank,
     loading: loading || matchesLoading,
     error: error ?? matchesError?.message,
   }
@@ -141,7 +147,7 @@ const parseNumber = (v: any) => {
 }
 
 const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
-  const { profile, careerMap, wins, losses, loading, error } = usePlayerProfile(ci)
+  const { profile, careerMap, wins, losses, rank, loading, error } = usePlayerProfile(ci)
 
   if (loading) {
     return (
@@ -171,12 +177,17 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
   const avatar = (profile as any).avatar ?? `https://picsum.photos/seed/player1/40/40`
   const careerName = (profile as any).career_name ?? careerMap.get(profile.career_id) ?? "Desconocida"
   const aura = profile.aura ?? 0
-  const rank = (profile as any).rank ?? 0
   const daysAvailable = profile.Days?.map((d: any) => d.day_id) ?? []
 
   // Prioriza los wins/loses computados; si no están listos usa campos del profile o 0.
-  const winsDisplay = wins != null ? wins : parseNumber((profile as any).wins ?? (profile as any).victories ?? (profile as any).wins_total ?? 0)
-  const lossesDisplay = losses != null ? losses : parseNumber((profile as any).losses ?? (profile as any).defeats ?? (profile as any).losses_total ?? 0)
+  const winsDisplay =
+    wins != null
+      ? wins
+      : parseNumber((profile as any).wins ?? (profile as any).victories ?? (profile as any).wins_total ?? 0)
+  const lossesDisplay =
+    losses != null
+      ? losses
+      : parseNumber((profile as any).losses ?? (profile as any).defeats ?? (profile as any).losses_total ?? 0)
 
   return (
     <section className="space-y-4">
@@ -184,16 +195,16 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
         <div className="flex items-center gap-4">
           <div className="relative">
             <Image
-              src={avatar}
+              src={avatar || "/placeholder.svg"}
               alt={fullName}
               width={80}
               height={80}
               className="w-20 h-20 rounded-full"
               unoptimized
             />
-            {/* <span className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center font-bold text-white rounded-full bg-purple-600 border-2 border-[#2A2A3E]">
+            <span className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center font-bold text-white rounded-full bg-purple-600 border-2 border-[#2A2A3E] text-xs">
               #{rank}
-            </span> */}
+            </span>
           </div>
           <div>
             <h3 className="text-xl font-bold text-white">{fullName}</h3>
@@ -204,11 +215,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
         </div>
 
         <div className="grid grid-cols-2 text-center divide-x divide-slate-700 mt-4">
-        {/* <div className="grid grid-cols-3 text-center divide-x divide-slate-700 mt-4"> */}
-          {/* <div>
-            <p className="text-2xl font-bold text-purple-400">{aura}</p>
-            <p className="text-xs text-slate-400">Aura</p>
-          </div> */}
           <div>
             <p className="text-2xl font-bold text-green-400">{winsDisplay}</p>
             <p className="text-xs text-slate-400">Victorias</p>
@@ -219,45 +225,20 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
           </div>
         </div>
 
-        {/* <div className="grid grid-cols-2 gap-3 mt-4">
-          <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-3">
-            <TrophyIcon className="w-8 h-8 text-yellow-400" />
-            <div>
-              <p className="font-bold text-white">{(profile as any).tournamentsWon ?? 0}</p>
-              <p className="text-xs text-slate-400">Torneos Ganados</p>
-            </div>
-          </div>
-          <div className="bg-slate-800/50 p-3 rounded-lg flex items-center gap-3">
-            <PodiumIcon className="w-8 h-8 text-yellow-400" />
-            <div>
-              <p className="font-bold text-white">{(profile as any).podiums ?? 0}</p>
-              <p className="text-xs text-slate-400">Podios</p>
-            </div>
-          </div>
-        </div> */}
-
         <div className="mt-4">
           <h4 className="text-sm font-semibold text-white mb-2">Días disponibles</h4>
           <div className="flex justify-center space-x-1">
-            {[
-              { id: 1, name: "Lun" },
-              { id: 2, name: "Mar" },
-              { id: 3, name: "Mié" },
-              { id: 4, name: "Jue" },
-              { id: 5, name: "Vie" },
-            ].map((d) => {
-              const available = daysAvailable.includes(d.id)
+            {[1, 2, 3, 4, 5].map((d) => {
+              const available = daysAvailable.includes(d)
               return (
                 <span
-                  key={d.id}
+                  key={d}
                   className={
                     "px-4 py-1 rounded-full text-xs font-medium " +
-                    (available
-                      ? "bg-green-500 text-white"
-                      : "border-b-gray-400 border-2 text-slate-400")
+                    (available ? "bg-green-500 text-white" : "border-b-gray-400 border-2 text-slate-400")
                   }
                 >
-                  {d.name}
+                  {d === 1 ? "Lun" : d === 2 ? "Mar" : d === 3 ? "Mié" : d === 4 ? "Jue" : "Vie"}
                 </span>
               )
             })}
