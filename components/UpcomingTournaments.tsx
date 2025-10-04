@@ -28,7 +28,7 @@ const UpcomingTournamentCard: React.FC<{ tournament: UpcomingTournament; isPrima
       <div className="flex justify-between items-start">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-500/20 text-purple-400">
+            <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-500/20 text-purple-500">
               Próximo
             </span>
             <span className="text-xs text-slate-400">{tournament.date}</span>

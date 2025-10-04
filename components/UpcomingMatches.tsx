@@ -10,6 +10,25 @@ import { usePlayerMatches } from "@/hooks/usePlayerMatches"
 
 type Career = { career_id: number; name_career: string }
 
+const getShortName = (fullName: string): string => {
+  if (!fullName) return "—"
+  
+  const names = fullName.trim().split(/\s+/)
+  if (names.length === 0) return "—"
+  
+  const firstName = names[0]
+  
+  let firstLastName = ""
+  for (let i = 1; i < names.length; i++) {
+    if (names[i] && names[i].length > 0) {
+      firstLastName = names[i]
+      break
+    }
+  }
+  
+  return firstLastName ? `${firstName} ${firstLastName}` : firstName
+}
+
 const UpcomingMatches: React.FC<{ ci: string }> = ({ ci: playerId }) => {
   const { matches, loading, error } = usePlayerMatches(playerId, "not-Finalizado")
 
@@ -183,6 +202,10 @@ const UpcomingMatches: React.FC<{ ci: string }> = ({ ci: playerId }) => {
             const isPlayer1Loading = loadingPlayerDetails && !player1Details
             const isPlayer2Loading = loadingPlayerDetails && !player2Details
 
+            // Obtener nombres cortos
+            const player1ShortName = getShortName(match.player1Name)
+            const player2ShortName = getShortName(match.player2Name)
+
             return (
               <div
                 key={match.id}
@@ -198,7 +221,7 @@ const UpcomingMatches: React.FC<{ ci: string }> = ({ ci: playerId }) => {
                     unoptimized
                   />
                   <div>
-                    <p className="font-bold text-white text-sm">{match.player1Name}</p>
+                    <p className="font-bold text-white text-sm">{player1ShortName}</p>
                     {isPlayer1Loading ? (
                       <div className="space-y-1 mt-1">
                         <Skeleton className="h-3 w-[60px]" />
@@ -227,7 +250,7 @@ const UpcomingMatches: React.FC<{ ci: string }> = ({ ci: playerId }) => {
 
                 <div className="flex items-center gap-3 w-full sm:w-1/3 justify-end">
                   <div className="text-right">
-                    <p className="font-bold text-white text-sm">{match.player2Name}</p>
+                    <p className="font-bold text-white text-sm">{player2ShortName}</p>
                     {isPlayer2Loading ? (
                       <div className="space-y-1 mt-1">
                         <Skeleton className="h-3 w-[60px] ml-auto" />

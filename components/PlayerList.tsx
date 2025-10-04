@@ -15,6 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+interface PlayerListProps {
+  limit?: number;
+  showFilters?: boolean;
+  showPagination?: boolean;
+  showTitle?: boolean;
+}
+
+// El componente PlayerItem se mantiene igual
 const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player, rank }) => {
   const router = useRouter();
 
@@ -50,7 +58,6 @@ const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player,
   const borderClass = rankBorders[rank] || "border-violet-900";
 
   const openProfile = () => {
-    // Ajusta la ruta según tu estructura (por ejemplo /player o /players)
     router.push(`/players/${player.ci}`);
   };
 
@@ -70,7 +77,8 @@ const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player,
       className={`flex items-center p-3 rounded-lg border ${borderClass} ${backgroundClass} cursor-pointer hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-purple-500`}
     >
       <div className="flex items-center justify-between w-full">
-        {/* Left side */}
+        {/* Left side - Avatar and player info */}
+        <div className="flex items-center gap-12 flex-1">
           <Image
             src={player.avatar || "/placeholder.svg"}
             alt={`${firstName} ${lastName}`.trim()}
@@ -78,14 +86,13 @@ const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player,
             height={40}
             className="rounded-full object-cover"
           />
-          <div>
-          <div>
+          <div className="text-left">
             <p className={`font-semibold ${nameColorClass}`}>{`${firstName} ${lastName}`.trim()}</p>
             <p className={`text-xs ${detailsColorClass}`}>{player.career_name}</p>
           </div>
         </div>
 
-        {/* Right side */}
+        {/* Right side - Rank and aura */}
         <div className="text-right">
           <p className={`font-semibold ${nameColorClass}`}>Rank: {rank + 1}</p>
           <p className={`text-xs ${detailsColorClass}`}>Aura: {player.aura}</p>
@@ -95,7 +102,12 @@ const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player,
   )
 }
 
-const PlayerList: React.FC = () => {
+const PlayerList: React.FC<PlayerListProps> = ({ 
+  limit, 
+  showFilters = true, 
+  showPagination = true, 
+  showTitle = true 
+}) => {
   const { players, loading, error } = usePlayers()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
@@ -148,8 +160,19 @@ const PlayerList: React.FC = () => {
       );
     }
 
+    // Aplicar límite si se especifica
+    if (limit) {
+      currentPlayers = currentPlayers.slice(0, limit);
+    }
+
     return currentPlayers;
-  }, [players, searchTerm, selectedSemester, selectedCareer]);
+  }, [players, searchTerm, selectedSemester, selectedCareer, limit]);
+
+  // Para paginación normal (sin límite)
+  const totalPages = Math.ceil(filteredPlayers.length / PLAYERS_PER_PAGE);
+  const startIndex = showPagination ? (currentPage - 1) * PLAYERS_PER_PAGE : 0;
+  const endIndex = showPagination ? startIndex + PLAYERS_PER_PAGE : filteredPlayers.length;
+  const playersOnPage = filteredPlayers.slice(startIndex, endIndex);
 
   if (loading) {
     return <div>Cargando jugadores...</div>
@@ -157,81 +180,88 @@ const PlayerList: React.FC = () => {
 
   if (error) {
     console.error("Error loading players:", error);
-    return <div>Error cargando jugadores.</div>;
+    return <div>{error && <p className="text-red-500 text-sm">Error al cargar los jugadores.</p>}</div>;
   }
-
-  const totalPages = Math.ceil(filteredPlayers.length / PLAYERS_PER_PAGE);
-  const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
-  const endIndex = startIndex + PLAYERS_PER_PAGE;
-  const playersOnPage = filteredPlayers.slice(startIndex, endIndex);
 
   return (
     <section className="mb-12 shadow-lg" >
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-white">Jugadores</h2>
-      </div>
-      <div className="mb-4 flex space-x-2">
-
-        <Input
-          placeholder="Buscar por nombre o CI..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="flex-grow"
-        />
-      </div>
-      <div className="mb-4 flex space-x-2">
-        <Select
-          onValueChange={(value) => {
-            setSelectedSemester(value === "all" ? null : value);
-            setCurrentPage(1);
-          }}
-          value={selectedSemester || "all"}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Semestre" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos los Semestres</SelectItem>
-            {uniqueSemesters.map((semester) => (
-              <SelectItem key={semester} value={semester.toString()}>
-                Semestre {semester}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          onValueChange={(value) => {
-            setSelectedCareer(value === "all" ? null : value);
-            setCurrentPage(1);
-          }}
-          value={selectedCareer || "all"}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Carrera" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas las Carreras</SelectItem>
-            {uniqueCareers.map((career) => (
-              <SelectItem key={career} value={career}>
-                {career}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {showTitle && (
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-white">Jugadores</h2>
+        </div>
+      )}
+      
+      {showFilters && (
+        <>
+          <div className="mb-4 flex space-x-2">
+            <Input
+              placeholder="Buscar por nombre o CI..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="flex-grow"
+            />
+          </div>
+          <div className="mb-4 flex space-x-2">
+            <Select
+              onValueChange={(value) => {
+                setSelectedSemester(value === "all" ? null : value);
+                setCurrentPage(1);
+              }}
+              value={selectedSemester || "all"}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Semestre" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los Semestres</SelectItem>
+                {uniqueSemesters.map((semester) => (
+                  <SelectItem key={semester} value={semester.toString()}>
+                    Semestre {semester}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              onValueChange={(value) => {
+                setSelectedCareer(value === "all" ? null : value);
+                setCurrentPage(1);
+              }}
+              value={selectedCareer || "all"}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Carrera" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas las Carreras</SelectItem>
+                {uniqueCareers.map((career) => (
+                  <SelectItem key={career} value={career}>
+                    {career}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </>
+      )}
+      
       <div className="space-y-3">
         {playersOnPage.length > 0 ? (
-          playersOnPage.map((p) => (
-            <PlayerItem key={p.ci} player={p} rank={playerRankMap.get(p.ci)! - 1} />
+          playersOnPage.map((p, index) => (
+            <PlayerItem 
+              key={p.ci} 
+              player={p} 
+              rank={playerRankMap.get(p.ci)! - 1} 
+            />
           ))
         ) : (
           <div className="text-center text-slate-400 py-8">No se encontraron jugadores.</div>
         )}
       </div>
-      {filteredPlayers.length > PLAYERS_PER_PAGE && (
+      
+      {showPagination && filteredPlayers.length > PLAYERS_PER_PAGE && (
         <div className="flex justify-center gap-2 mt-4">
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}

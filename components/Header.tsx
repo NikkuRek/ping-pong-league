@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-// import { Button } from "../components/ui/button"
-// import Link from "next/link"
+import { Button } from "../components/ui/button"
+import Link from "next/link"
 import { AppLogo } from "./AppLogo";
 
 const Header: React.FC = () => {
@@ -16,11 +16,11 @@ const Header: React.FC = () => {
             <p className="text-sm text-slate-400">Gestión de Torneos</p>
           </div>
         </div>
-        {/* <div className="gap-4 rounded-lg flex items-center justify-center">
-          <Link href="/login">
-            <Button className="cursor-pointer" variant="outstanding" >Iniciar Sesión</Button>
+        <div className="gap-4 rounded-lg flex items-center justify-center">
+          <Link href="/player-registration">
+            <Button className="cursor-pointer text-purple-400" variant="ghost" >Registrarse</Button>
           </Link>
-        </div> */}
+        </div>
       </div>
     </header>
   )

@@ -12,6 +12,28 @@ interface PlayerRecentMatchesProps {
   playerId: string
 }
 
+// Función para obtener solo el primer nombre y primer apellido
+const getShortName = (fullName: string): string => {
+  if (!fullName) return "—"
+  
+  const names = fullName.trim().split(/\s+/)
+  if (names.length === 0) return "—"
+  
+  // Primer nombre
+  const firstName = names[0]
+  
+  // Buscar el primer apellido (primer elemento después del último nombre)
+  let firstLastName = ""
+  for (let i = 1; i < names.length; i++) {
+    if (names[i] && names[i].length > 0) {
+      firstLastName = names[i]
+      break
+    }
+  }
+  
+  return firstLastName ? `${firstName} ${firstLastName}` : firstName
+}
+
 const PlayerRecentMatches: React.FC<PlayerRecentMatchesProps> = ({ playerId }) => {
   const { matches: recentMatches, loading, error } = usePlayerMatches(playerId, "Finalizado")
   const [PlayerBackendResponseMap, setPlayerBackendResponseMap] = useState<Map<string, PlayerBackendResponse>>(
@@ -160,6 +182,10 @@ const PlayerRecentMatches: React.FC<PlayerRecentMatchesProps> = ({ playerId }) =
             const player1CareerName = player1Details ? careerMap.get(player1Details.career_id) : "Cargando..."
             const player2CareerName = player2Details ? careerMap.get(player2Details.career_id) : "Cargando..."
 
+            // Obtener nombres cortos
+            const player1ShortName = getShortName(match.player1Name)
+            const player2ShortName = getShortName(match.player2Name)
+
             if (player1Details) {
               console.log(
                 "[v0] PlayerRecentMatches: Player1 career_id:",
@@ -198,7 +224,7 @@ const PlayerRecentMatches: React.FC<PlayerRecentMatchesProps> = ({ playerId }) =
                       unoptimized
                     />
                     <div>
-                      <p className="font-bold text-white">{match.player1Name}</p>
+                      <p className="font-bold text-white">{player1ShortName}</p>
                       {player1Details && (
                         <>
                           <p className="text-xs text-slate-400">Aura: {player1Details.aura}</p>
@@ -222,7 +248,7 @@ const PlayerRecentMatches: React.FC<PlayerRecentMatchesProps> = ({ playerId }) =
 
                   <div className="flex items-center gap-3 text-right">
                     <div className="text-right">
-                      <p className="font-bold text-white">{match.player2Name}</p>
+                      <p className="font-bold text-white">{player2ShortName}</p>
                       {player2Details && (
                         <>
                           <p className="text-xs text-slate-400">Aura: {player2Details.aura}</p>

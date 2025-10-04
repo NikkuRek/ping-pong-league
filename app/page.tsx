@@ -8,9 +8,11 @@ import PlayerRanking from "@/components/PlayerRanking"
 export default function Home() {
   return (
     <div className="space-y-8">
-      <Welcome />
-      <PlayerRanking />
-      {/* <RecentMatches /> */}
+      <div className="mb-20" >
+        <Welcome />
+        <PlayerRanking />
+        {/* <RecentMatches /> */}
+      </div>
     </div>
   )
 }

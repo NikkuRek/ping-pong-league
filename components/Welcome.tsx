@@ -2,6 +2,8 @@
 import type React from "react"
 import { AppLogo } from "./AppLogo"
 import { useWelcomeData } from "@/hooks/useWelcomeData"
+import Link from "next/link"
+import { Button } from "./ui/button"
 
 const Welcome: React.FC = () => {
   const { playerCount, activeTournamentsCount, loading, error } = useWelcomeData()
@@ -34,6 +36,19 @@ const Welcome: React.FC = () => {
         </div>
       </div>
       {error && <p className="text-red-500 text-sm">Error al cargar los datos.</p>}
+      <div>
+        <div className="m-7 rounded-lg flex items-center justify-center">
+          <Link href="/player-registration">
+            <Button
+              className="cursor-pointer w-full text-xl py-7 px-10 font-bold"
+              size="lg"
+              variant="outstanding"
+            >
+              ¡Únete Ahora!
+            </Button>
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }

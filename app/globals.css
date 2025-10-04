@@ -158,3 +158,9 @@
     }
   }
 }
+
+@layer components {
+    .terms {
+        @apply bg-muted/50 border border-border rounded-lg p-4;
+    }
+}

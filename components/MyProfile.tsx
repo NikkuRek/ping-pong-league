@@ -41,7 +41,7 @@ const MyProfile: React.FC = () => {
         </div>
         <div className="grid grid-cols-3 text-center divide-x divide-slate-700">
           <div>
-            <p className="text-2xl font-bold text-purple-400">{user.aura}</p>
+            <p className="text-2xl font-bold text-purple-500">{user.aura}</p>
             <p className="text-xs text-slate-400">Aura</p>
           </div>
           <div>

@@ -25,7 +25,7 @@ export default function BottomNav() {
               href={href}
               key={label}
               className={`flex flex-col items-center justify-center w-full pt-2 pb-1 text-sm transition-colors duration-200 ${
-                isActive ? "text-purple-400" : "text-gray-400 hover:text-white"
+                isActive ? "text-purple-500" : "text-gray-400 hover:text-white"
               }`}>
               <Icon className="w-6 h-6 mb-1" />
               <span>{label}</span>
