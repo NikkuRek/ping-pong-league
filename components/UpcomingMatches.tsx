@@ -45,30 +45,22 @@ const UpcomingMatches: React.FC<{ ci: string }> = ({ ci: playerId }) => {
         setLoadingCareers(true)
         const apiUrl = getApiUrl()
 
-        console.log("[v0] UpcomingMatches: Fetching careers from:", `${apiUrl}/player`)
-        const response = await fetch(`${apiUrl}/player`)
-        console.log("[v0] UpcomingMatches: Response status:", response.status, response.ok)
+        const response = await fetch(`${apiUrl}/career`)
 
         if (response.ok) {
           const data = await response.json()
-          console.log("[v0] UpcomingMatches: Raw API response:", data)
-          console.log("[v0] UpcomingMatches: data.data type:", typeof data.data, Array.isArray(data.data))
-          console.log("[v0] UpcomingMatches: First item in data.data:", data.data?.[0])
-
           const newCareerMap = new Map<number, string>()
-          data.data.forEach((career: Career) => {
-            console.log("[v0] UpcomingMatches: Processing career item:", career)
-            console.log("[v0] UpcomingMatches: career_id:", career.career_id, "name_career:", career.name_career)
-            newCareerMap.set(career.career_id, career.name_career)
-          })
-          console.log("[v0] UpcomingMatches: Final careerMap size:", newCareerMap.size)
-          console.log("[v0] UpcomingMatches: Final careerMap entries:", Array.from(newCareerMap.entries()))
+          if (data && data.data) {
+            data.data.forEach((career: Career) => {
+              newCareerMap.set(career.career_id, career.name_career)
+            })
+          }
           setCareerMap(newCareerMap)
         } else {
-          console.error("[v0] UpcomingMatches: Failed to fetch career data, status:", response.status)
+          console.error("Failed to fetch career data, status:", response.status)
         }
       } catch (err) {
-        console.error("[v0] UpcomingMatches: Error fetching career data:", err)
+        console.error("Error fetching career data:", err)
       } finally {
         setLoadingCareers(false)
       }
@@ -87,12 +79,8 @@ const UpcomingMatches: React.FC<{ ci: string }> = ({ ci: playerId }) => {
       setLoadingPlayerDetails(true)
       const uniqueCis = new Set<string>()
       matches.forEach((m) => {
-        uniqueCis.add(m.player1Ci)
-        uniqueCis.add(m.player2Ci)
-      })
-
-      playerDetailsMap.forEach((_, key) => {
-        fetchedCisRef.current.add(key)
+        if (m.player1Ci) uniqueCis.add(m.player1Ci)
+        if (m.player2Ci) uniqueCis.add(m.player2Ci)
       })
 
       const newPlayerDetailsMap = new Map<string, PlayerDetails>()
@@ -112,10 +100,10 @@ const UpcomingMatches: React.FC<{ ci: string }> = ({ ci: playerId }) => {
               fetchedCisRef.current.add(playerCi)
             }
           } else {
-            console.error(`[v0] Failed to fetch player details for CI: ${playerCi}`)
+            console.error(`Failed to fetch player details for CI: ${playerCi}`)
           }
         } catch (err) {
-          console.error("[v0] Error fetching player", playerCi, err)
+          console.error("Error fetching player", playerCi, err)
         }
       }
 
@@ -190,9 +178,6 @@ const UpcomingMatches: React.FC<{ ci: string }> = ({ ci: playerId }) => {
               if (loadingCareers) return "Cargando..."
               if (!details) return "—"
               const careerId = Number(details.career_id)
-              console.log("[v0] UpcomingMatches: Looking up career for player:", details.ci, "career_id:", careerId)
-              console.log("[v0] UpcomingMatches: careerMap has career_id?", careerMap.has(careerId))
-              console.log("[v0] UpcomingMatches: careerMap value:", careerMap.get(careerId))
               return careerMap.get(careerId) ?? "—"
             }
 
