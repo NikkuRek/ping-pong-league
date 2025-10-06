@@ -135,6 +135,20 @@ const PlayerList: React.FC<PlayerListProps> = ({
     return Array.from(careers).sort();
   }, [players]);
 
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+
+  const uniqueDays = useMemo(() => {
+    const days = new Map<string, string>();
+    players.forEach(player => {
+      if (player.Days) {
+        player.Days.forEach(day => {
+          days.set(day.day_id.toString(), day.day_name);
+        });
+      }
+    });
+    return Array.from(days.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+  }, [players]);
+
   const filteredPlayers = useMemo(() => {
     let currentPlayers = players;
 
@@ -160,13 +174,19 @@ const PlayerList: React.FC<PlayerListProps> = ({
       );
     }
 
+    if (selectedDay) {
+      currentPlayers = currentPlayers.filter((p) =>
+        p.Days?.some((day) => day.day_id.toString() === selectedDay)
+      );
+    }
+
     // Aplicar límite si se especifica
     if (limit) {
       currentPlayers = currentPlayers.slice(0, limit);
     }
 
     return currentPlayers;
-  }, [players, searchTerm, selectedSemester, selectedCareer, limit]);
+  }, [players, searchTerm, selectedSemester, selectedCareer, selectedDay, limit]);
 
   // Para paginación normal (sin límite)
   const totalPages = Math.ceil(filteredPlayers.length / PLAYERS_PER_PAGE);
@@ -239,6 +259,25 @@ const PlayerList: React.FC<PlayerListProps> = ({
                 {uniqueCareers.map((career) => (
                   <SelectItem key={career} value={career}>
                     {career}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              onValueChange={(value) => {
+                setSelectedDay(value === "all" ? null : value);
+                setCurrentPage(1);
+              }}
+              value={selectedDay || "all"}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Día Disponible" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los Días</SelectItem>
+                {uniqueDays.map(([day_id, day_name]) => (
+                  <SelectItem key={day_id} value={day_id}>
+                    {day_name}
                   </SelectItem>
                 ))}
               </SelectContent>

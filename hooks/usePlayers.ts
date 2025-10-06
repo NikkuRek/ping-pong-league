@@ -19,6 +19,7 @@ const transformPlayerData = (data: any, careerMap: { [key: number]: string }): P
       aura: player.aura ?? 0,
       avatar: `https://picsum.photos/seed/player${player.ci}/40/40`,
       career_name: careerMap[player.career_id] ?? "N/A",
+      Days: player.Days,
     }))
 }
 

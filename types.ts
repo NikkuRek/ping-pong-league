@@ -146,6 +146,7 @@ export type PlayerForList = {
   career_name: string
   aura?: string | number
   semester: number
+  Days?: Day[]
 }
 
 export interface WelcomeData {
