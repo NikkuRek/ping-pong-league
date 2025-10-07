@@ -1,5 +1,4 @@
 import type React from "react"
-import type { Tournament } from "@/types"
 import { ArrowRightIcon } from "./icons"
 
 const tournamentsData: any[] = [
@@ -10,7 +9,7 @@ const tournamentsData: any[] = [
     participants: 0,
     status: "En Curso",
     stage: "Fase de Puntos",
-    progress: 0
+    progress: 0,
   },
   {
     tournament_id: 4,
@@ -19,7 +18,7 @@ const tournamentsData: any[] = [
     participants: 0,
     status: "En Curso",
     stage: "Fase de Puntos",
-    progress: 0
+    progress: 0,
   },
   {
     tournament_id: 5,
@@ -28,7 +27,7 @@ const tournamentsData: any[] = [
     participants: 0,
     status: "En Curso",
     stage: "Fase de Puntos",
-    progress: 0
+    progress: 0,
   },
   {
     tournament_id: 6,
@@ -37,7 +36,7 @@ const tournamentsData: any[] = [
     participants: 0,
     status: "En Curso",
     stage: "Fase de Puntos",
-    progress: 0
+    progress: 0,
   },
 ]
 
@@ -48,8 +47,8 @@ const TournamentCard: React.FC<{ tournament: any }> = ({ tournament }) => {
         <div>
           <h3 className="text-lg font-bold text-white">{tournament.name}</h3>
           <p className="text-sm text-slate-400">
-            {tournament.type} • {tournament.participants}{" "}
-            {tournament.type === "Individual" ? "participantes" : "equipos"}
+            {tournament.tournament_type} • {tournament.participants}{" "}
+            {tournament.tournament_type === "Individual" ? "participantes" : "equipos"}
           </p>
         </div>
         <div className="text-right">
@@ -73,18 +72,20 @@ const TournamentCard: React.FC<{ tournament: any }> = ({ tournament }) => {
 
       <div className="flex justify-between items-center">
         <div className="flex -space-x-3">
-          {tournament.players.slice(0, 3).map((p: { id: React.Key | null | undefined; avatar: any; name: string | undefined }) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={p.id}
-              src={p.avatar || "/placeholder.svg"}
-              alt={p.name}
-              className="w-8 h-8 rounded-full border-2 border-[#2A2A3E]"
-            />
-          ))}
-          {tournament.players.length > 3 && (
+          {(tournament.players || [])
+            .slice(0, 3)
+            .map((p: { id: React.Key | null | undefined; avatar: any; name: string | undefined }) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={p.id}
+                src={p.avatar || "/placeholder.svg"}
+                alt={p.name}
+                className="w-8 h-8 rounded-full border-2 border-[#2A2A3E]"
+              />
+            ))}
+          {(tournament.players?.length || 0) > 3 && (
             <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold border-2 border-[#2A2A3E]">
-              +{tournament.players.length - 3 + (tournament.type === "Dobles" ? 1 : 0)}
+              +{(tournament.players?.length || 0) - 3 + (tournament.tournament_type === "Dobles" ? 1 : 0)}
             </div>
           )}
         </div>
@@ -104,7 +105,7 @@ const InProgressTournaments: React.FC = () => {
       </div>
       <div className="space-y-4">
         {tournamentsData.map((t) => (
-          <TournamentCard key={t.id} tournament={t} />
+          <TournamentCard key={t.tournament_id} tournament={t} />
         ))}
       </div>
     </section>
