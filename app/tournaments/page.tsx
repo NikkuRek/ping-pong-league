@@ -6,7 +6,7 @@ export default function TournamentsPage() {
     <div className="space-y-8">
       <h1 className="text-3xl font-bold">Torneos</h1>
       <InProgressTournaments />
-      {/* <UpcomingTournaments /> */}
+      {/* <UpcomingTournaments /> dddd*/}
     </div>
   );
 }

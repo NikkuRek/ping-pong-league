@@ -4,68 +4,40 @@ import { ArrowRightIcon } from "./icons"
 
 const tournamentsData: any[] = [
   {
-    tournament_id: 1,
-    name: "Copa Primavera 2024",
+    tournament_id: 3,
+    name: "Liga 2-2025 | Avanzado (Play-In)",
     tournament_type: "Individual",
-    participants: 32,
+    participants: 0,
     status: "En Curso",
-    stage: "Semifinales",
-    progress: 85,
-    players: [
-      {
-        id: "V28123456",
-        name: "Diego M.",
-        avatar: "https://picsum.photos/seed/player1/40/40",
-        rating: 2450,
-        major: "Ing. Software",
-      },
-      {
-        id: "V27890123",
-        name: "Ana G.",
-        avatar: "https://picsum.photos/seed/player2/40/40",
-        rating: 2380,
-        major: "Ing. Industrial",
-      },
-      {
-        id: "V28456123",
-        name: "Carlos M.",
-        avatar: "https://picsum.photos/seed/player3/40/40",
-        rating: 2320,
-        major: "Ing. Software",
-      },
-    ],
+    stage: "Fase de Puntos",
+    progress: 0
   },
   {
-    tournament_id: 2,
-    name: "Torneo Dobles Mixto",
-    tournament_type: "Dobles",
-    participants: 16,
-    status: "Cuartos",
-    stage: "8 equipos restantes",
-    progress: 62,
-    players: [
-      {
-        id: "V29876543",
-        name: "Roberto S.",
-        avatar: "https://picsum.photos/seed/player4/40/40",
-        rating: 2290,
-        major: "Ing. Civil",
-      },
-      {
-        id: "V24321987",
-        name: "Patricia R.",
-        avatar: "https://picsum.photos/seed/player5/40/40",
-        rating: 2250,
-        major: "Ing. Química",
-      },
-      {
-        id: "V26123789",
-        name: "Luis R.",
-        avatar: "https://picsum.photos/seed/player6/40/40",
-        rating: 2200,
-        major: "Ing. Sistemas",
-      },
-    ],
+    tournament_id: 4,
+    name: "Liga 2-2025 | Intermedio (Play-In)",
+    tournament_type: "Individual",
+    participants: 0,
+    status: "En Curso",
+    stage: "Fase de Puntos",
+    progress: 0
+  },
+  {
+    tournament_id: 5,
+    name: "Liga 2-2025 | Principiante (Play-In)",
+    tournament_type: "Individual",
+    participants: 0,
+    status: "En Curso",
+    stage: "Fase de Puntos",
+    progress: 0
+  },
+  {
+    tournament_id: 6,
+    name: "Liga 2-2025 | Sin experiencia (Play-In)",
+    tournament_type: "Individual",
+    participants: 0,
+    status: "En Curso",
+    stage: "Fase de Puntos",
+    progress: 0
   },
 ]
 
@@ -101,7 +73,8 @@ const TournamentCard: React.FC<{ tournament: any }> = ({ tournament }) => {
 
       <div className="flex justify-between items-center">
         <div className="flex -space-x-3">
-          {tournament.players.slice(0, 3).map((p) => (
+          {tournament.players.slice(0, 3).map((p: { id: React.Key | null | undefined; avatar: any; name: string | undefined }) => (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               key={p.id}
               src={p.avatar || "/placeholder.svg"}
@@ -128,9 +101,6 @@ const InProgressTournaments: React.FC = () => {
     <section>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-white">Torneos en Curso</h2>
-        <a href="#" className="text-sm text-blue-400 font-semibold hover:text-blue-300">
-          Ver Todos
-        </a>
       </div>
       <div className="space-y-4">
         {tournamentsData.map((t) => (
