@@ -216,7 +216,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
 
         <div className="grid grid-cols-2 text-center divide-x divide-slate-700 mt-4">
           <div>
-            <p className="text-2xl font-bold text-green-400">{winsDisplay}</p>
+            <p className="text-2xl font-bold text-emerald-400">{winsDisplay}</p>
             <p className="text-xs text-slate-400">Victorias</p>
           </div>
           <div>
@@ -235,7 +235,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
                   key={d}
                   className={
                     "px-4 py-1 rounded-full text-xs font-medium " +
-                    (available ? "bg-green-500 text-white" : "border-b-gray-400 border-2 text-slate-400")
+                    (available ? "bg-emerald-500 text-white" : "border-b-gray-400 border-2 text-slate-400")
                   }
                 >
                   {d === 1 ? "Lun" : d === 2 ? "Mar" : d === 3 ? "Mié" : d === 4 ? "Jue" : "Vie"}
