@@ -155,3 +155,21 @@ export interface WelcomeData {
   loading: boolean
   error: Error | null
 }
+
+export interface TournamentStanding {
+  player_ci: string
+  player_name: string
+  matches_played: number // JJ
+  matches_won: number // JG
+  matches_lost: number // JP
+  sets_won: number // SG
+  points: number // Pts (3 per win, 1 per loss with at least 1 set won, 0 otherwise)
+  points_for: number // Pts. F (total points scored in all sets)
+  points_against: number // Pts. C (total points received in all sets)
+  difference: number // Dif (points_for - points_against)
+}
+
+export interface TournamentDetail extends Tournament {
+  inscriptions?: Inscription[]
+  matches?: Match[]
+}
