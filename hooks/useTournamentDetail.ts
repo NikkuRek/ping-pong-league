@@ -17,23 +17,44 @@ export function useTournamentDetail(tournamentId: string) {
         setLoading(true)
         const apiUrl = getApiUrl()
 
+        console.log("[v0] Fetching tournament details for ID:", tournamentId)
+        console.log("[v0] API URL:", apiUrl)
+
         // Fetch tournament details
-        const tournamentResponse = await fetch(`${apiUrl}/tournament/${tournamentId}`)
-        if (!tournamentResponse.ok) throw new Error("Failed to fetch tournament")
+        const tournamentUrl = `${apiUrl}/tournament/${tournamentId}`
+        console.log("[v0] Fetching tournament from:", tournamentUrl)
+        const tournamentResponse = await fetch(tournamentUrl)
+        console.log("[v0] Tournament response status:", tournamentResponse.status)
+
+        if (!tournamentResponse.ok) {
+          const errorText = await tournamentResponse.text()
+          console.log("[v0] Tournament error response:", errorText)
+          throw new Error("Failed to fetch tournament")
+        }
         const tournamentData = await tournamentResponse.json()
+        console.log("[v0] Tournament data:", tournamentData)
 
         // Fetch tournament matches
-        const matchesResponse = await fetch(`${apiUrl}/match/tournament/${tournamentId}`)
+        const matchesUrl = `${apiUrl}/match/tournament/${tournamentId}`
+        console.log("[v0] Fetching matches from:", matchesUrl)
+        const matchesResponse = await fetch(matchesUrl)
+        console.log("[v0] Matches response status:", matchesResponse.status)
         const matchesData = matchesResponse.ok ? await matchesResponse.json() : { data: [] }
+        console.log("[v0] Matches data:", matchesData)
 
         // Fetch tournament inscriptions
-        const inscriptionsResponse = await fetch(`${apiUrl}/inscription/tournament/${tournamentId}`)
+        const inscriptionsUrl = `${apiUrl}/inscription/tournament/${tournamentId}`
+        console.log("[v0] Fetching inscriptions from:", inscriptionsUrl)
+        const inscriptionsResponse = await fetch(inscriptionsUrl)
+        console.log("[v0] Inscriptions response status:", inscriptionsResponse.status)
         const inscriptionsData = inscriptionsResponse.ok ? await inscriptionsResponse.json() : { data: [] }
+        console.log("[v0] Inscriptions data:", inscriptionsData)
 
         setTournament(tournamentData.data || tournamentData)
         setMatches(matchesData.data || [])
         setInscriptions(inscriptionsData.data || [])
       } catch (err) {
+        console.error("[v0] Error fetching tournament details:", err)
         setError(err instanceof Error ? err : new Error("Unknown error"))
       } finally {
         setLoading(false)

@@ -1,6 +1,6 @@
 "use client"
 
-import { use } from "react"
+import { useEffect, useState } from "react"
 import { useTournamentDetail } from "@/hooks/useTournamentDetail"
 import { useTournamentStandings } from "@/hooks/useTournamentStandings"
 import { ArrowLeftIcon } from "@/components/icons"
@@ -8,11 +8,28 @@ import Link from "next/link"
 import type { Match } from "@/types"
 
 export default function TournamentDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  return <TournamentDetailContent params={params} />
+  const [tournamentId, setTournamentId] = useState<string | null>(null)
+
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setTournamentId(resolvedParams.id)
+    })
+  }, [params])
+
+  if (!tournamentId) {
+    return (
+      <div className="min-h-screen bg-[#1A1A2E] text-white p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-12">Cargando...</div>
+        </div>
+      </div>
+    )
+  }
+
+  return <TournamentDetailContent id={tournamentId} />
 }
 
-function TournamentDetailContent({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+function TournamentDetailContent({ id }: { id: string }) {
   const { tournament, matches, inscriptions, loading, error } = useTournamentDetail(id)
   const standings = useTournamentStandings(matches, inscriptions)
 
