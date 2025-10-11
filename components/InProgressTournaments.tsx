@@ -62,12 +62,17 @@ const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) =>
 
       <div className="flex justify-between items-center">
         <div className="text-sm text-slate-400">Inicio: {new Date(tournament.start_date).toLocaleDateString()}</div>
-        <Link
+        
+        
+        {/* <Link
           href={`/tournaments/${tournament.tournament_id}`}
           className="flex items-center gap-2 text-sm text-blue-400 font-semibold hover:text-blue-300"
         >
           Ver Detalles <ArrowRightIcon />
-        </Link>
+        </Link> */}
+
+
+        
       </div>
     </div>
   )
