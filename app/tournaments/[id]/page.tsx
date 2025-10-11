@@ -7,13 +7,11 @@ import { ArrowLeftIcon } from "@/components/icons"
 import Link from "next/link"
 import type { Match } from "@/types"
 
-export default function TournamentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function TournamentDetailPage({ params }: { params: { id: string } }) {
   const [tournamentId, setTournamentId] = useState<string | null>(null)
 
   useEffect(() => {
-    params.then((resolvedParams) => {
-      setTournamentId(resolvedParams.id)
-    })
+    setTournamentId(params.id)
   }, [params])
 
   if (!tournamentId) {
