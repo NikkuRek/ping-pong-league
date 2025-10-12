@@ -256,11 +256,13 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
           <p className="text-xs text-slate-500">{match.timeAgo}</p>
         </div>
         <div className="flex justify-center gap-2">
-          {match.sets.map((set, index) => (
-            <div key={index} className={`px-3 py-1 rounded text-sm font-semibold ${set.p1 > set.p2 ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>
-              {set.p1}-{set.p2}
-            </div>
-          ))}
+          {match.sets
+            .filter((set) => !(set.p1 === 0 && set.p2 === 0))
+            .map((set, index) => (
+              <div key={index} className={`px-3 py-1 rounded text-sm font-semibold ${set.p1 > set.p2 ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>
+                {set.p1}-{set.p2}
+              </div>
+            ))}
         </div>
       </div>
     )

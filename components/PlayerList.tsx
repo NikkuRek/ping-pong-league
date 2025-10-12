@@ -113,7 +113,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
   const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
   const [selectedCareer, setSelectedCareer] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const PLAYERS_PER_PAGE = 10;
+  const PLAYERS_PER_PAGE = 15;
 
   const playerRankMap = useMemo(() => {
     const map = new Map<string, number>();

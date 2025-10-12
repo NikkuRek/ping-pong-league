@@ -130,6 +130,30 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
               })
             }
 
+            // Check if there are exactly 3 sets and all are 0-0
+            const hasThreeSetsAllZero = formattedSets.length === 3 && formattedSets.every(set => set.p1 === 0 && set.p2 === 0)
+            
+            // If there are exactly 3 sets all 0-0 and there's a winner, adjust scores to 2-1
+            if (hasThreeSetsAllZero && match.winner_inscription_id !== null) {
+              if (playerInscriptionIds.includes(match.winner_inscription_id)) {
+                playerSetsWon = 2
+                opponentSetsWon = 1
+              } else if (match.winner_inscription_id === opponentInscriptionId) {
+                playerSetsWon = 1
+                opponentSetsWon = 2
+              }
+            }
+            // For matches with 1 or 2 sets all 0-0, winner gets all sets
+            else if (formattedSets.length > 0 && formattedSets.length < 3 && formattedSets.every(set => set.p1 === 0 && set.p2 === 0) && match.winner_inscription_id !== null) {
+              if (playerInscriptionIds.includes(match.winner_inscription_id)) {
+                playerSetsWon = formattedSets.length
+                opponentSetsWon = 0
+              } else if (match.winner_inscription_id === opponentInscriptionId) {
+                playerSetsWon = 0
+                opponentSetsWon = formattedSets.length
+              }
+            }
+
             let result: "win" | "loss" | "no-result" = "no-result"
 
             if (match.winner_inscription_id !== null) {
@@ -169,6 +193,9 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
               timeAgo: timeAgo,
               sets: formattedSets,
               result: result,
+              winnerInscriptionId: match.winner_inscription_id,
+              playerInscriptionId: playerInscriptionId,
+              opponentInscriptionId: opponentInscriptionId,
             }
           })
           .filter((match): match is MatchData => match !== null)
