@@ -170,6 +170,11 @@ export interface TournamentStanding {
   points_for: number // Pts. F (total points scored in all sets)
   points_against: number // Pts. C (total points received in all sets)
   difference: number // Dif (points_for - points_against)
+  bonus_points: number // Bonus points from 1-2 losses
+  losses_1_2: number // Losses with score 1-2 (earned 1 point)
+  losses_0_2: number // Losses with score 0-2 (earned 0 points)
+  position: number // Actual position (1, 2, 3, etc.)
+  displayPosition: string // Display position ("1", "2", "-", etc.)
 }
 
 export interface TournamentDetail extends Tournament {

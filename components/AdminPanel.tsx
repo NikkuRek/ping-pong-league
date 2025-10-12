@@ -41,7 +41,7 @@ const AdminPanel: React.FC = () => {
           title="Jugadores"
           description="Gestionar perfiles"
           icon={<UsersIcon className="w-8 h-8 text-white" />}
-          color="from-blue-500 to-cyan-500"
+          color="from-purple-500 to-cyan-500"
         />
         <AdminCard
           title="Torneos"
@@ -70,7 +70,7 @@ const AdminPanel: React.FC = () => {
           <h3 className="text-lg font-bold text-white mb-4">Resumen Mensual</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <p className="text-5xl font-bold text-blue-400">156</p>
+              <p className="text-5xl font-bold text-purple-400">156</p>
               <p className="text-slate-400">Partidos Jugados</p>
             </div>
             <div>
@@ -83,7 +83,7 @@ const AdminPanel: React.FC = () => {
         <div className="bg-[#2A2A3E] p-6 rounded-2xl border border-slate-700/50">
           <h3 className="text-lg font-bold text-white mb-4">Actividad por Carrera</h3>
           <div className="space-y-4">
-            <ActivityBar label="Ing. Software" value={85} percentage={85} color="bg-blue-500" />
+            <ActivityBar label="Ing. Software" value={85} percentage={85} color="bg-purple-500" />
             <ActivityBar label="Ing. Industrial" value={62} percentage={62} color="bg-purple-500" />
             <ActivityBar label="Ing. Civil" value={48} percentage={48} color="bg-green-500" />
             <ActivityBar label="Ing. Sistemas" value={35} percentage={35} color="bg-pink-500" />

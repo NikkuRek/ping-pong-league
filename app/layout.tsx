@@ -10,9 +10,11 @@ import Header from "@/components/Header"
 import BottomNav from "@/components/BottomNav"
 
 export const metadata: Metadata = {
-  title: "LPP - Gestión de Torneos de Tenis de Mesa",
-  description: "Sistema completo de gestión de torneos de tenis de mesa",
-    generator: 'v0.app'
+  title: "LPP - IUJO",
+  description: "Página del Club de Tenis de Mesa del IUJO, Barquisimeto",
+  icons: [
+    { rel: "icon", url: "/favicon-purp.ico" },
+  ],
 }
 
 export default function RootLayout({

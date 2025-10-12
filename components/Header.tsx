@@ -13,7 +13,7 @@ const Header: React.FC = () => {
           <AppLogo />
           <div>
             <h1 className="text-xl font-bold text-white">LPP</h1>
-            <p className="text-sm text-slate-400">Gestión de Torneos</p>
+            <p className="text-sm text-slate-400">Liga de Ping Pong</p>
           </div>
         </div>
         <div className="gap-4 rounded-lg flex items-center justify-center">

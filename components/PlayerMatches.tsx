@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { usePlayerMatches } from "@/hooks/usePlayerMatches"
 import { Skeleton } from "./ui/skeleton"
 import type { PlayerBackendResponse, Career, MatchData } from "@/types"
@@ -15,20 +16,17 @@ interface PlayerMatchesProps {
 const getShortName = (fullName: string): string => {
   if (!fullName) return "—"
   
-  const names = fullName.trim().split(/\s+/)
+  const names = fullName.trim().split(/\s+/).filter(n => n.length > 0)
   if (names.length === 0) return "—"
+  if (names.length === 1) return names[0]
   
+  // Assume format: "FirstName(s) LastName(s)"
+  // Take first name and first element from second half (likely first last name)
   const firstName = names[0]
+  const midPoint = Math.ceil(names.length / 2)
+  const firstLastName = names[midPoint] || names[1]
   
-  let firstLastName = ""
-  for (let i = 1; i < names.length; i++) {
-    if (names[i] && names[i].length > 0) {
-      firstLastName = names[i]
-      break
-    }
-  }
-  
-  return firstLastName ? `${firstName} ${firstLastName}` : firstName
+  return `${firstName} ${firstLastName}`
 }
 
 const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
@@ -145,57 +143,77 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
     const commonDays = player1Days.filter((day) => player2Days.includes(day))
 
     return (
-      <div key={match.id} className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 flex flex-col sm:flex-row items-center justify-between">
-        <div className="flex items-center gap-3 w-full sm:w-1/3">
-          <Image src={match.player1Avatar || "/placeholder-user.jpg"} alt={match.player1Name} width={48} height={48} className="w-12 h-12 rounded-full object-cover" unoptimized />
-          <div>
-            <p className="font-bold text-white text-sm">{player1ShortName}</p>
-            {isPlayer1Loading ? (
-              <div className="space-y-1 mt-1">
-                <Skeleton className="h-3 w-[60px]" />
-                <Skeleton className="h-3 w-[80px]" />
-              </div>
-            ) : (
-              player1Details && (
-                <>
-                  <p className="text-xs text-slate-400">Aura: {player1Details.aura ?? "—"}</p>
-                  <p className="text-xs text-slate-400">Carrera: {player1CareerName}</p>
-                </>
-              )
+      <div key={match.id} className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+        {/* Grid layout for match info */}
+        <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center">
+          {/* Player 1 */}
+          <Link href={`/players/${p1Ci}`} className="grid grid-cols-[48px_1fr] gap-3 items-center hover:opacity-80 transition-opacity">
+            <Image 
+              src={match.player1Avatar || "/placeholder-user.jpg"} 
+              alt={match.player1Name} 
+              width={48} 
+              height={48} 
+              className="w-12 h-12 rounded-full object-cover" 
+              unoptimized 
+            />
+            <div className="min-w-0">
+              <p className="font-bold text-white text-sm truncate hover:text-purple-400 transition-colors">{player1ShortName}</p>
+              {isPlayer1Loading ? (
+                <div className="space-y-1 mt-1">
+                  <Skeleton className="h-3 w-[60px]" />
+                  <Skeleton className="h-3 w-[80px]" />
+                </div>
+              ) : (
+                player1Details && (
+                  <>
+                    <p className="text-xs text-slate-400">Aura: {player1Details.aura ?? "—"}</p>
+                    <p className="text-xs text-slate-400 truncate">Carrera: {player1CareerName}</p>
+                  </>
+                )
+              )}
+            </div>
+          </Link>
+
+          {/* Score */}
+          <div className="text-center px-4">
+            <p className="text-xl font-bold whitespace-nowrap">
+              <span className="text-slate-400">{match.score1}</span>
+              <span className="text-slate-500 mx-2 text-base">VS</span>
+              <span className="text-slate-400">{match.score2}</span>
+            </p>
+            <p className="text-sm text-slate-400 mt-1">{match.tournamentName}</p>
+            {commonDays.length > 0 && (
+              <p className="text-xs text-green-400 mt-1">{commonDays.join(" - ")}</p>
             )}
           </div>
-        </div>
-        <div className="flex flex-col items-center justify-center w-full sm:w-1/3 my-4 sm:my-0">
-          <p className="text-xl font-bold">
-            <span className="text-slate-400">{match.score1}</span>
-            <span className="text-slate-500 mx-2 text-base">VS</span>
-            <span className="text-slate-400">{match.score2}</span>
-          </p>
-          <p className="text-sm text-slate-400 mt-1">{match.tournamentName}</p>
-          {commonDays.length > 0 ? (
-            <p className="text-xs text-green-400 mt-1">{commonDays.join(" - ")}</p>
-          ) : (
-            <p></p>
-          )}
-        </div>
-        <div className="flex items-center gap-3 w-full sm:w-1/3 justify-end">
-          <div className="text-right">
-            <p className="font-bold text-white text-sm">{player2ShortName}</p>
-            {isPlayer2Loading ? (
-              <div className="space-y-1 mt-1">
-                <Skeleton className="h-3 w-[60px] ml-auto" />
-                <Skeleton className="h-3 w-[80px] ml-auto" />
-              </div>
-            ) : (
-              player2Details && (
-                <>
-                  <p className="text-xs text-slate-400">Aura: {player2Details.aura ?? "—"}</p>
-                  <p className="text-xs text-slate-400">Carrera: {player2CareerName}</p>
-                </>
-              )
-            )}
-          </div>
-          <Image src={match.player2Avatar || "/placeholder-user.jpg"} alt={match.player2Name} width={48} height={48} className="w-12 h-12 rounded-full object-cover" unoptimized />
+
+          {/* Player 2 */}
+          <Link href={`/players/${p2Ci}`} className="grid grid-cols-[1fr_48px] gap-3 items-center hover:opacity-80 transition-opacity">
+            <div className="text-right min-w-0">
+              <p className="font-bold text-white text-sm truncate hover:text-purple-400 transition-colors">{player2ShortName}</p>
+              {isPlayer2Loading ? (
+                <div className="space-y-1 mt-1">
+                  <Skeleton className="h-3 w-[60px] ml-auto" />
+                  <Skeleton className="h-3 w-[80px] ml-auto" />
+                </div>
+              ) : (
+                player2Details && (
+                  <>
+                    <p className="text-xs text-slate-400">Aura: {player2Details.aura ?? "—"}</p>
+                    <p className="text-xs text-slate-400 truncate">Carrera: {player2CareerName}</p>
+                  </>
+                )
+              )}
+            </div>
+            <Image 
+              src={match.player2Avatar || "/placeholder-user.jpg"} 
+              alt={match.player2Name} 
+              width={48} 
+              height={48} 
+              className="w-12 h-12 rounded-full object-cover" 
+              unoptimized 
+            />
+          </Link>
         </div>
       </div>
     )
@@ -208,54 +226,73 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
     const player1CareerName = player1Details ? careerMap.get(player1Details.career_id) : "Cargando..."
     const player2CareerName = player2Details ? careerMap.get(player2Details.career_id) : "Cargando..."
 
-    const p1FirstName = player1Details?.first_name?.trim().split(/\s+/)[0] ?? "";
-    const p1LastName = player1Details?.last_name?.trim().split(/\s+/)[0] ?? "";
-    const player1ShortName = `${p1FirstName} ${p1LastName}`.trim();
-
-    const p2FirstName = player2Details?.first_name?.trim().split(/\s+/)[0] ?? "";
-    const p2LastName = player2Details?.last_name?.trim().split(/\s+/)[0] ?? "";
-    const player2ShortName = `${p2FirstName} ${p2LastName}`.trim();
+    const player1ShortName = getShortName(match.player1Name)
+    const player2ShortName = getShortName(match.player2Name)
 
     return (
-      <div key={match.id} className="bg-[#2A2A3E] p-4 rounded-2xl border border-slate-700/50 space-y-4">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <Image src={match.player1Avatar || "/placeholder-user.jpg"} alt={match.player1Name} width={48} height={48} className="rounded-full" unoptimized />
-            <div>
-              <p className="font-bold text-white">{player1ShortName}</p>
+      <div key={match.id} className="bg-[#2A2A3E] p-4 rounded-2xl border border-slate-700/50">
+        {/* Grid layout for match info */}
+        <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
+          {/* Player 1 */}
+          <Link href={`/players/${match.player1Ci}`} className="grid grid-cols-[48px_1fr] gap-3 items-center hover:opacity-80 transition-opacity">
+            <Image 
+              src={match.player1Avatar || "/placeholder-user.jpg"} 
+              alt={match.player1Name} 
+              width={48} 
+              height={48} 
+              className="rounded-full w-12 h-12" 
+              unoptimized 
+            />
+            <div className="min-w-0">
+              <p className="font-bold text-white truncate hover:text-purple-400 transition-colors">{player1ShortName}</p>
               {player1Details && (
                 <>
                   <p className="text-xs text-slate-400">Aura: {player1Details.aura}</p>
-                  <p className="text-xs text-slate-400">Carrera: {player1CareerName}</p>
+                  <p className="text-xs text-slate-400 truncate">Carrera: {player1CareerName}</p>
                 </>
               )}
             </div>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold">
+          </Link>
+
+          {/* Score */}
+          <div className="text-center px-4">
+            <p className="text-2xl font-bold whitespace-nowrap">
               <span className={match.score1 > match.score2 ? "text-white" : "text-slate-400"}>{match.score1}</span>
               <span className="text-slate-500 mx-2">VS</span>
               <span className={match.score2 > match.score1 ? "text-white" : "text-slate-400"}>{match.score2}</span>
             </p>
           </div>
-          <div className="flex items-center gap-3 text-right">
-            <div className="text-right">
-              <p className="font-bold text-white">{player2ShortName}</p>
+
+          {/* Player 2 */}
+          <Link href={`/players/${match.player2Ci}`} className="grid grid-cols-[1fr_48px] gap-3 items-center hover:opacity-80 transition-opacity">
+            <div className="text-right min-w-0">
+              <p className="font-bold text-white truncate hover:text-purple-400 transition-colors">{player2ShortName}</p>
               {player2Details && (
                 <>
                   <p className="text-xs text-slate-400">Aura: {player2Details.aura}</p>
-                  <p className="text-xs text-slate-400">Carrera: {player2CareerName}</p>
+                  <p className="text-xs text-slate-400 truncate">Carrera: {player2CareerName}</p>
                 </>
               )}
             </div>
-            <Image src={match.player2Avatar || "/placeholder-user.jpg"} alt={match.player2Name} width={48} height={48} className="rounded-full" unoptimized />
-          </div>
+            <Image 
+              src={match.player2Avatar || "/placeholder-user.jpg"} 
+              alt={match.player2Name} 
+              width={48} 
+              height={48} 
+              className="rounded-full w-12 h-12" 
+              unoptimized 
+            />
+          </Link>
         </div>
-        <div className="text-center">
+
+        {/* Tournament info */}
+        <div className="text-center border-t border-slate-700/50 pt-3 mb-3">
           <p className="text-sm text-slate-400">{match.tournamentName}</p>
           <p className="text-xs text-slate-500">{match.timeAgo}</p>
         </div>
-        <div className="flex justify-center gap-2">
+
+        {/* Sets */}
+        <div className="flex justify-center gap-2 flex-wrap">
           {match.sets
             .filter((set) => !(set.p1 === 0 && set.p2 === 0))
             .map((set, index) => (

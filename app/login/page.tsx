@@ -95,7 +95,7 @@ export default function LoginPage() {
       {/* Adjust min-h to account for header height */}
       <Card className="w-full max-w-md bg-[#2A2A3E]">
         <CardHeader className="text-center">
-          <h1 className="text-2xl text-slate-200 font-bold">Iniciar Sesión</h1>
+          <h1 className="text-2xl text-purple-400 font-bold">Iniciar Sesión</h1>
           <p className="text-slate-400 text-sm">Ingresa tus credenciales para acceder a tu cuenta.</p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -137,7 +137,7 @@ export default function LoginPage() {
           {/* Moved CardFooter outside form */}
           <p className="text-sm text-slate-400">
             ¿No tienes una cuenta?{" "}
-            <Link href="/register" className="underline text-slate-200 hover:text-slate-50">
+            <Link href="/player-registration" className="underline text-purple-400 hover:text-slate-50">
               Regístrate
             </Link>
           </p>
