@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { useAllMatches, type AllMatchData } from "@/hooks/useAllMatches"
 import { Skeleton } from "./ui/skeleton"
 import type { PlayerBackendResponse, Career, Tournament } from "@/types"
@@ -188,7 +189,7 @@ const MatchHistory: React.FC = () => {
         {/* Grid layout for match info */}
         <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
           {/* Player 1 */}
-          <div className="grid grid-cols-[48px_1fr] gap-3 items-center">
+          <Link href={`/players/${match.player1Ci}`} className="grid grid-cols-[48px_1fr] gap-3 items-center hover:opacity-80 transition-opacity">
             <Image 
               src={match.player1Avatar || "/placeholder-user.jpg"} 
               alt={match.player1Name} 
@@ -198,7 +199,7 @@ const MatchHistory: React.FC = () => {
               unoptimized 
             />
             <div className="min-w-0">
-              <p className="font-bold text-white truncate">{player1ShortName}</p>
+              <p className="font-bold text-white truncate hover:text-purple-400 transition-colors">{player1ShortName}</p>
               {player1Details && (
                 <>
                   <p className="text-xs text-slate-400">Aura: {player1Details.aura}</p>
@@ -206,7 +207,7 @@ const MatchHistory: React.FC = () => {
                 </>
               )}
             </div>
-          </div>
+          </Link>
 
           {/* Score */}
           <div className="text-center px-4">
@@ -225,9 +226,9 @@ const MatchHistory: React.FC = () => {
           </div>
 
           {/* Player 2 */}
-          <div className="grid grid-cols-[1fr_48px] gap-3 items-center">
+          <Link href={`/players/${match.player2Ci}`} className="grid grid-cols-[1fr_48px] gap-3 items-center hover:opacity-80 transition-opacity">
             <div className="text-right min-w-0">
-              <p className="font-bold text-white truncate">{player2ShortName}</p>
+              <p className="font-bold text-white truncate hover:text-purple-400 transition-colors">{player2ShortName}</p>
               {player2Details && (
                 <>
                   <p className="text-xs text-slate-400">Aura: {player2Details.aura}</p>
@@ -243,7 +244,7 @@ const MatchHistory: React.FC = () => {
               className="rounded-full w-12 h-12" 
               unoptimized 
             />
-          </div>
+          </Link>
         </div>
 
         {/* Tournament info */}

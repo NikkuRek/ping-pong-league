@@ -20,7 +20,7 @@ const MyProfile: React.FC = () => {
     <section>
       {/* <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-white">Mi Perfil</h2>
-        <a href="#" className="text-sm text-blue-400 font-semibold hover:text-blue-300">
+        <a href="#" className="text-sm text-purple-400 font-semibold hover:text-purple-300">
           Editar
         </a>
       </div> */}
