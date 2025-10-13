@@ -107,6 +107,7 @@ export interface MatchData {
   winnerInscriptionId: number | null
   playerInscriptionId: number
   opponentInscriptionId: number
+  matchDatetime: string
 }
 
 export interface Inscription {

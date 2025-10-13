@@ -16,7 +16,7 @@ export const useWelcomeData = () => {
         const apiUrl = getApiUrl()
 
         const [playersResponse, tournamentsResponse] = await Promise.all([
-          fetch(`${apiUrl}/player`),
+          fetch(`${apiUrl}/player/active`),
           fetch(`${apiUrl}/tournament`),
         ])
 

@@ -62,7 +62,7 @@ function usePlayerProfile(ci: string) {
           return null
         })
 
-        const allPlayersResPromise = fetch(`${apiBase}/player`, { signal }).catch((e) => {
+        const allPlayersResPromise = fetch(`${apiBase}/player/active`, { signal }).catch((e) => {
           if (e.name === "AbortError") throw e
           return null
         })
@@ -148,6 +148,7 @@ const parseNumber = (v: any) => {
 
 const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
   const { profile, careerMap, wins, losses, rank, loading, error } = usePlayerProfile(ci)
+  const [copied, setCopied] = useState(false)
 
   if (loading) {
     return (
@@ -208,9 +209,50 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
           </div>
           <div>
             <h3 className="text-xl font-bold text-white">{fullName}</h3>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-400 mt-1">
               {careerName} • {profile.semester}º Semestre
             </p>
+            {profile.phone && (
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-sm text-slate-400">
+                  Teléfono: {profile.phone}
+                </p>
+                <div className="relative flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      const formattedPhone = profile.phone.startsWith('0') 
+                        ? `+58 ${profile.phone.slice(1)}` 
+                        : profile.phone
+                      navigator.clipboard.writeText(formattedPhone)
+                      setCopied(true)
+                      setTimeout(() => setCopied(false), 2000)
+                    }}
+                    className="text-slate-400 hover:text-white transition-all p-1 rounded hover:bg-slate-700/50 active:scale-90"
+                    title="Copiar teléfono"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                    </svg>
+                  </button>
+                  {copied && (
+                    <span className="text-xs text-emerald-400 font-medium animate-fade-in">
+                      ¡Copiado!
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
