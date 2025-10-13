@@ -35,7 +35,7 @@ export const usePlayers = () => {
         const apiUrl = getApiUrl()
 
         const [playersResponse, careersResponse] = await Promise.all([
-          fetch(`${apiUrl}/player`),
+          fetch(`${apiUrl}/player/active`),
           fetch(`${apiUrl}/career`),
         ])
 

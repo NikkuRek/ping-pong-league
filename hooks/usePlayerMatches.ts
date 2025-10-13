@@ -196,10 +196,11 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
               winnerInscriptionId: match.winner_inscription_id,
               playerInscriptionId: playerInscriptionId,
               opponentInscriptionId: opponentInscriptionId,
+              matchDatetime: match.match_datetime,
             }
           })
           .filter((match): match is MatchData => match !== null)
-          .sort((a, b) => new Date(b.timeAgo).getTime() - new Date(a.timeAgo).getTime())
+          .sort((a, b) => new Date(b.matchDatetime).getTime() - new Date(a.matchDatetime).getTime())
 
         setMatches(formattedMatches)
       } catch (e: any) {

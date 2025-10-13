@@ -7,7 +7,7 @@ import { AppLogo } from "./AppLogo";
 
 const Header: React.FC = () => {
   return (
-    <header className="container mx-auto px-4 py-6">
+    <header className="container mx-auto px-2 py-3">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <AppLogo />
