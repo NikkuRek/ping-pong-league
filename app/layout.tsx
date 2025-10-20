@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   icons: [
     { rel: "icon", url: "/favicon-purp.ico" },
   ],
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
