@@ -29,6 +29,14 @@ const getShortName = (fullName: string): string => {
   return `${firstName} ${firstLastName}`
 }
 
+const formatMatchDate = (dateString: string): string => {
+  const date = new Date(dateString)
+  const day = date.getDate().toString().padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
+}
+
 const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
   const { matches: upcomingMatches, loading: upcomingLoading, error: upcomingError } = usePlayerMatches(playerId, "not-Finalizado")
   const { matches: recentMatches, loading: recentLoading, error: recentError } = usePlayerMatches(playerId, "Finalizado")
@@ -143,9 +151,11 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
     const commonDays = player1Days.filter((day) => player2Days.includes(day))
 
     return (
-      <div key={match.id} className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+      <div key={match.id} className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 relative">
+        {/* Match ID */}
+        <span className="absolute top-2 right-2 text-[10px] text-slate-800">#{match.id}</span>
         {/* Grid layout for match info */}
-        <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center">
+        <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
           {/* Player 1 */}
           <Link href={`/players/${p1Ci}`} className="grid grid-cols-[48px_1fr] gap-3 items-center hover:opacity-80 transition-opacity">
             <Image 
@@ -178,13 +188,9 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
           <div className="text-center px-4">
             <p className="text-xl font-bold whitespace-nowrap">
               <span className="text-slate-400">{match.score1}</span>
-              <span className="text-slate-500 mx-2 text-base">VS</span>
+              <span className="text-slate-500 mx-2">VS</span>
               <span className="text-slate-400">{match.score2}</span>
             </p>
-            <p className="text-sm text-slate-400 mt-1">{match.tournamentName}</p>
-            {commonDays.length > 0 && (
-              <p className="text-xs text-green-400 mt-1">{commonDays.join(" - ")}</p>
-            )}
           </div>
 
           {/* Player 2 */}
@@ -215,6 +221,14 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
             />
           </Link>
         </div>
+
+        {/* Tournament info */}
+        <div className="text-center border-t border-slate-700/50 pt-3">
+          <p className="text-sm text-slate-400">{match.tournamentName}</p>
+          {commonDays.length > 0 && (
+            <p className="text-xs text-green-400 mt-1">{commonDays.join(" - ")}</p>
+          )}
+        </div>
       </div>
     )
   }
@@ -230,7 +244,9 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
     const player2ShortName = getShortName(match.player2Name)
 
     return (
-      <div key={match.id} className="bg-[#2A2A3E] p-4 rounded-2xl border border-slate-700/50">
+      <div key={match.id} className="bg-[#2A2A3E] p-4 rounded-2xl border border-slate-700/50 relative">
+        {/* Match ID */}
+        <span className="absolute top-2 right-2 text-[10px] text-slate-600">#{match.id}</span>
         {/* Grid layout for match info */}
         <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
           {/* Player 1 */}
@@ -244,7 +260,7 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
               unoptimized 
             />
             <div className="min-w-0">
-              <p className="font-bold text-white truncate hover:text-purple-400 transition-colors">{player1ShortName}</p>
+              <p className="font-bold text-white text-sm truncate hover:text-purple-400 transition-colors">{player1ShortName}</p>
               {player1Details && (
                 <>
                   <p className="text-xs text-slate-400">Aura: {player1Details.aura}</p>
@@ -256,7 +272,7 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
 
           {/* Score */}
           <div className="text-center px-4">
-            <p className="text-2xl font-bold whitespace-nowrap">
+            <p className="text-xl font-bold whitespace-nowrap">
               <span className={match.score1 > match.score2 ? "text-white" : "text-slate-400"}>{match.score1}</span>
               <span className="text-slate-500 mx-2">VS</span>
               <span className={match.score2 > match.score1 ? "text-white" : "text-slate-400"}>{match.score2}</span>
@@ -266,7 +282,7 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
           {/* Player 2 */}
           <Link href={`/players/${match.player2Ci}`} className="grid grid-cols-[1fr_48px] gap-3 items-center hover:opacity-80 transition-opacity">
             <div className="text-right min-w-0">
-              <p className="font-bold text-white truncate hover:text-purple-400 transition-colors">{player2ShortName}</p>
+              <p className="font-bold text-white text-sm truncate hover:text-purple-400 transition-colors">{player2ShortName}</p>
               {player2Details && (
                 <>
                   <p className="text-xs text-slate-400">Aura: {player2Details.aura}</p>
@@ -288,7 +304,7 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
         {/* Tournament info */}
         <div className="text-center border-t border-slate-700/50 pt-3 mb-3">
           <p className="text-sm text-slate-400">{match.tournamentName}</p>
-          <p className="text-xs text-slate-500">{match.timeAgo}</p>
+          <p className="text-xs text-slate-500">{formatMatchDate(match.updatedAt)}</p>
         </div>
 
         {/* Sets */}

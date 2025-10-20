@@ -102,6 +102,7 @@ export interface MatchData {
   score2: number
   tournamentName: string
   timeAgo: string
+  updatedAt: string
   sets: FormattedSet[]
   result: "win" | "loss" | "no-result" // Added "no-result" to handle matches without valid winners
   winnerInscriptionId: number | null
