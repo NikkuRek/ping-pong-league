@@ -186,6 +186,8 @@ const MatchHistory: React.FC = () => {
 
     return (
       <div key={match.id} className="bg-[#2A2A3E] p-4 rounded-2xl border border-slate-700/50">
+        {/* Match ID */}
+        <span className="absolute top-2 right-2 text-[10px] text-slate-800">#{match.id}</span>
         {/* Grid layout for match info */}
         <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
           {/* Player 1 */}
