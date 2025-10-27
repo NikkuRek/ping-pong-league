@@ -1014,8 +1014,8 @@ export default function MatchCreationPage() {
               {sets.map((set, index) => (
                 <div key={index} className={`grid gap-4 items-center ${currentMatch.tournament_id === 2 ? 'grid-cols-3' : 'grid-cols-4'}`}>
                   <label className="text-white font-medium">Set {set.set_number}</label>
-                  <input type="text" min="0" max="50" value={set.score_participant1} onChange={(e) => updateSetScore(index, 'score_participant1', parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0)} placeholder="Puntuación" className="p-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white"/>
-                  <input type="text" min="0" max="50" value={set.score_participant2} onChange={(e) => updateSetScore(index, 'score_participant2', parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0)} placeholder="Puntuación" className="p-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white"/>
+                  <input type="text" max="50" value={set.score_participant1} onChange={(e) => updateSetScore(index, 'score_participant1', parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0)} placeholder="Puntuación" className="p-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white"/>
+                  <input type="text" max="50" value={set.score_participant2} onChange={(e) => updateSetScore(index, 'score_participant2', parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0)} placeholder="Puntuación" className="p-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white"/>
                   {currentMatch.tournament_id !== 2 && (
                     <Button onClick={() => removeSet(index)} variant="destructive" className="font-semibold">Eliminar</Button>
                   )}
