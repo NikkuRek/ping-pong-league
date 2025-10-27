@@ -2,12 +2,13 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { HomeIcon, TrophyIcon, UsersIcon, SettingsIcon } from "@/components/icons"
+import { HomeIcon, TrophyIcon, UsersIcon, SettingsIcon, PlusIcon } from "@/components/icons"
 
 const navItems = [
   { href: "/", label: "Inicio", icon: HomeIcon },
   { href: "/tournaments", label: "Torneos", icon: TrophyIcon },
   { href: "/players", label: "Jugadores", icon: UsersIcon },
+  { href: "/matches/create", label: "Añadir Partido", icon: PlusIcon },
   // { href: "/profile", label: "Perfil", icon: UsersIcon },
   // { href: "/settings", label: "Ajustes", icon: SettingsIcon },
 ]

@@ -195,7 +195,12 @@ const PlayerList: React.FC<PlayerListProps> = ({
   const playersOnPage = filteredPlayers.slice(startIndex, endIndex);
 
   if (loading) {
-    return <div>Cargando jugadores...</div>
+return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-10 h-10 border-4 border-slate-600 border-t-purple-500 rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-400">Cargando datos...</p>
+      </div>
+    )
   }
 
   if (error) {

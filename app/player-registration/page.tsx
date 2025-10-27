@@ -53,7 +53,7 @@ const formSchema = z.object({
     phone_prefix: z.string().length(4, "El prefijo debe tener 4 dígitos."),
     phone_number: z.string().length(7, "El número de teléfono debe tener 7 dígitos."),
     aura: z.string().min(1, "Debe seleccionar un nivel de habilidad."),
-    available_days: z.array(z.string()).refine((value) => value.length > 0, {
+    days: z.array(z.string()).refine((value) => value.length > 0, {
         message: "Debes seleccionar al menos un día.",
     }),
     password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres."),
@@ -90,7 +90,7 @@ export default function PlayerRegistrationPage() {
             phone_prefix: "0412",
             phone_number: "",
             aura: "1000",
-            available_days: [],
+            days: [],
             password: "",
             confirm_password: "",
         },
@@ -135,7 +135,7 @@ export default function PlayerRegistrationPage() {
                     career_id: parseInt(values.career_id, 10),
                     aura: parseInt(values.aura, 10),
                     status: true,
-                    available_days: values.available_days.map(day => parseInt(day, 10)),
+                    days: values.days.map(day => parseInt(day, 10)),
                 },
             };
 
@@ -448,7 +448,7 @@ export default function PlayerRegistrationPage() {
                                             />
                                             <FormField
                                                 control={form.control}
-                                                name="available_days"
+                                                name="days"
                                                 render={() => (
                                                     <FormItem>
                                                         <div className="mb-2">
@@ -459,7 +459,7 @@ export default function PlayerRegistrationPage() {
                                                                 <FormField
                                                                     key={item.id}
                                                                     control={form.control}
-                                                                    name="available_days"
+                                                                    name="days"
                                                                     render={({ field }) => {
                                                                         return (
                                                                             <FormItem

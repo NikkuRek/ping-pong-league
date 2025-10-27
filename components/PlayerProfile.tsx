@@ -152,9 +152,10 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
 
   if (loading) {
     return (
-      <section className="bg-[#2A2A3E] p-5 mt-5 rounded-2xl border border-slate-700/50">
-        <p className="text-sm text-slate-400">Cargando perfil...</p>
-      </section>
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-10 h-10 border-4 border-slate-600 border-t-purple-500 rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-400">Cargando datos...</p>
+      </div>
     )
   }
 
@@ -220,8 +221,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
                 <div className="relative flex items-center gap-2">
                   <button
                     onClick={() => {
-                      const formattedPhone = profile.phone.startsWith('0') 
-                        ? `+58 ${profile.phone.slice(1)}` 
+                      const formattedPhone = profile.phone.startsWith('0')
+                        ? `+58 ${profile.phone.slice(1)}`
                         : profile.phone
                       navigator.clipboard.writeText(formattedPhone)
                       setCopied(true)

@@ -43,13 +43,12 @@ const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) =>
 
       <div className="flex items-center gap-3">
         <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-            tournament.status === "En Curso"
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${tournament.status === "En Curso"
               ? "bg-green-500/20 text-green-400"
               : tournament.status === "Finalizado"
                 ? "bg-gray-500/20 text-gray-400"
                 : "bg-purple-500/20 text-purple-400"
-          }`}
+            }`}
         >
           {tournament.status}
         </span>
@@ -62,8 +61,8 @@ const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) =>
 
       <div className="flex justify-between items-center">
         <div className="text-sm text-slate-400">Inicio: {new Date(tournament.start_date).toLocaleDateString()}</div>
-        
-        
+
+
         <Link
           href={`/tournaments/${tournament.tournament_id}`}
           className="flex items-center gap-2 text-sm text-purple-400 font-semibold hover:text-purple-300"
@@ -72,7 +71,7 @@ const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) =>
         </Link>
 
 
-        
+
       </div>
     </div>
   )
@@ -83,12 +82,10 @@ const InProgressTournaments: React.FC = () => {
 
   if (loading) {
     return (
-      <section>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-white">Torneos en Curso</h2>
-        </div>
-        <div className="text-center py-8 text-slate-400">Cargando torneos...</div>
-      </section>
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-10 h-10 border-4 border-slate-600 border-t-purple-500 rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-400">Cargando datos...</p>
+      </div>
     )
   }
 

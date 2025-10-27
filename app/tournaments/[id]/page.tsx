@@ -35,12 +35,11 @@ function TournamentDetailContent({ id }: { id: string }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1c1c2e] text-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center py-12">Cargando detalles del torneo...</div>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-10 h-10 border-4 border-slate-600 border-t-purple-500 rounded-full animate-spin mb-4"></div>
+        <p className="text-slate-400">Cargando datos...</p>
       </div>
-    )
+    )  
   }
 
   if (error || !tournament) {
