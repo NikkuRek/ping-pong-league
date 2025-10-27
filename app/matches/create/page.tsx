@@ -14,8 +14,8 @@ type PlayerWithDays = PlayerBackendResponse
 // Interface para los sets que se están creando (sin IDs todavía)
 interface SetCreate {
   set_number: number
-  score_participant1: number
-  score_participant2: number
+  score_participant1: number | string
+  score_participant2: number | string
 }
 
 export default function MatchCreationPage() {
@@ -358,7 +358,7 @@ export default function MatchCreationPage() {
 
     // Para torneo ID 2, agregar automáticamente 1 set
     if (tournamentId === 2) {
-      setSets([{ set_number: 1, score_participant1: 0, score_participant2: 0 }])
+      setSets([{ set_number: 1, score_participant1: '', score_participant2: '' }])
     } else {
       setSets([])
     }
@@ -385,7 +385,7 @@ export default function MatchCreationPage() {
       return
     }
 
-    setSets([...sets, { set_number: setCounter, score_participant1: 0, score_participant2: 0 }])
+    setSets([...sets, { set_number: setCounter, score_participant1: '', score_participant2: '' }])
     setSetCounter(setCounter + 1)
   }
 
@@ -404,7 +404,7 @@ export default function MatchCreationPage() {
     setSetCounter(reorganizedSets.length + 1)
   }
 
-  function updateSetScore(index: number, field: 'score_participant1' | 'score_participant2', value: number) {
+  function updateSetScore(index: number, field: 'score_participant1' | 'score_participant2', value: number | string) {
     const newSets = [...sets]
     newSets[index][field] = value
     setSets(newSets)
@@ -430,10 +430,13 @@ export default function MatchCreationPage() {
       return
     }
 
-    const validSets = sets.every(set => !isNaN(set.score_participant1) && !isNaN(set.score_participant2))
+    const validSets = sets.every(set =>
+      (typeof set.score_participant1 === 'number' && !isNaN(set.score_participant1)) &&
+      (typeof set.score_participant2 === 'number' && !isNaN(set.score_participant2))
+    )
 
     if (!validSets) {
-      showSetsAlert('Todos los sets deben tener puntuaciones válidas.', 'error')
+      showSetsAlert('Todos los sets deben tener puntuaciones numéricas válidas.', 'error')
       return
     }
 
@@ -539,8 +542,8 @@ export default function MatchCreationPage() {
         const setData = {
           match_id: matchId,
           set_number: set.set_number,
-          score_participant1: set.score_participant1,
-          score_participant2: set.score_participant2
+          score_participant1: typeof set.score_participant1 === 'number' ? set.score_participant1 : parseInt(set.score_participant1 as string) || 0,
+          score_participant2: typeof set.score_participant2 === 'number' ? set.score_participant2 : parseInt(set.score_participant2 as string) || 0
         }
 
         const setResponse = await fetch(`${apiUrl}/set`, {
@@ -608,8 +611,11 @@ export default function MatchCreationPage() {
     let player2Wins = 0
 
     sets.forEach(set => {
-      if (set.score_participant1 > set.score_participant2) player1Wins++
-      else if (set.score_participant2 > set.score_participant1) player2Wins++
+      const score1 = typeof set.score_participant1 === 'number' ? set.score_participant1 : parseInt(set.score_participant1 as string) || 0
+      const score2 = typeof set.score_participant2 === 'number' ? set.score_participant2 : parseInt(set.score_participant2 as string) || 0
+
+      if (score1 > score2) player1Wins++
+      else if (score2 > score1) player2Wins++
     })
 
     const player1Inscription = inscriptions.find(ins => ins.player_ci === player1 && ins.tournament_id === parseInt(matchTournament))
@@ -901,13 +907,13 @@ export default function MatchCreationPage() {
                     value={player1Search}
                     onChange={(e) => setPlayer1Search(e.target.value)}
                     placeholder="Buscar jugador 1"
-                    disabled={!matchTournament}
+                    disabled={!matchTournament || isMatchPrepared}
                     className="w-full px-4 py-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
                   />
                   <select
                     value={player1}
                     onChange={(e) => setPlayer1(e.target.value)}
-                    disabled={!matchTournament}
+                    disabled={!matchTournament || isMatchPrepared}
                     className="w-full p-3 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
                   >
                     <option value="">{matchTournament ? 'Selecciona un jugador' : 'Primero selecciona un torneo'}</option>
@@ -928,13 +934,13 @@ export default function MatchCreationPage() {
                     value={player2Search}
                     onChange={(e) => setPlayer2Search(e.target.value)}
                     placeholder="Buscar jugador 2"
-                    disabled={!matchTournament}
+                    disabled={!matchTournament || isMatchPrepared}
                     className="w-full px-4 py-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
                   />
                   <select
                     value={player2}
                     onChange={(e) => setPlayer2(e.target.value)}
-                    disabled={!matchTournament}
+                    disabled={!matchTournament || isMatchPrepared}
                     className="w-full p-3 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
                   >
                     <option value="">{matchTournament ? 'Selecciona un jugador' : 'Primero selecciona un torneo'}</option>
@@ -1014,8 +1020,14 @@ export default function MatchCreationPage() {
               {sets.map((set, index) => (
                 <div key={index} className={`grid gap-4 items-center ${currentMatch.tournament_id === 2 ? 'grid-cols-3' : 'grid-cols-4'}`}>
                   <label className="text-white font-medium">Set {set.set_number}</label>
-                  <input type="text" max="50" value={set.score_participant1} onChange={(e) => updateSetScore(index, 'score_participant1', parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0)} placeholder="Puntuación" className="p-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white"/>
-                  <input type="text" max="50" value={set.score_participant2} onChange={(e) => updateSetScore(index, 'score_participant2', parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0)} placeholder="Puntuación" className="p-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white"/>
+                  <input type="text" min="0" max="50" value={set.score_participant1} onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    updateSetScore(index, 'score_participant1', value === '' ? '' : parseInt(value) || 0);
+                  }} placeholder="Puntuación" className="p-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white"/>
+                  <input type="text" min="0" max="50" value={set.score_participant2} onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    updateSetScore(index, 'score_participant2', value === '' ? '' : parseInt(value) || 0);
+                  }} placeholder="Puntuación" className="p-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white"/>
                   {currentMatch.tournament_id !== 2 && (
                     <Button onClick={() => removeSet(index)} variant="destructive" className="font-semibold">Eliminar</Button>
                   )}
