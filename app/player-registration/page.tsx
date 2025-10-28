@@ -99,7 +99,7 @@ export default function PlayerRegistrationPage() {
     useEffect(() => {
         const fetchCareers = async () => {
             try {
-                const response = await fetch("https://lpp-backend.onrender.com/api/career");
+                const response = await fetch("https://lpp-backend-ss9l.onrender.com/api/career");
                 if (!response.ok) {
                     throw new Error('Failed to fetch careers');
                 }
@@ -144,7 +144,7 @@ export default function PlayerRegistrationPage() {
                 password: values.password,
             };
 
-            const playerResponse = await fetch("https://lpp-backend.onrender.com/api/player", {
+            const playerResponse = await fetch("https://lpp-backend-ss9l.onrender.com/api/player", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
@@ -155,7 +155,7 @@ export default function PlayerRegistrationPage() {
                 throw new Error(errorData.message || "Error al registrar al jugador. Intente con otra Cédula.");
             }
 
-            const credentialResponse = await fetch("https://lpp-backend.onrender.com/api/credential", {
+            const credentialResponse = await fetch("https://lpp-backend-ss9l.onrender.com/api/credential", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(credentialPayload),
