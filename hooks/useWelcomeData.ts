@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import type { Player, Tournament } from "@/types"
-import { getApiUrl } from "@/lib/api-config"
+import { apiGet } from "@/lib/api"
 
 export const useWelcomeData = () => {
   const [playerCount, setPlayerCount] = useState<number>(0)
@@ -13,22 +13,10 @@ export const useWelcomeData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = getApiUrl()
-
-        const [playersResponse, tournamentsResponse] = await Promise.all([
-          fetch(`${apiUrl}/player/active`),
-          fetch(`${apiUrl}/tournament`),
+        const [playersData, tournamentsData] = await Promise.all([
+          apiGet<any>("/player/active"),
+          apiGet<any>("/tournament"),
         ])
-
-        if (!playersResponse.ok) {
-          throw new Error(`Player API HTTP error! status: ${playersResponse.status}`)
-        }
-        if (!tournamentsResponse.ok) {
-          throw new Error(`Tournament API HTTP error! status: ${tournamentsResponse.status}`)
-        }
-
-        const playersData = await playersResponse.json()
-        const tournamentsData = await tournamentsResponse.json()
 
         const players: Player[] = Array.isArray(playersData) ? playersData : playersData.data
         setPlayerCount(players.length)

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import type { PlayerForList, Career } from "@/types"
-import { getApiUrl } from "@/lib/api-config"
+import { apiGet } from "@/lib/api"
 
 const transformPlayerData = (data: any, careerMap: { [key: number]: string }): PlayerForList[] => {
   const players = Array.isArray(data) ? data : data.data
@@ -32,32 +32,15 @@ export const usePlayers = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = getApiUrl()
-
-        const [playersResponse, careersResponse] = await Promise.all([
-          fetch(`${apiUrl}/player/active`),
-          fetch(`${apiUrl}/career`),
+        const [playersData, careersData] = await Promise.all([
+          apiGet<any>("/player/active"),
+          apiGet<Career[]>("/career"),
         ])
 
-        if (!playersResponse.ok) {
-          throw new Error(`Player API HTTP error! status: ${playersResponse.status}`)
-        }
-        if (!careersResponse.ok) {
-          throw new Error(`Career API HTTP error! status: ${careersResponse.status}`)
-        }
+        const careers = Array.isArray(careersData) ? careersData : careersData
+        setCareers(careers)
 
-        const playersData = await playersResponse.json()
-        const careersResponseData = await careersResponse.json()
-        const careersData: Career[] = Array.isArray(careersResponseData)
-          ? careersResponseData
-          : careersResponseData.data
-
-        if (!Array.isArray(careersData)) {
-          throw new Error("Career data is not in the expected format.")
-        }
-        setCareers(careersData)
-
-        const careerMap = careersData.reduce((map: { [key: number]: string }, career) => {
+        const careerMap = careers.reduce((map: { [key: number]: string }, career) => {
           map[career.career_id] = career.name_career
           return map
         }, {})

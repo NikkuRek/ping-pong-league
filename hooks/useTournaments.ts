@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { getApiUrl } from "@/lib/api-config"
 import type { Tournament } from "@/types"
+import { apiGet } from "@/lib/api"
 
 interface UseTournamentsResult {
   tournaments: Tournament[]
@@ -19,18 +19,11 @@ export function useTournaments(statusFilter?: string): UseTournamentsResult {
     const fetchTournaments = async () => {
       try {
         setLoading(true)
-        const apiUrl = getApiUrl()
-        const response = await fetch(`${apiUrl}/tournament`)
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch tournaments: ${response.statusText}`)
-        }
-
-        const data = await response.json()
+        const data = await apiGet<Tournament[]>("/tournament")
 
         // Filter tournaments by status if provided
-        let filteredTournaments = data.data || []
-        if (statusFilter) {
+        let filteredTournaments = Array.isArray(data) ? data : []
+        if (statusFilter && filteredTournaments.length > 0) {
           filteredTournaments = filteredTournaments.filter(
             (tournament: Tournament) => tournament.status === statusFilter,
           )
@@ -39,7 +32,7 @@ export function useTournaments(statusFilter?: string): UseTournamentsResult {
         setTournaments(filteredTournaments)
         setError(null)
       } catch (err) {
-        console.error("Error fetching tournaments:", err)
+        console.error("[v0] Error fetching tournaments:", err)
         setError(err instanceof Error ? err : new Error("Unknown error"))
         setTournaments([])
       } finally {
