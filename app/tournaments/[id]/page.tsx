@@ -118,4 +118,3 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
     </div>
   )
 }
-
