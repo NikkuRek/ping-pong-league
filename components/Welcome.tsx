@@ -9,7 +9,7 @@ const Welcome: React.FC = () => {
   const { playerCount, activeTournamentsCount, loading, error } = useWelcomeData()
 
   return (
-    <div className="text-center flex flex-col items-center space-y-8">
+    <div className="text-center flex flex-col items-center space-y-8 animate-fade-in">
       <AppLogo />
       <div className="space-y-2">
         <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
@@ -36,7 +36,7 @@ const Welcome: React.FC = () => {
         </div>
       </div>
       {error && <p className="text-red-500 text-sm">Error al cargar los datos.</p>}
-      <div>
+      <div className="animate-slide-in-from-bottom">
         <div className="m-7 rounded-lg flex items-center justify-center">
           <Link href="/player-registration">
             <Button

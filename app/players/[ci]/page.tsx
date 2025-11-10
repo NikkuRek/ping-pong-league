@@ -1,14 +1,21 @@
-import React from "react"
-import PlayerProfile from "@/components/PlayerProfile"
-import PlayerMatches from "@/components/PlayerMatches"
+import type { Metadata } from "next"
+import PlayerDetailClient from "@/components/PlayerDetailClient"
+import { apiGet } from "@/lib/api"
+
+export async function generateMetadata({ params }: { params: { ci: string } }): Promise<Metadata> {
+  try {
+  const data = await apiGet(`/player/${params.ci}`)
+  const p = (data as any)?.data || (data as any)
+    const name = p?.first_name && p?.last_name ? `${p.first_name} ${p.last_name}` : `Jugador ${params.ci}`
+    return {
+      title: `${name} — LPP`,
+      description: `Perfil, partidos y estadísticas de ${name}`,
+    }
+  } catch (err) {
+    return { title: `Jugador ${params.ci} — LPP`, description: "Perfil del jugador" }
+  }
+}
 
 export default function Page({ params }: { params: { ci: string } }) {
-  const { ci } = params
-
-  return (
-    <div className="container mx-auto px-4 py-6">
-      <PlayerProfile ci={ci} />
-      <PlayerMatches playerId={ci} />
-    </div>
-  )
+  return <PlayerDetailClient params={params} />
 }

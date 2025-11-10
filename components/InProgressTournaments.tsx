@@ -27,7 +27,7 @@ const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) =>
   const progress = Math.round(calculateProgress())
 
   return (
-    <div className="bg-[#2A2A3E] p-5 rounded-2xl border border-slate-700/50 space-y-4">
+    <div className="bg-[#2A2A3E] p-5 rounded-2xl border border-slate-700/50 space-y-4 animate-fade-in">
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-lg font-bold text-white">{tournament.name}</h3>
@@ -43,12 +43,13 @@ const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) =>
 
       <div className="flex items-center gap-3">
         <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full ${tournament.status === "En Curso"
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${
+            tournament.status === "En Curso"
               ? "bg-green-500/20 text-green-400"
               : tournament.status === "Finalizado"
                 ? "bg-gray-500/20 text-gray-400"
                 : "bg-purple-500/20 text-purple-400"
-            }`}
+          }`}
         >
           {tournament.status}
         </span>
@@ -56,12 +57,14 @@ const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) =>
       </div>
 
       <div className="w-full bg-slate-700 rounded-full h-2">
-        <div className="bg-gradient-to-r from-purple-600 to-pink-500 h-2 rounded-full" style={{ width: `${progress}%` }}></div>
+        <div
+          className="bg-gradient-to-r from-purple-600 to-pink-500 h-2 rounded-full"
+          style={{ width: `${progress}%` }}
+        ></div>
       </div>
 
       <div className="flex justify-between items-center">
         <div className="text-sm text-slate-400">Inicio: {new Date(tournament.start_date).toLocaleDateString()}</div>
-
 
         <Link
           href={`/tournaments/${tournament.tournament_id}`}
@@ -69,9 +72,6 @@ const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) =>
         >
           Ver Detalles <ArrowRightIcon />
         </Link>
-
-
-
       </div>
     </div>
   )
@@ -112,9 +112,7 @@ const InProgressTournaments: React.FC = () => {
   }
 
   // Filter out tournaments with ID 1 and 2
-  const filteredTournaments = tournaments.filter(
-    (t) => t.tournament_id !== 1 && t.tournament_id !== 2
-  )
+  const filteredTournaments = tournaments.filter((t) => t.tournament_id !== 1 && t.tournament_id !== 2)
 
   if (filteredTournaments.length === 0) {
     return (

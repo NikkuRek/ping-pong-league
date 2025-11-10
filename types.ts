@@ -88,6 +88,9 @@ export interface Match {
   createdAt: string
   updatedAt: string
   sets: Set[]
+  // Optional nested inscriptions when the API returns full objects
+  inscription1?: Inscription
+  inscription2?: Inscription
 }
 
 export interface MatchData {
@@ -166,6 +169,7 @@ export interface TournamentStanding {
   player_name: string
   matches_played: number // JJ
   matches_won: number // JG
+  default_wins: number // Wins by default (1-0)
   matches_lost: number // JP
   sets_won: number // SG
   points: number // Pts (3 per win, 1 per loss with at least 1 set won, 0 otherwise)

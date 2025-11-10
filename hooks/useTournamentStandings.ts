@@ -17,6 +17,7 @@ export function useTournamentStandings(matches: Match[], inscriptions: Inscripti
         player_name: playerName,
         matches_played: 0,
         matches_won: 0,
+        default_wins: 0,
         matches_lost: 0,
         sets_won: 0,
         points: 0,
@@ -106,33 +107,60 @@ export function useTournamentStandings(matches: Match[], inscriptions: Inscripti
       standing2.points_for += player2PointsFor
       standing2.points_against += player1PointsFor
 
-      // Assign points based on sets won (using calculated sets, not DB sets)
-      // Winner (2-0 or 2-1): 3 points
-      // Loser (1-2): 1 point (bonus)
+      // Check for default win condition: exactly 2 sets, both 1-0 for the winner
+      const isDefaultWin = (() => {
+        if (match.sets.length !== 2) return false;
+      
+        if (match.winner_inscription_id === match.inscription1_id) {
+          return match.sets.every(set => set.score_participant1 === 1 && set.score_participant2 === 0);
+        } else if (match.winner_inscription_id === match.inscription2_id) {
+          return match.sets.every(set => set.score_participant1 === 0 && set.score_participant2 === 1);
+        }
+        return false;
+      })();
+
+      // Assign points based on sets won
+      // Default win (2 sets of 1-0): 2 points for winner, 0 for loser
+      // Regular win (2-0 or 2-1): 3 points for winner
+      // Loser (1-2): 1 point
       // Loser (0-2): 0 points
       if (match.winner_inscription_id === match.inscription1_id) {
         standing1.matches_won++
         standing2.matches_lost++
-        standing1.points += 3 // Winner always gets 3 points
-        // Loser gets 1 point if they won at least 1 set
-        if (player2SetsWon >= 1) {
-          standing2.points += 1
-          standing2.bonus_points += 1
-          standing2.losses_1_2++
+
+        if (isDefaultWin) {
+          standing1.points += 2
+          standing1.default_wins++
+          standing2.losses_0_2++ // Loser gets 0 points
         } else {
-          standing2.losses_0_2++
+          standing1.points += 3 // Regular win (2-0 or 2-1)
+          // Loser in a 1-2 match gets 1 point
+          if (player2SetsWon >= 1) {
+            standing2.points += 1
+            standing2.bonus_points += 1
+            standing2.losses_1_2++
+          } else {
+            standing2.losses_0_2++
+          }
         }
       } else if (match.winner_inscription_id === match.inscription2_id) {
         standing2.matches_won++
         standing1.matches_lost++
-        standing2.points += 3 // Winner always gets 3 points
-        // Loser gets 1 point if they won at least 1 set
-        if (player1SetsWon >= 1) {
-          standing1.points += 1
-          standing1.bonus_points += 1
-          standing1.losses_1_2++
+
+        if (isDefaultWin) {
+          standing2.points += 2
+          standing2.default_wins++
+          standing1.losses_0_2++ // Loser gets 0 points
         } else {
-          standing1.losses_0_2++
+          standing2.points += 3 // Regular win (2-0 or 2-1)
+          // Loser in a 1-2 match gets 1 point
+          if (player1SetsWon >= 1) {
+            standing1.points += 1
+            standing1.bonus_points += 1
+            standing1.losses_1_2++
+          } else {
+            standing1.losses_0_2++
+          }
         }
       }
 

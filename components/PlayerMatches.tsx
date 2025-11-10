@@ -98,15 +98,21 @@ const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerId }) => {
         }
         try {
           const res = await fetch(`${apiUrl}/player/${playerCi}`)
+          // Debug: log response status for each player CI
+          console.log(`[PlayerMatches] fetching player ${playerCi} -> status:`, res.status)
           if (res.ok) {
             const json = await res.json()
+            // Debug: log the returned payload to inspect shape
+            console.log(`[PlayerMatches] player ${playerCi} payload:`, json)
             const pd = json.data ?? json.player ?? null
             if (pd) {
               newPlayerDetailsMap.set(playerCi, pd as PlayerBackendResponse)
               fetchedCisRef.current.add(playerCi)
+            } else {
+              console.warn(`[PlayerMatches] player ${playerCi} no data found in payload`)
             }
           } else {
-            console.error(`Failed to fetch player details for CI: ${playerCi}`)
+            console.error(`Failed to fetch player details for CI: ${playerCi} (status ${res.status})`)
           }
         } catch (err) {
           console.error("Error fetching player", playerCi, err)

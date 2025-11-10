@@ -257,17 +257,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 text-center divide-x divide-slate-700 mt-4">
-          <div>
-            <p className="text-2xl font-bold text-emerald-400">{winsDisplay}</p>
-            <p className="text-xs text-slate-400">Victorias</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-red-400">{lossesDisplay}</p>
-            <p className="text-xs text-slate-400">Derrotas</p>
-          </div>
-        </div>
-
         <div className="mt-4">
           <h4 className="text-sm font-semibold text-white mb-2">Días disponibles</h4>
           <div className="flex justify-center space-x-1">
