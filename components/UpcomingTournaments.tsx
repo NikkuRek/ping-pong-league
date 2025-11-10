@@ -24,7 +24,7 @@ const UpcomingTournamentCard: React.FC<{ tournament: UpcomingTournament; isPrima
   const progress = (tournament.registered / tournament.slots) * 100
 
   return (
-    <div className="bg-[#2A2A3E] p-4 rounded-2xl border border-slate-700/50 space-y-4">
+    <div className="bg-[#2A2A3E] p-4 rounded-2xl border border-slate-700/50 space-y-4 animate-fade-in">
       <div className="flex justify-between items-start">
         <div>
           <div className="flex items-center gap-2 mb-2">

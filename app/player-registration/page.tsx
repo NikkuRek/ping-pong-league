@@ -22,17 +22,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-} from "@/components/ui/dialog";
+import { WelcomeDialog } from "@/components/ui/welcome-dialog";
+import { SuccessDialog } from "@/components/ui/success-dialog";
 import { useEffect, useState } from "react";
 import { UserPlus, GraduationCap, Phone, Lock, IdCard, CheckCircle } from "lucide-react";
 import { Career } from "@/types";
+import { API_BASE_URL } from "@/lib/api-config";
 
 const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
 
@@ -99,7 +94,7 @@ export default function PlayerRegistrationPage() {
     useEffect(() => {
         const fetchCareers = async () => {
             try {
-                const response = await fetch("https://lpp-backend-ss9l.onrender.com/api/career");
+                                const response = await fetch(`${API_BASE_URL}/career`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch careers');
                 }
@@ -144,7 +139,7 @@ export default function PlayerRegistrationPage() {
                 password: values.password,
             };
 
-            const playerResponse = await fetch("https://lpp-backend-ss9l.onrender.com/api/player", {
+            const playerResponse = await fetch(`${API_BASE_URL}/player`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
@@ -155,7 +150,7 @@ export default function PlayerRegistrationPage() {
                 throw new Error(errorData.message || "Error al registrar al jugador. Intente con otra Cédula.");
             }
 
-            const credentialResponse = await fetch("https://lpp-backend-ss9l.onrender.com/api/credential", {
+                        const credentialResponse = await fetch(`${API_BASE_URL}/credential`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(credentialPayload),
@@ -175,66 +170,11 @@ export default function PlayerRegistrationPage() {
         }
     }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof PlayerRegistrationForm) => {
-        const value = e.target.value;
-        if (field === 'phone_number' || field === 'ci') {
-            const numericValue = value.replace(/[^0-9]/g, '');
-            form.setValue(field, numericValue as any);
-            form.trigger(field);
-        } else if (field === 'first_name' || field === 'last_name') {
-            const textValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-            form.setValue(field, textValue as any);
-            form.trigger(field);
-        } else {
-            form.setValue(field, value as any);
-            form.trigger(field);
-        }
-    };
-
     return (
         <>
             <div className="">
-                <Dialog open={isWelcomeModalOpen} onOpenChange={setWelcomeModalOpen}>
-                    <DialogContent className="bg-[#2A2A3E] p-5 rounded-2xl border border-slate-700/50 space-y-4">
-                        <DialogHeader>
-                            <DialogTitle className="text-xl text-purple-400">Bienvenido al Registro de Jugadores</DialogTitle>
-                            <DialogDescription asChild>
-                                <div className="mt-4">
-                                    <div className="text-lg p-4 bg-slate-800/50 rounded-lg">
-                                        <h3 className="font-bold text-purple-300 mb-2">Términos y Condiciones:</h3>
-                                        <ul className="text-sm pl-4 text-slate-300 list-disc list-inside space-y-1">
-                                            <li>Participación voluntaria en torneos.</li>
-                                            <li>Cumplir horarios establecidos y notificar ausencias.</li>
-                                            <li>Respetar reglas de juego y a los demás participantes.</li>
-                                            <li>Mantener una conducta deportiva y ética.</li>
-                                            <li>Los datos proporcionados deben ser verídicos y obligatorios.</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <Button className="w-full" variant={"outstanding"} onClick={() => setWelcomeModalOpen(false)}>Aceptar y Continuar</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-
-                <Dialog open={isSuccessModalOpen} onOpenChange={setSuccessModalOpen}>
-                    <DialogContent className="bg-[#2A2A3E]">
-                        <DialogHeader>
-                            <div className="flex flex-col items-center text-center p-4">
-                                <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-                                <DialogTitle className="text-2xl text-green-400">¡Registro Exitoso!</DialogTitle>
-                                <DialogDescription className="text-slate-300 mt-2">
-                                    Tu registro se ha completado correctamente.
-                                </DialogDescription>
-                            </div>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <Button className="w-full" variant="outstanding" onClick={() => setSuccessModalOpen(false)}>Cerrar</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
+                <WelcomeDialog isOpen={isWelcomeModalOpen} onClose={() => setWelcomeModalOpen(false)} />
+                <SuccessDialog isOpen={isSuccessModalOpen} onClose={() => setSuccessModalOpen(false)} />
 
                 <div className="flex items-center justify-center min-h-[calc(90vh-64px)] py-12 mb-16">
                     <Card className="max-w-3xl w-full mx-4 bg-[#232339] border border-purple-700/50 shadow-2xl">
@@ -265,7 +205,10 @@ export default function PlayerRegistrationPage() {
                                                                 maxLength={30}
                                                                 placeholder="Ingrese sus nombres"
                                                                 {...field}
-                                                                onChange={(e) => handleInputChange(e, 'first_name')}
+                                                                onChange={(e) => {
+                                                                    const textValue = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+                                                                    field.onChange(textValue);
+                                                                }}
                                                                 className="bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus-visible:ring-purple-500"
                                                             />
                                                         </FormControl>
@@ -284,7 +227,10 @@ export default function PlayerRegistrationPage() {
                                                                 maxLength={30}
                                                                 placeholder="Ingrese sus apellidos"
                                                                 {...field}
-                                                                onChange={(e) => handleInputChange(e, 'last_name')}
+                                                                onChange={(e) => {
+                                                                    const textValue = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+                                                                    field.onChange(textValue);
+                                                                }}
                                                                 className="bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus-visible:ring-purple-500"
                                                             />
                                                         </FormControl>
@@ -303,7 +249,10 @@ export default function PlayerRegistrationPage() {
                                                                 maxLength={8}
                                                                 placeholder="12345678"
                                                                 {...field}
-                                                                onChange={(e) => handleInputChange(e, 'ci')}
+                                                                onChange={(e) => {
+                                                                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                                                    field.onChange(numericValue);
+                                                                }}
                                                                 className="bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus-visible:ring-purple-500"
                                                             />
                                                         </FormControl>
@@ -409,7 +358,10 @@ export default function PlayerRegistrationPage() {
                                                                 maxLength={7}
                                                                 placeholder="0552789"
                                                                 {...field}
-                                                                onChange={(e) => handleInputChange(e, 'phone_number')}
+                                                                onChange={(e) => {
+                                                                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                                                    field.onChange(numericValue);
+                                                                }}
                                                                 className="bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus-visible:ring-purple-500"
                                                             />
                                                         </FormControl>

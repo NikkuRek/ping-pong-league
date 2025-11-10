@@ -1,12 +1,15 @@
-import type React from "react"
+import React from "react";
 
-export const AppLogo: React.FC = () => {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-        <span className="text-white font-bold text-lg">L</span>
-      </div>
-      <span className="text-xl font-bold text-white">LPP</span>
+export const AppLogo: React.FC<{ size?: string }> = ({ size = "w-16 h-16" }) => (
+  <div
+    className={`flex-shrink-0 ${size} bg-gradient-to-br from-purple-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-lg shadow-purple-500/20 relative overflow-hidden`}
+  >
+    {/* Contenedor de la raqueta */}
+    <div className="relative w-1/2 h-1/2 flex items-end">
+  <img
+      src="/favicon.png "
+      className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-full"
+    />
     </div>
-  )
-}
+  </div>
+);

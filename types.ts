@@ -88,6 +88,9 @@ export interface Match {
   createdAt: string
   updatedAt: string
   sets: Set[]
+  // Optional nested inscriptions when the API returns full objects
+  inscription1?: Inscription
+  inscription2?: Inscription
 }
 
 export interface MatchData {

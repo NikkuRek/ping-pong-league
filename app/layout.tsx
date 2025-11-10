@@ -8,6 +8,7 @@ import { Suspense } from "react"
 import "./globals.css"
 import Header from "@/components/Header"
 import BottomNav from "@/components/BottomNav"
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "LPP - IUJO",
@@ -33,6 +34,7 @@ export default function RootLayout({
           <main className="container mx-auto px-4 flex-grow">{children}</main>
           <BottomNav />
         </Suspense>
+        <Toaster />
         <Analytics />
       </body>
     </html>

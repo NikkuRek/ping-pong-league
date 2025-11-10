@@ -164,9 +164,17 @@
         @apply bg-muted/50 border border-border rounded-lg p-4;
     }
     
-    .animate-fade-in {
-        animation: fadeIn 0.3s ease-in-out;
-    }
+  .animate-fade-in {
+    animation: fadeIn 0.28s cubic-bezier(.2,.9,.2,1) both;
+  }
+
+  /* Utility classes for small entrance/pop animations */
+  .anim-pop {
+    animation: pop 220ms cubic-bezier(.2,.9,.2,1) both;
+  }
+  .anim-rise {
+    animation: rise 300ms cubic-bezier(.2,.9,.2,1) both;
+  }
 }
 
 @keyframes fadeIn {
@@ -178,4 +186,68 @@
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+@layer utilities {
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  .btn, .card, a, input, select, textarea {
+    @apply transition-all;
+  }
+
+  /* Subtle lift on hover for interactive elements */
+  button[data-slot="button"], .btn, .card, a, .player-card, .match-card {
+    will-change: transform, opacity, box-shadow;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  button[data-slot="button"]:hover, .btn:hover, .card:hover, a:hover, .player-card:hover, .match-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(2,6,23,0.45);
+  }
+
+  button[data-slot="button"]:active, .btn:active {
+    transform: translateY(0px) scale(0.995);
+    box-shadow: 0 4px 10px rgba(2,6,23,0.35);
+  }
+
+  /* Input focus animations */
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    box-shadow: 0 6px 18px rgba(99,102,241,0.12), 0 0 0 4px rgba(99,102,241,0.06);
+    transform: translateY(-2px);
+  }
+
+  /* Tabs buttons subtle active state */
+  .player-stats-tab-btn {
+    transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+  }
+  .player-stats-tab-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in, .anim-pop, .anim-rise, button[data-slot="button"], .btn, .card, a, input, select, textarea {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+}
+
+/* Keyframes */
+@keyframes pop {
+  0% { transform: scale(0.97); opacity: 0; }
+  60% { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes rise {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }

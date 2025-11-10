@@ -7,6 +7,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { getApiUrl } from '@/lib/api-config'
+import { PlayerSelection } from '@/components/ui/player-selection'
+import { useToast } from '@/components/ui/use-toast'
 
 // Type alias para el Player con Days incluidos
 type PlayerWithDays = PlayerBackendResponse
@@ -59,9 +61,7 @@ export default function MatchCreationPage() {
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
 
-  // Estado para alertas
-  const [matchAlert, setMatchAlert] = useState<{ message: string; type: string } | null>(null)
-  const [setsAlert, setSetsAlert] = useState<{ message: string; type: string } | null>(null)
+  const { toast } = useToast()
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -80,30 +80,10 @@ export default function MatchCreationPage() {
     }
   }, [playerSearch, players])
 
-  // Actualizar opciones de jugador 1 cuando cambia el torneo o la búsqueda
+  // Actualizar opciones de jugadores cuando cambia el torneo o la búsqueda
   useEffect(() => {
     if (!matchTournament) {
       setFilteredPlayer1Options([])
-      return
-    }
-
-    const inscribedPlayerCIs = inscriptions
-      .filter(ins => ins.tournament_id === parseInt(matchTournament))
-      .map(ins => ins.player_ci)
-
-    const filtered = players.filter(player => {
-      const isInscribed = inscribedPlayerCIs.includes(player.ci)
-      const matchesSearch = player1Search === '' ||
-        `${player.first_name} ${player.last_name}`.toLowerCase().includes(player1Search.toLowerCase())
-      return isInscribed && matchesSearch
-    })
-
-    setFilteredPlayer1Options(filtered)
-  }, [matchTournament, player1Search, players, inscriptions])
-
-  // Actualizar opciones de jugador 2 cuando cambia el torneo o la búsqueda
-  useEffect(() => {
-    if (!matchTournament) {
       setFilteredPlayer2Options([])
       return
     }
@@ -112,15 +92,20 @@ export default function MatchCreationPage() {
       .filter(ins => ins.tournament_id === parseInt(matchTournament))
       .map(ins => ins.player_ci)
 
-    const filtered = players.filter(player => {
-      const isInscribed = inscribedPlayerCIs.includes(player.ci)
-      const matchesSearch = player2Search === '' ||
-        `${player.first_name} ${player.last_name}`.toLowerCase().includes(player2Search.toLowerCase())
-      return isInscribed && matchesSearch
-    })
+    const inscribedPlayers = players.filter(player => inscribedPlayerCIs.includes(player.ci))
 
-    setFilteredPlayer2Options(filtered)
-  }, [matchTournament, player2Search, players, inscriptions])
+    const filterPlayers = (search: string) => {
+      if (search === '') {
+        return inscribedPlayers
+      }
+      return inscribedPlayers.filter(player =>
+        `${player.first_name} ${player.last_name}`.toLowerCase().includes(search.toLowerCase())
+      )
+    }
+
+    setFilteredPlayer1Options(filterPlayers(player1Search))
+    setFilteredPlayer2Options(filterPlayers(player2Search))
+  }, [matchTournament, player1Search, player2Search, players, inscriptions])
 
   // Cargar matches pendientes cuando se selecciona un torneo con ID >= 3
   useEffect(() => {
@@ -283,33 +268,32 @@ export default function MatchCreationPage() {
     // Para torneos con ID >= 3, usar match pendiente existente
     if (tournamentId >= 3) {
       if (!selectedPendingMatch) {
-        showMatchAlert('Por favor, selecciona un partido pendiente.', 'error')
+        toast({ title: 'Error', description: 'Por favor, selecciona un partido pendiente.', variant: 'destructive' })
         return
       }
 
       const match = pendingMatches.find(m => m.match_id === parseInt(selectedPendingMatch))
       if (!match) {
-        showMatchAlert('No se encontró el partido seleccionado.', 'error')
+        toast({ title: 'Error', description: 'No se encontró el partido seleccionado.', variant: 'destructive' })
         return
       }
 
-      // Usar el match existente
       setCurrentMatch(match)
       setIsMatchPrepared(true)
       setSetCounter(1)
       setSets([])
-      showMatchAlert('Partido cargado. Ahora puedes agregar los sets y luego confirmar.', 'success')
+      toast({ title: 'Éxito', description: 'Partido cargado. Ahora puedes agregar los sets y luego confirmar.' })
       return
     }
 
     // Lógica original para torneos con ID 1 y 2
     if (!player1 || !player2 || !matchTournament) {
-      showMatchAlert('Por favor, selecciona ambos jugadores y un torneo.', 'error')
+      toast({ title: 'Error', description: 'Por favor, selecciona ambos jugadores y un torneo.', variant: 'destructive' })
       return
     }
 
     if (player1 === player2) {
-      showMatchAlert('Los jugadores deben ser diferentes.', 'error')
+      toast({ title: 'Error', description: 'Los jugadores deben ser diferentes.', variant: 'destructive' })
       return
     }
 
@@ -322,12 +306,12 @@ export default function MatchCreationPage() {
     )
 
     if (!player1Inscription) {
-      showMatchAlert('El jugador 1 no está inscrito en este torneo.', 'error')
+      toast({ title: 'Error', description: 'El jugador 1 no está inscrito en este torneo.', variant: 'destructive' })
       return
     }
 
     if (!player2Inscription) {
-      showMatchAlert('El jugador 2 no está inscrito en este torneo.', 'error')
+      toast({ title: 'Error', description: 'El jugador 2 no está inscrito en este torneo.', variant: 'destructive' })
       return
     }
 
@@ -363,12 +347,12 @@ export default function MatchCreationPage() {
       setSets([])
     }
 
-    showMatchAlert(
-      tournamentId === 2
+    toast({
+      title: 'Éxito',
+      description: tournamentId === 2
         ? 'Partido preparado. Ahora puedes registrar el set y luego confirmar.'
         : 'Partido preparado. Ahora puedes agregar los sets y luego confirmar.',
-      'success'
-    )
+    })
   }
 
   function addSet() {
@@ -376,12 +360,12 @@ export default function MatchCreationPage() {
 
     // Para torneo ID 2, solo se permite 1 set
     if (tournamentId === 2) {
-      showSetsAlert('Para el torneo seleccionado solo se permite 1 set.', 'error')
+      toast({ title: 'Error', description: 'Para el torneo seleccionado solo se permite 1 set.', variant: 'destructive' })
       return
     }
 
     if (setCounter > 10) {
-      showSetsAlert('No se pueden agregar más de 10 sets.', 'error')
+      toast({ title: 'Error', description: 'No se pueden agregar más de 10 sets.', variant: 'destructive' })
       return
     }
 
@@ -394,7 +378,7 @@ export default function MatchCreationPage() {
 
     // Para torneo ID 2, no se puede eliminar el único set
     if (tournamentId === 2 && sets.length === 1) {
-      showSetsAlert('Para el torneo seleccionado no se puede eliminar el set.', 'error')
+      toast({ title: 'Error', description: 'Para el torneo seleccionado no se puede eliminar el set.', variant: 'destructive' })
       return
     }
 
@@ -412,7 +396,7 @@ export default function MatchCreationPage() {
 
   function handleConfirmMatch() {
     if (!currentMatch) {
-      showSetsAlert('No hay un partido preparado.', 'error')
+      toast({ title: 'Error', description: 'No hay un partido preparado.', variant: 'destructive' })
       return
     }
 
@@ -420,13 +404,13 @@ export default function MatchCreationPage() {
 
     // Para torneo ID 2, debe haber exactamente 1 set
     if (tournamentId === 2 && sets.length !== 1) {
-      showSetsAlert('Para este torneo debe haber exactamente 1 set.', 'error')
+      toast({ title: 'Error', description: 'Para este torneo debe haber exactamente 1 set.', variant: 'destructive' })
       return
     }
 
     // Para otros torneos, debe haber al menos 1 set
     if (tournamentId !== 2 && sets.length === 0) {
-      showSetsAlert('Debes agregar al menos un set antes de confirmar.', 'error')
+      toast({ title: 'Error', description: 'Debes agregar al menos un set antes de confirmar.', variant: 'destructive' })
       return
     }
 
@@ -436,7 +420,7 @@ export default function MatchCreationPage() {
     )
 
     if (!validSets) {
-      showSetsAlert('Todos los sets deben tener puntuaciones numéricas válidas.', 'error')
+      toast({ title: 'Error', description: 'Todos los sets deben tener puntuaciones numéricas válidas.', variant: 'destructive' })
       return
     }
 
@@ -573,12 +557,12 @@ export default function MatchCreationPage() {
       }
 
       // Éxito - limpiar todo
-      showSetsAlert(
-        currentMatch.tournament_id === 2
+      toast({
+        title: 'Éxito',
+        description: currentMatch.tournament_id === 2
           ? '¡Set completado exitosamente!'
           : '¡Partido completado exitosamente con todos sus sets!',
-        'success'
-      )
+      })
       
       setTimeout(() => {
         setCurrentMatch(null)
@@ -594,13 +578,11 @@ export default function MatchCreationPage() {
         setPlayer1Search('')
         setPlayer2Search('')
         setMatchSearch('')
-        setSetsAlert(null)
-        setMatchAlert(null)
       }, 3000)
 
     } catch (error: any) {
       console.error('Error:', error)
-      showSetsAlert(error.message || 'Error al confirmar el partido', 'error')
+      toast({ title: 'Error', description: error.message || 'Error al confirmar el partido', variant: 'destructive' })
     } finally {
       setIsSubmitting(false)
     }
@@ -626,16 +608,6 @@ export default function MatchCreationPage() {
     else return null
   }
 
-  function showMatchAlert(message: string, type: string) {
-    setMatchAlert({ message, type })
-    setTimeout(() => setMatchAlert(null), 5000)
-  }
-
-  function showSetsAlert(message: string, type: string) {
-    setSetsAlert({ message, type })
-    setTimeout(() => setSetsAlert(null), 5000)
-  }
-
   function handleCancelMatch() {
     setCurrentMatch(null)
     setSets([])
@@ -647,8 +619,7 @@ export default function MatchCreationPage() {
     setPlayer1Search('')
     setPlayer2Search('')
     setMatchSearch('')
-    setSetsAlert(null)
-    showMatchAlert('Partido cancelado. Puedes crear uno nuevo.', 'info')
+    toast({ title: 'Info', description: 'Partido cancelado. Puedes crear uno nuevo.' })
   }
 
   const selectedPlayerData = players.find(p => p.ci === selectedPlayer)
@@ -899,59 +870,27 @@ export default function MatchCreationPage() {
           ) : (
             /* Para torneos con ID 1 y 2: Seleccionar jugadores */
             <>
-              <div>
-                <label className="block mb-2 font-semibold text-slate-300">Jugador 1:</label>
-                <div className="space-y-2">
-                  <input
-                    type="text"
-                    value={player1Search}
-                    onChange={(e) => setPlayer1Search(e.target.value)}
-                    placeholder="Buscar jugador 1"
-                    disabled={!matchTournament || isMatchPrepared}
-                    className="w-full px-4 py-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
-                  />
-                  <select
-                    value={player1}
-                    onChange={(e) => setPlayer1(e.target.value)}
-                    disabled={!matchTournament || isMatchPrepared}
-                    className="w-full p-3 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
-                  >
-                    <option value="">{matchTournament ? 'Selecciona un jugador' : 'Primero selecciona un torneo'}</option>
-                    {filteredPlayer1Options.map(player => (
-                      <option key={player.ci} value={player.ci}>
-                        {player.first_name} {player.last_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+              <PlayerSelection
+                label="Jugador 1"
+                playerSearch={player1Search}
+                onPlayerSearchChange={setPlayer1Search}
+                player={player1}
+                onPlayerChange={setPlayer1}
+                filteredPlayerOptions={filteredPlayer1Options}
+                matchTournament={matchTournament}
+                isMatchPrepared={isMatchPrepared}
+              />
 
-              <div>
-                <label className="block mb-2 font-semibold text-slate-300">Jugador 2:</label>
-                <div className="space-y-2">
-                  <input
-                    type="text"
-                    value={player2Search}
-                    onChange={(e) => setPlayer2Search(e.target.value)}
-                    placeholder="Buscar jugador 2"
-                    disabled={!matchTournament || isMatchPrepared}
-                    className="w-full px-4 py-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
-                  />
-                  <select
-                    value={player2}
-                    onChange={(e) => setPlayer2(e.target.value)}
-                    disabled={!matchTournament || isMatchPrepared}
-                    className="w-full p-3 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
-                  >
-                    <option value="">{matchTournament ? 'Selecciona un jugador' : 'Primero selecciona un torneo'}</option>
-                    {filteredPlayer2Options.map(player => (
-                      <option key={player.ci} value={player.ci}>
-                        {player.first_name} {player.last_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+              <PlayerSelection
+                label="Jugador 2"
+                playerSearch={player2Search}
+                onPlayerSearchChange={setPlayer2Search}
+                player={player2}
+                onPlayerChange={setPlayer2}
+                filteredPlayerOptions={filteredPlayer2Options}
+                matchTournament={matchTournament}
+                isMatchPrepared={isMatchPrepared}
+              />
             </>
           )}
         </div>
@@ -971,15 +910,6 @@ export default function MatchCreationPage() {
           </Button>
         </div>
 
-        {matchAlert && (
-          <div className={`mt-4 p-4 rounded-lg ${
-            matchAlert.type === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/50' :
-            matchAlert.type === 'error' ? 'bg-red-500/20 text-red-300 border border-red-500/50' :
-            'bg-blue-500/20 text-blue-300 border border-blue-500/50'
-          }`}>
-            {matchAlert.message}
-          </div>
-        )}
       </div>
 
       {/* Sección de gestión de sets */}
@@ -1050,15 +980,6 @@ export default function MatchCreationPage() {
             </div>
           </div>
 
-          {setsAlert && (
-            <div className={`p-4 rounded-lg ${
-              setsAlert.type === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/50' :
-              setsAlert.type === 'error' ? 'bg-red-500/20 text-red-300 border border-red-500/50' :
-              'bg-blue-500/20 text-blue-300 border border-blue-500/50'
-            }`}>
-              {setsAlert.message}
-            </div>
-          )}
         </div>
       )}
 

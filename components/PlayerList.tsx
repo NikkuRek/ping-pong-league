@@ -69,7 +69,7 @@ const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player,
       tabIndex={0}
       onClick={openProfile}
       onKeyDown={onKeyDown}
-      className={`flex items-center p-3 rounded-lg border ${borderClass} ${backgroundClass} cursor-pointer hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-purple-500`}
+      className={`flex items-center p-3 rounded-lg border ${borderClass} ${backgroundClass} cursor-pointer hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-purple-500 animate-fade-in`}
     >
       <div className="flex items-center justify-between w-full">
         {/* Left side - Avatar and player info */}

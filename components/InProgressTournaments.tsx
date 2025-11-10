@@ -27,7 +27,7 @@ const TournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) =>
   const progress = Math.round(calculateProgress())
 
   return (
-    <div className="bg-[#2A2A3E] p-5 rounded-2xl border border-slate-700/50 space-y-4">
+    <div className="bg-[#2A2A3E] p-5 rounded-2xl border border-slate-700/50 space-y-4 animate-fade-in">
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-lg font-bold text-white">{tournament.name}</h3>
