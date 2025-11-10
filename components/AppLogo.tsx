@@ -7,7 +7,7 @@ export const AppLogo: React.FC<{ size?: string }> = ({ size = "w-16 h-16" }) => 
     {/* Contenedor de la raqueta */}
     <div className="relative w-1/2 h-1/2 flex items-end">
   <img
-      src="/favicon.png "
+      src="/favicon-white.png "
       className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-full"
     />
     </div>

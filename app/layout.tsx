@@ -14,9 +14,8 @@ export const metadata: Metadata = {
   title: "LPP - IUJO",
   description: "Página del Club de Tenis de Mesa del IUJO, Barquisimeto",
   icons: [
-    { rel: "icon", url: "/favicon-purp.ico" },
+    { rel: "icon", url: "/favicon.ico" },
   ],
-    generator: 'v0.app'
 }
 
 export default function RootLayout({

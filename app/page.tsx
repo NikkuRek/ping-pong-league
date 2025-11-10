@@ -1,18 +1,11 @@
-"use client"
+import type { Metadata } from "next"
+import HomeClient from "@/components/HomeClient"
 
-import type React from "react"
-import Welcome from "@/components/Welcome"
-// import RecentMatches from "@/components/RecentMatches"
-import PlayerRanking from "@/components/PlayerRanking"
+export const metadata: Metadata = {
+  title: "Inicio — LPP",
+  description: "Página principal del club de Tenis de Mesa del IUJO",
+}
 
-export default function Home() {
-  return (
-    <div className="space-y-8">
-      <div className="mb-20" >
-        <Welcome />
-        <PlayerRanking />
-        {/* <RecentMatches /> */}
-      </div>
-    </div>
-  )
+export default function Page() {
+  return <HomeClient />
 }

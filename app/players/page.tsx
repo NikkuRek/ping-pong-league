@@ -1,12 +1,11 @@
-"use client"
+import type { Metadata } from "next"
+import PlayersClient from "@/components/PlayersClient"
 
-import type React from "react"
-import PlayerList from "@/components/PlayerList"
+export const metadata: Metadata = {
+  title: "Jugadores — LPP",
+  description: "Listado de jugadores registrados en el club",
+}
 
-export default function PlayersPage() {
-  return (
-    <div className="container mx-auto px-4 py-6">
-      <PlayerList />
-    </div>
-  )
+export default function Page() {
+  return <PlayersClient />
 }
