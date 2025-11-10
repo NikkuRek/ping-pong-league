@@ -103,19 +103,30 @@ export function StandingsTable({ standings }: StandingsTableProps) {
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <Tooltip
                                         content={
-                                            <div className="text-left space-y-1">
-                                                <p className="font-semibold text-white mb-2">Desglose de puntos:</p>
-                                                <p className="text-slate-300">• {standing.matches_won} victorias: {standing.matches_won * 3} pts</p>
-                                                {standing.losses_1_2 > 0 && (
-                                                    <p className="text-emerald-400">• {standing.losses_1_2} derrota(s) 1-2: {standing.losses_1_2} pt(s)</p>
-                                                )}
-                                                {standing.losses_0_2 > 0 && (
-                                                    <p className="text-slate-400">• {standing.losses_0_2} derrota(s) 0-2: 0 pts</p>
-                                                )}
-                                                <div className="border-t border-slate-600 mt-2 pt-2">
-                                                    <p className="text-white font-bold">Total: {standing.points} pts</p>
-                                                </div>
-                                            </div>
+                                            (() => {
+                                                const regularWins = standing.matches_won - (standing.default_wins || 0);
+                                                const defaultWins = standing.default_wins || 0;
+                                                return (
+                                                    <div className="text-left space-y-1">
+                                                        <p className="font-semibold text-white mb-2">Desglose de puntos:</p>
+                                                        {regularWins > 0 && (
+                                                            <p className="text-slate-300">• {regularWins} victoria(s): {regularWins * 3} pts</p>
+                                                        )}
+                                                        {defaultWins > 0 && (
+                                                            <p className="text-yellow-400">• {defaultWins} victoria(s) por default: {defaultWins * 2} pts</p>
+                                                        )}
+                                                        {standing.losses_1_2 > 0 && (
+                                                            <p className="text-emerald-400">• {standing.losses_1_2} derrota(s) 1-2: {standing.losses_1_2} pt(s)</p>
+                                                        )}
+                                                        {standing.losses_0_2 > 0 && (
+                                                            <p className="text-slate-400">• {standing.losses_0_2} derrota(s) 0-2: 0 pts</p>
+                                                        )}
+                                                        <div className="border-t border-slate-600 mt-2 pt-2">
+                                                            <p className="text-white font-bold">Total: {standing.points} pts</p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })()
                                         }
                                     >
                                         <div className="text-center cursor-help">
