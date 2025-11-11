@@ -36,7 +36,10 @@ export default function MatchCreationAdminPage() {
   const [adminPassword, setAdminPassword] = useState('')
   const [adminLoading, setAdminLoading] = useState(false)
   const [adminFailedAttempts, setAdminFailedAttempts] = useState(0)
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false)
+  // Allow viewing this admin page without requiring a sign-in.
+  // Previously the page required an admin login; set default to true so the
+  // page data is loaded and the creation UI is visible without authentication.
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(true)
 
   const allowedAdminCis = new Set([
     '29944901',
