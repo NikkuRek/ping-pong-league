@@ -24,11 +24,11 @@ export function StandingsTable({ standings }: StandingsTableProps) {
                         qualifiedSpots = 16
                         almostQualifiedSpots = 0
                     } else if (totalParticipants >= 16) {
-                        qualifiedSpots = 8
-                        almostQualifiedSpots = 0
+                        qualifiedSpots = 4
+                        almostQualifiedSpots = 6
                     } else if (totalParticipants >= 14) {
-                        qualifiedSpots = 12
-                        almostQualifiedSpots = 0
+                        qualifiedSpots = 6
+                        almostQualifiedSpots = 4
                     } else if (totalParticipants >= 12) {
                         qualifiedSpots = 8
                         almostQualifiedSpots = 0
