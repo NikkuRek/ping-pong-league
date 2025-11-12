@@ -14,7 +14,7 @@ export interface ApiError {
 /**
  * Standardized API fetch wrapper with error handling
  */
-export async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
+export async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<any> {
   const apiUrl = getApiUrl()
   const url = `${apiUrl}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`
 
@@ -48,15 +48,15 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
 /**
  * GET request
  */
-export async function apiGet<T>(endpoint: string, signal?: AbortSignal): Promise<T> {
-  return apiFetch<T>(endpoint, { method: "GET", signal })
+export async function apiGet(endpoint: string, signal?: AbortSignal): Promise<any> {
+  return apiFetch(endpoint, { method: "GET", signal })
 }
 
 /**
  * POST request
  */
-export async function apiPost<T>(endpoint: string, body: any): Promise<T> {
-  return apiFetch<T>(endpoint, {
+export async function apiPost(endpoint: string, body: any): Promise<any> {
+  return apiFetch(endpoint, {
     method: "POST",
     body: JSON.stringify(body),
   })
@@ -65,8 +65,8 @@ export async function apiPost<T>(endpoint: string, body: any): Promise<T> {
 /**
  * PUT request
  */
-export async function apiPut<T>(endpoint: string, body: any): Promise<T> {
-  return apiFetch<T>(endpoint, {
+export async function apiPut(endpoint: string, body: any): Promise<any> {
+  return apiFetch(endpoint, {
     method: "PUT",
     body: JSON.stringify(body),
   })

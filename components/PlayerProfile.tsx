@@ -6,6 +6,7 @@ import Image from "next/image"
 import { usePlayerMatches } from "@/hooks/usePlayerMatches"
 import type { PlayerProfile as PlayerProfileType, Career } from "@/types"
 import { getApiUrl } from "@/lib/api-config"
+import RemainingMatches from "./RemainingMatches"
 
 interface PlayerProfileProps {
   ci: string
@@ -254,6 +255,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
                 </div>
               </div>
             )}
+          </div>
+          <div className="ml-auto mr-5">
+            <RemainingMatches ci={ci} />
           </div>
         </div>
 
