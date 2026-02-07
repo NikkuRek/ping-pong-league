@@ -37,17 +37,36 @@ const Welcome: React.FC = () => {
       </div>
       {error && <p className="text-red-500 text-sm">Error al cargar los datos.</p>}
       <div className="animate-slide-in-from-bottom">
-        <div className="m-7 rounded-lg flex items-center justify-center">
-          <Link href="/player-registration">
-            <Button
-              className="cursor-pointer w-full text-xl py-7 px-10 font-bold"
-              size="lg"
-              variant="outstanding"
-            >
-              ¡Únete Ahora!
-            </Button>
-          </Link>
+      <div className="animate-slide-in-from-bottom w-full max-w-2xl px-4 mb-8">
+        <div className="bg-gradient-to-r from-purple-900/40 to-slate-900/40 border border-purple-500/30 rounded-xl p-6 backdrop-blur-sm">
+           <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+            ¡Nuevo inicio de semestre!
+          </h3>
+          <p className="text-slate-300 mb-6">
+            Renueva tus datos para participar o regístrate si eres nuevo.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link href="/player-registration" className="w-full sm:w-auto">
+              <Button
+                className="w-full sm:w-auto text-lg py-6 px-8 font-bold shadow-lg shadow-purple-900/20"
+                size="lg"
+                variant="outstanding"
+              >
+                ¡Únete Ahora!
+              </Button>
+            </Link>
+            <Link href="/renew-data" className="w-full sm:w-auto">
+               <Button
+                className="w-full sm:w-auto text-lg py-6 px-8 font-bold border-purple-500 text-purple-100 hover:bg-purple-900/30"
+                size="lg"
+                variant="outline"
+              >
+                Renovar Datos
+              </Button>
+            </Link>
+          </div>
         </div>
+      </div>
       </div>
     </div>
   )
