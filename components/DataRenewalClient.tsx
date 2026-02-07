@@ -58,11 +58,43 @@ const updateSchema = z.object({
     career_id: z.string().min(1, "Debe seleccionar una carrera."),
     phone_prefix: z.string().length(4, "El prefijo debe tener 4 dígitos."),
     phone_number: z.string().length(7, "El número de teléfono debe tener 7 dígitos."),
-    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres."),
+    password: z.string(),
     confirm_password: z.string(),
-}).refine((data) => data.password === data.confirm_password, {
-    message: "Las contraseñas no coinciden.",
-    path: ["confirm_password"],
+    was_active: z.boolean(),
+}).superRefine((data, ctx) => {
+    if (data.was_active) {
+        // Optional password
+        if (data.password && data.password.length < 6) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "La contraseña debe tener al menos 6 caracteres.",
+                path: ["password"]
+            });
+        }
+        if (data.password && data.password !== data.confirm_password) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Las contraseñas no coinciden.",
+                path: ["confirm_password"]
+            });
+        }
+    } else {
+        // Mandatory password
+        if (data.password.length < 6) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "La contraseña debe tener al menos 6 caracteres.",
+                path: ["password"]
+            });
+        }
+        if (data.password !== data.confirm_password) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Las contraseñas no coinciden.",
+                path: ["confirm_password"]
+            });
+        }
+    }
 });
 
 type VerifyFormValues = z.infer<typeof verifySchema>;
@@ -114,6 +146,7 @@ export default function DataRenewalClient() {
             phone_number: "",
             password: "",
             confirm_password: "",
+            was_active: false,
         },
     });
 
@@ -155,9 +188,11 @@ export default function DataRenewalClient() {
             semester: String(player.semester),
             career_id: String(player.career_id),
             phone_prefix: phonePrefix,
+
             phone_number: phoneNumber,
             password: "",
             confirm_password: "",
+            was_active: player.status,
         });
         setStep("edit");
     };
@@ -181,11 +216,7 @@ export default function DataRenewalClient() {
             setPlayerData(player);
             setTempCi(player.ci);
 
-            // Check if updated in last 5 months
-            const lastUpdate = player.updatedAt ? parseISO(player.updatedAt) : new Date(0);
-            const monthsDiff = differenceInMonths(new Date(), lastUpdate);
-
-            if (monthsDiff < 5) {
+            if (player.status) {
                 setStep("auth");
             } else {
                 prepareEditForm(player);
@@ -257,21 +288,23 @@ export default function DataRenewalClient() {
                 throw new Error(errorData.message || "Error al actualizar datos del jugador.");
             }
 
-            // 2. Update Credential (Password)
-            const credentialPayload = {
-                player_ci: values.ci,
-                password: values.password,
-            };
+            // 2. Update Credential (Password) - Only if provided
+            if (values.password) {
+                const credentialPayload = {
+                    player_ci: values.ci,
+                    password: values.password,
+                };
 
-            const credentialResponse = await fetch(`${API_BASE_URL}/credential`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(credentialPayload),
-            });
+                const credentialResponse = await fetch(`${API_BASE_URL}/credential`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(credentialPayload),
+                });
 
-            if (!credentialResponse.ok) {
-                const errorData = await credentialResponse.json();
-                throw new Error(errorData.message || "Datos actualizados, pero error al actualizar contraseña.");
+                if (!credentialResponse.ok) {
+                    const errorData = await credentialResponse.json();
+                    throw new Error(errorData.message || "Datos actualizados, pero error al actualizar contraseña.");
+                }
             }
 
             setSuccessModalOpen(true);
@@ -358,8 +391,7 @@ export default function DataRenewalClient() {
                                 <div className="bg-yellow-900/20 p-4 rounded-lg border border-yellow-500/20 mb-4 flex items-start gap-3">
                                     <AlertTriangle className="text-yellow-500 w-5 h-5 flex-shrink-0 mt-0.5" />
                                     <p className="text-sm text-yellow-200">
-                                        Detectamos una actualización reciente en tus datos (hace menos de 5 meses). 
-                                        Por seguridad, debes ingresar tu contraseña actual para continuar.
+                                        Se renovaron sus datos recientemente, use su contraseña para continuar.
                                     </p>
                                 </div>
 
@@ -603,13 +635,20 @@ export default function DataRenewalClient() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <h2 className="text-purple-500 text-xl font-semibold flex items-center">
-                                        <Lock className="mr-2 h-5 w-5" />Nueva Contraseña
+                                    <h2 className="text-purple-500 text-xl font-semibold flex flex-wrap items-center gap-2">
+                                        <div className="flex items-center">
+                                            <Lock className="mr-2 h-5 w-5" />Nueva Contraseña
+                                        </div>
+                                        <span className="text-red-500 text-xs md:text-sm font-normal">
+                                            Importante: Necesitarás tu contraseña para la gestión de partidos, no la pierdas y no la compartas con nadie
+                                        </span>
                                     </h2>
                                     <div className="bg-purple-900/10 p-4 rounded-lg border border-purple-500/20 mb-4">
                                         <p className="text-sm text-purple-300">
-                                            Por seguridad, todas las contraseñas anteriores fueron reiniciadas. 
-                                            Debes establecer una nueva contraseña para acceder a tu cuenta.
+                                            {updateForm.getValues("was_active") 
+                                                ? "Dado a que se renovaron sus datos recientemente, este apartado es opcional. Úselo solo si quiere cambiar nuevamente su contraseña."
+                                                : "Por seguridad, todas las contraseñas anteriores fueron reiniciadas. Debes establecer una nueva contraseña para acceder a tu cuenta."
+                                            }
                                         </p>
                                     </div>
                                     <div className="text-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4">
