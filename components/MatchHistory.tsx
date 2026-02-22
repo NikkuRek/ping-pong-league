@@ -160,7 +160,7 @@ const MatchHistory: React.FC<{ playerId?: string }> = ({ playerId }) => {
         <span className="absolute top-2 right-2 text-[10px] text-slate-600">#{match.id}</span>
         <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
           {/* Player 1 */}
-          <Link href={`/players/${match.player1Ci}`} className="grid grid-cols-[48px_1fr] gap-3 items-center hover:opacity-80 transition-opacity">
+          <Link href={`/players/detail?ci=${match.player1Ci}`} className="grid grid-cols-[48px_1fr] gap-3 items-center hover:opacity-80 transition-opacity">
             <Image
               src={match.player1Avatar || "/placeholder-user.jpg"}
               alt={match.player1Name}
@@ -192,7 +192,7 @@ const MatchHistory: React.FC<{ playerId?: string }> = ({ playerId }) => {
           </div>
 
           {/* Player 2 */}
-          <Link href={`/players/${match.player2Ci}`} className="grid grid-cols-[1fr_48px] gap-3 items-center hover:opacity-80 transition-opacity">
+          <Link href={`/players/detail?ci=${match.player2Ci}`} className="grid grid-cols-[1fr_48px] gap-3 items-center hover:opacity-80 transition-opacity">
             <div className="text-right min-w-0">
               <p className="font-bold text-white truncate hover:text-purple-400 transition-colors">{p2Short}</p>
               {p2 && (

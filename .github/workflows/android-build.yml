@@ -1,0 +1,131 @@
+# Define el nombre del flujo de trabajo que aparecerá en la interfaz de GitHub Actions
+name: Build Android APK
+
+# Define en qué momentos (eventos) se ejecutará este flujo de trabajo
+on:
+  # Se ejecutará cada vez que se haga un 'push' (subida de código)...
+  push:
+    # ...específicamente hacia las ramas listadas abajo
+    branches:
+      - main
+      - master
+
+# Define los trabajos (jobs) que se ejecutarán como parte de este flujo
+jobs:
+  # Crea un trabajo con el identificador "build"
+  build:
+    # Nombre legible del trabajo
+    name: Build APK
+    # Entorno virtual de GitHub donde se ejecutará (la última versión de Ubuntu)
+    runs-on: ubuntu-latest
+
+    # Pasos secuenciales que componen este trabajo
+    steps:
+      # Paso 1: Descargar el código fuente actual del repositorio al entorno virtual
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      # Paso 2: Configurar el entorno de Java (Necesario para compilar Android)
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          # Usa la distribución 'zulu' de OpenJDK
+          distribution: 'zulu'
+          # Define la versión de Java a utilizar (21)
+          java-version: '21'
+
+      # Paso 3: Configurar el entorno de Node.js (Necesario para Next.js y Capacitor)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Define la versión de Node.js a utilizar (22)
+          node-version: '22'
+          # Habilita el caché para npm, acelerando futuras instalaciones
+          cache: 'npm'
+          # Indica la ruta del package-lock para validar si el caché es válido
+          cache-dependency-path: package-lock.json
+
+      # Paso 4: Instalar las dependencias del proyecto de forma limpia usando el lockfile
+      - name: Install Dependencies
+        run: npm ci
+
+      # Paso 5: Construir la aplicación web Next.js (generará la carpeta estática 'out')
+      - name: Build Next.js
+        run: npm run build
+
+      # Paso 6: Sincronizar los archivos estáticos de Next.js hacia el proyecto Android con Capacitor
+      - name: Sync Capacitor
+        run: npm run cap:sync
+
+      # Paso 7: Compilar y generar el archivo APK de Android optimizado para Release
+      - name: Build Android APK
+        # Cambia el directorio de trabajo a la carpeta 'android' para este paso
+        working-directory: ./android
+        run: |
+          # Otorga permisos de ejecución al script gradlew
+          chmod +x gradlew
+          # Ejecuta Gradle para ensamblar una versión de producción (Release APK)
+          ./gradlew assembleRelease
+
+      # Paso 8: Firmar el APK (Solo se ejecutará si has configurado tus Secrets en GitHub)
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        # Este ID permite referenciar la ruta del APK firmado en pasos posteriores
+        id: sign_app
+        # Verifica si existe el secreto para que no falle la Action si aún no lo has configurado
+        if: secrets.SIGNING_KEY != ''
+        with:
+          releaseDirectory: android/app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      # Paso 9: Renombrar el APK firmado para que coincida con el nombre deseado
+      - name: Rename APK
+        run: |
+          # Si se firmó exitosamente, se renombra el firmado. Si no se firmó, se usa el de release-unsigned.
+          if [ -f "android/app/build/outputs/apk/release/app-release-signed.apk" ]; then
+            mv android/app/build/outputs/apk/release/app-release-signed.apk android/app/build/outputs/apk/release/LPP.apk
+          else
+            mv android/app/build/outputs/apk/release/app-release-unsigned.apk android/app/build/outputs/apk/release/LPP.apk
+          fi
+
+      # Paso 10: Subir el APK generado como un 'Artefacto' descargable en GitHub
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          # Nombre con el que se guardará el artefacto en GitHub
+          name: LPP
+          # Ruta donde se guardó el APK final renombrado
+          path: android/app/build/outputs/apk/release/LPP.apk
+
+      # Paso 11: Crear notas de la versión (Release Notes)
+      - name: Create Release Notes
+        run: |
+          cat << EOF > release-notes.md
+          # Liga de Ping Pong - Build Android APK
+          
+          ### Información del Build
+          - **Versión:** 1.0.0 (Build No. \`${{ github.run_number }}\`)
+          - **Tipo:** Release (Producción)
+          - **Fecha de Compilación:** \`$(date -u +'%Y-%m-%d %H:%M:%S UTC')\`
+          - **Commit:** \`${{ github.sha }}\`
+          - **Autor:** @${{ github.actor }}
+          
+          ### Notas de Lanzamiento
+          - Versión inicial (Release) habilitada.
+          - Integración de Next.js App mediante Capacitor en Android nativo.
+          
+          ---
+          *Documento generado automáticamente por GitHub Actions. *
+          EOF
+
+      # Paso 12: Subir las notas de la versión como un artefacto
+      - name: Upload Release Notes
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes.md
+
+      

@@ -55,7 +55,7 @@ const PlayerItem: React.FC<{ player: PlayerForList; rank: number; badges?: any[]
   const borderClass = rankBorders[rank] || "border-violet-900"
 
   const openProfile = () => {
-    router.push(`/players/${player.ci}`)
+    router.push(`/players/detail?ci=${player.ci}`)
   }
 
   const onKeyDown = (e: React.KeyboardEvent) => {

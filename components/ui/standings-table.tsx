@@ -69,7 +69,7 @@ export function StandingsTable({ standings }: StandingsTableProps) {
                     return (
                         <Link
                             key={standing.player_ci}
-                            href={`/players/${standing.player_ci}`}
+                            href={`/players/detail?ci=${standing.player_ci}`}
                             className={`flex items-center p-4 rounded-lg border ${borderClass} ${backgroundClass} hover:opacity-95 transition-opacity cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500`}
                         >
                             <div className="flex items-center justify-between w-full gap-4">

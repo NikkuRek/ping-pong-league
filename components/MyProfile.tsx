@@ -84,7 +84,7 @@ function GearMenu({ ci }: { ci: string }) {
           {/* View public profile */}
           <div className="px-3 pb-2.5 pt-1 border-t border-slate-700/60">
             <Link
-              href={`/players/${ci}`}
+              href={`/players/detail?ci=${ci}`}
               className="flex items-center gap-2 text-xs text-purple-400 hover:text-purple-300 py-1 transition-colors"
               onClick={() => setOpen(false)}
             >

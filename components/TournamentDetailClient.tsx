@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import { useSearchParams } from "next/navigation"
 import { useTournamentDetail } from "@/hooks/useTournamentDetail"
 import { useTournamentStandings } from "@/hooks/useTournamentStandings"
 import { ArrowLeftIcon } from "@/components/icons"
@@ -12,8 +13,10 @@ import { MatchCard } from "@/components/ui/match-card"
 import { StandingsTable } from "@/components/ui/standings-table"
 import { MatchList } from "@/components/ui/match-list"
 
-export default function TournamentDetailClient({ params }: { params: { id: string } }) {
-  const { tournament, matches, inscriptions, loading, error } = useTournamentDetail(params.id)
+export default function TournamentDetailClient() {
+  const searchParams = useSearchParams()
+  const id = searchParams.get("id") || ""
+  const { tournament, matches, inscriptions, loading, error } = useTournamentDetail(id)
   const standings = useTournamentStandings(matches, inscriptions)
 
   if (loading) {

@@ -77,7 +77,7 @@ export function MatchCard({ match, inscriptions }: MatchCardProps) {
             {/* Grid layout for match info */}
             <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-center mb-4">
                 {/* Player 1 */}
-                <Link href={`/players/${inscription1.player.ci}`} className="grid grid-cols-[48px_1fr] gap-3 items-center hover:opacity-80 transition-opacity">
+                <Link href={`/players/detail?ci=${inscription1.player.ci}`} className="grid grid-cols-[48px_1fr] gap-3 items-center hover:opacity-80 transition-opacity">
                     <Image
                         src={`https://picsum.photos/seed/${inscription1.player.ci}/48/48`}
                         alt={player1Name}
@@ -108,7 +108,7 @@ export function MatchCard({ match, inscriptions }: MatchCardProps) {
                 </div>
 
                 {/* Player 2 */}
-                <Link href={`/players/${inscription2.player.ci}`} className="grid grid-cols-[1fr_48px] gap-3 items-center hover:opacity-80 transition-opacity">
+                <Link href={`/players/detail?ci=${inscription2.player.ci}`} className="grid grid-cols-[1fr_48px] gap-3 items-center hover:opacity-80 transition-opacity">
                     <div className="text-right min-w-0">
                         <div className="font-bold text-white hover:text-purple-400 transition-colors leading-tight">
                             <p className="break-words">{player2Short.firstName}</p>
