@@ -1,6 +1,6 @@
 {
   "name": "lpp-iujo",
-  "version": "0.3.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -55,6 +55,7 @@
     "react-hook-form": "latest",
     "react-resizable-panels": "latest",
     "recharts": "latest",
+    "socket.io-client": "^4.8.3",
     "sonner": "latest",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",

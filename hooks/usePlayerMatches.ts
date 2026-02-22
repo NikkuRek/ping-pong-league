@@ -6,6 +6,7 @@ import { getApiUrl } from "@/lib/api-config"
 
 export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" | "not-Finalizado") {
   const [matches, setMatches] = useState<MatchData[]>([])
+  const [rawMatches, setRawMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
   const [tournamentMap, setTournamentMap] = useState<Map<number, string>>(new Map())
@@ -56,10 +57,8 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
         }
 
         const matchesData = await matchesRes.json()
-  // Debug: log raw matches response from backend
-  console.log("[usePlayerMatches] matchesRes.ok:", matchesRes.ok, "status:", matchesRes.status)
-  console.log("[usePlayerMatches] matchesData:", matchesData)
         const playerMatches: Match[] = matchesData.data
+        setRawMatches(playerMatches)
 
         // Apply status filter if provided. "not-Finalizado" should include only upcoming statuses.
         let filteredPlayerMatches: Match[] = playerMatches
@@ -82,18 +81,14 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
               const insJson = await insRes.json()
               const insList: Inscription[] = insJson.data || []
               insList.forEach((ins) => inscriptionMap.set(ins.inscription_id, ins))
-              console.log("[usePlayerMatches] loaded inscriptions count:", inscriptionMap.size)
-            } else {
-              console.warn("[usePlayerMatches] failed to load inscriptions, status:", insRes.status)
             }
           } catch (err) {
             console.error("[usePlayerMatches] error fetching inscriptions:", err)
           }
         }
 
-  const formattedMatches: MatchData[] = filteredPlayerMatches
+        const formattedMatches: MatchData[] = filteredPlayerMatches
           .map((match) => {
-            // Resolve inscriptions from nested objects or from the fetched map
             const ins1: Inscription | undefined = match.inscription1 ?? inscriptionMap.get(match.inscription1_id)
             const ins2: Inscription | undefined = match.inscription2 ?? inscriptionMap.get(match.inscription2_id)
 
@@ -133,10 +128,8 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
               })
             }
 
-            // Check if there are exactly 3 sets and all are 0-0
             const hasThreeSetsAllZero = formattedSets.length === 3 && formattedSets.every(set => set.p1 === 0 && set.p2 === 0)
             
-            // If there are exactly 3 sets all 0-0 and there's a winner, adjust scores to 2-1
             if (hasThreeSetsAllZero && match.winner_inscription_id !== null) {
               if (match.winner_inscription_id === playerInscription.inscription_id) {
                 playerSetsWon = 2
@@ -146,7 +139,6 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
                 opponentSetsWon = 2
               }
             }
-            // For matches with 1 or 2 sets all 0-0, winner gets all sets
             else if (formattedSets.length > 0 && formattedSets.length < 3 && formattedSets.every(set => set.p1 === 0 && set.p2 === 0) && match.winner_inscription_id !== null) {
               if (match.winner_inscription_id === playerInscription.inscription_id) {
                 playerSetsWon = formattedSets.length
@@ -158,17 +150,9 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
             }
 
             let result: "win" | "loss" | "no-result" = "no-result"
-
             if (match.winner_inscription_id !== null) {
-              // Check if winner is the current player
-              if (match.winner_inscription_id === playerInscription.inscription_id) {
-                result = "win"
-              }
-              // Check if winner is the opponent
-              else if (match.winner_inscription_id === opponentInscription.inscription_id) {
-                result = "loss"
-              }
-              // If winner_inscription_id doesn't match either player, keep as "no-result"
+              if (match.winner_inscription_id === playerInscription.inscription_id) result = "win"
+              else if (match.winner_inscription_id === opponentInscription.inscription_id) result = "loss"
             }
 
             const matchDate = new Date(match.match_datetime)
@@ -192,11 +176,12 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
               player2Ci: opponentInscription.player.ci,
               score1: playerSetsWon,
               score2: opponentSetsWon,
+              tournamentId: match.tournament_id,
               tournamentName: tournamentMap.get(match.tournament_id) || "Cargando Torneo...",
               timeAgo: timeAgo,
               updatedAt: match.updatedAt,
               sets: formattedSets,
-                result: result,
+              result: result,
               winnerInscriptionId: match.winner_inscription_id,
               playerInscriptionId: playerInscription.inscription_id,
               opponentInscriptionId: opponentInscription.inscription_id,
@@ -208,7 +193,7 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
 
         setMatches(formattedMatches)
       } catch (e: any) {
-        console.error("[v0] Error fetching matches:", e)
+        console.error("[usePlayerMatches] Error fetching matches:", e)
         setError(e)
       } finally {
         setLoading(false)
@@ -220,5 +205,5 @@ export function usePlayerMatches(playerId: string, statusFilter?: "Finalizado" |
     }
   }, [playerId, loadingTournaments, tournamentMap, statusFilter])
 
-  return { matches, loading: loading || loadingTournaments, error }
+  return { matches, rawMatches, loading: loading || loadingTournaments, error }
 }

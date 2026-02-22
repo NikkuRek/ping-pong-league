@@ -76,6 +76,16 @@ export interface FormattedSet {
   p2: number
 }
 
+export interface AuraRecord {
+  aura_record_id: number
+  match_id: number
+  player_ci: string
+  aura: number
+  date: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface Match {
   match_id: number
   tournament_id: number
@@ -84,13 +94,15 @@ export interface Match {
   winner_inscription_id: number | null
   match_datetime: string
   round: string
-  status: string
+  status: 'Pendiente' | 'Propuesto' | 'Rechazado' | 'Finalizado' | string
   createdAt: string
   updatedAt: string
+  rejection_reason?: string | null
   sets: Set[]
   // Optional nested inscriptions when the API returns full objects
   inscription1?: Inscription
   inscription2?: Inscription
+  AuraRecords?: AuraRecord[]
 }
 
 export interface MatchData {
@@ -103,6 +115,7 @@ export interface MatchData {
   player2Avatar: string
   score1: number
   score2: number
+  tournamentId: number
   tournamentName: string
   timeAgo: string
   updatedAt: string
@@ -112,6 +125,8 @@ export interface MatchData {
   playerInscriptionId: number
   opponentInscriptionId: number
   matchDatetime: string
+  status?: 'Pendiente' | 'Propuesto' | 'Rechazado' | 'Finalizado' | string
+  rejection_reason?: string | null
 }
 
 export interface Inscription {

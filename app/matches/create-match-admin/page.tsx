@@ -100,7 +100,7 @@ export default function MatchCreationAdminPage() {
       const apiUrl = getApiUrl()
 
       const [playersRes, tournamentsRes, inscriptionsRes] = await Promise.all([
-        fetch(`${apiUrl}/player`),
+        fetch(`${apiUrl}/player/active`),
         fetch(`${apiUrl}/tournament`),
         fetch(`${apiUrl}/inscription`)
       ])

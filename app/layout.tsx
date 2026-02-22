@@ -8,7 +8,8 @@ import { Suspense } from "react"
 import "./globals.css"
 import Header from "@/components/Header"
 import BottomNav from "@/components/BottomNav"
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/toaster"
+import { AuthProvider } from "@/context/AuthContext"
 
 export const metadata: Metadata = {
   title: "LPP - IUJO",
@@ -28,12 +29,14 @@ export default function RootLayout({
       <body
         className={`bg-[#1C1C2E] font-sans text-white selection:bg-purple-500/30 flex flex-col min-h-screen ${GeistSans.variable} ${GeistMono.variable}`}
       >
-        <Suspense fallback={<div>Loading...</div>}>
-          <Header />
-          <main className="container mx-auto px-4 flex-grow">{children}</main>
-          <BottomNav />
-        </Suspense>
-        <Toaster />
+        <AuthProvider>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Header />
+            <main className="container mx-auto px-4 flex-grow">{children}</main>
+            <BottomNav />
+          </Suspense>
+          <Toaster />
+        </AuthProvider>
         <Analytics />
       </body>
     </html>

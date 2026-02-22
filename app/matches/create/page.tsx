@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { getApiUrl } from '@/lib/api-config'
 import { PlayerSelection } from '@/components/ui/player-selection'
 import { useToast } from '@/components/ui/use-toast'
+import { useAuth } from '@/context/AuthContext'
 
 // Type alias para el Player con Days incluidos
 type PlayerWithDays = PlayerBackendResponse
@@ -21,6 +22,9 @@ interface SetCreate {
 }
 
 export default function MatchCreationPage() {
+  // Auth context
+  const { player: loggedPlayer, isLoggedIn, isLoading: authLoading, token } = useAuth()
+
   // Estado para datos de la API
   const [players, setPlayers] = useState<PlayerWithDays[]>([])
   const [tournaments, setTournaments] = useState<Tournament[]>([])
@@ -56,8 +60,8 @@ export default function MatchCreationPage() {
 
   // Estado para modal de autenticación
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const [player1Password, setPlayer1Password] = useState('')
-  const [player2Password, setPlayer2Password] = useState('')
+  const [proposerCI, setProposerCI] = useState('')
+  const [proposerPassword, setProposerPassword] = useState('')
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
 
@@ -139,7 +143,16 @@ export default function MatchCreationPage() {
           const pending = (matchesData.data || []).filter((m: Match) => {
             const isPending = m.status === 'Pendiente'
             const isCorrectTournament = m.tournament_id === tournamentId
-            return isPending && isCorrectTournament
+            
+            // Solo mostrar partidos donde el usuario actual es participante
+            const isParticipant = loggedPlayer && (
+              m.inscription1?.player_ci === loggedPlayer.ci || 
+              m.inscription2?.player_ci === loggedPlayer.ci ||
+              (inscriptions.find(i => i.inscription_id === m.inscription1_id)?.player_ci === loggedPlayer.ci) ||
+              (inscriptions.find(i => i.inscription_id === m.inscription2_id)?.player_ci === loggedPlayer.ci)
+            )
+            
+            return isPending && isCorrectTournament && isParticipant
           })
 
           setPendingMatches(pending)
@@ -183,12 +196,20 @@ export default function MatchCreationPage() {
   // Limpiar selecciones cuando cambia el torneo
   useEffect(() => {
     if (matchTournament) {
+      // Limpiar selecciones previas
       setPlayer1('')
       setPlayer2('')
       setSelectedPendingMatch('')
       setPlayer1Search('')
       setPlayer2Search('')
       setMatchSearch('')
+
+      // Si es torneo 1 o 2, pre-seleccionar al jugador logueado como Player 1
+      const tournamentId = parseInt(matchTournament)
+      if ((tournamentId === 1 || tournamentId === 2) && loggedPlayer) {
+        setPlayer1(loggedPlayer.ci)
+        setPlayer1Search(`${loggedPlayer.first_name} ${loggedPlayer.last_name}`)
+      }
     }
   }, [matchTournament])
 
@@ -241,7 +262,7 @@ export default function MatchCreationPage() {
       const apiUrl = getApiUrl()
 
       const [playersRes, tournamentsRes, inscriptionsRes] = await Promise.all([
-        fetch(`${apiUrl}/player`),
+        fetch(`${apiUrl}/player/active`),
         fetch(`${apiUrl}/tournament`),
         fetch(`${apiUrl}/inscription`)
       ])
@@ -424,16 +445,17 @@ export default function MatchCreationPage() {
       return
     }
 
-    // Abrir modal de autenticación
+    // Abrir modal para que el proponente ingrese SU contraseña
+    // Si el usuario ya tiene sesión, pre-rellenar su CI
     setAuthError(null)
-    setPlayer1Password('')
-    setPlayer2Password('')
+    setProposerCI(isLoggedIn && loggedPlayer?.ci ? loggedPlayer.ci : '')
+    setProposerPassword('')
     setShowAuthModal(true)
   }
 
   async function handleAuthenticateAndSubmit() {
-    if (!player1Password || !player2Password) {
-      setAuthError('Por favor, ingresa ambas contraseñas.')
+    if (!proposerCI || !proposerPassword) {
+      setAuthError('Por favor, ingresa tu cédula y contraseña.')
       return
     }
 
@@ -443,43 +465,36 @@ export default function MatchCreationPage() {
     try {
       const apiUrl = getApiUrl()
 
-      // Autenticar Jugador 1
-      const auth1Response = await fetch(`${apiUrl}/credential/authenticate`, {
+      // Autenticar solo al jugador que propone el resultado
+      const authResponse = await fetch(`${apiUrl}/credential/authenticate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ player_ci: player1, password: player1Password })
+        body: JSON.stringify({ player_ci: proposerCI, password: proposerPassword })
       })
 
-      if (!auth1Response.ok) {
-        const error = await auth1Response.json()
-        throw new Error(`Error al autenticar a ${player1Data?.first_name}: ${error.message || 'Contraseña incorrecta'}`)
+      if (!authResponse.ok) {
+        const error = await authResponse.json()
+        throw new Error(`Autenticación fallida: ${error.message || 'Contraseña incorrecta'}`)
       }
 
-      // Autenticar Jugador 2
-      const auth2Response = await fetch(`${apiUrl}/credential/authenticate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ player_ci: player2, password: player2Password })
-      })
-
-      if (!auth2Response.ok) {
-        const error = await auth2Response.json()
-        throw new Error(`Error al autenticar a ${player2Data?.first_name}: ${error.message || 'Contraseña incorrecta'}`)
+      // Guardar CI del jugador autenticado para socket
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('playerCI', proposerCI)
       }
 
-      // Si ambas autenticaciones son exitosas, proceder a crear el partido
       setShowAuthModal(false)
-      await submitMatch()
+      await submitMatch(proposerCI)
 
     } catch (error: any) {
       console.error('Error de autenticación:', error)
-      setAuthError(error.message || 'Error al autenticar a los jugadores')
+      setAuthError(error.message || 'Error al autenticar')
     } finally {
       setIsAuthenticating(false)
     }
   }
 
-  async function submitMatch() {
+  // proposerCI: CI del jugador que propone el resultado (ya autenticado)
+  async function submitMatch(proposerCI?: string) {
     if (!currentMatch) return
 
     setIsSubmitting(true)
@@ -488,14 +503,11 @@ export default function MatchCreationPage() {
       const apiUrl = getApiUrl()
       let matchId: number
 
-      // Determinar si es un torneo que requiere crear match o actualizar existente
       const tournamentId = currentMatch.tournament_id
 
       if (tournamentId >= 3) {
-        // Para torneos >= 3, usar el match existente (ya tiene match_id)
         matchId = currentMatch.match_id
       } else {
-        // Para torneos 1 y 2, crear el match en la API
         const matchData = {
           tournament_id: currentMatch.tournament_id,
           inscription1_id: currentMatch.inscription1_id,
@@ -503,18 +515,20 @@ export default function MatchCreationPage() {
           winner_inscription_id: null,
           match_datetime: currentMatch.match_datetime,
           round: currentMatch.round,
-          status: "Pendiente"
         }
 
-        const matchResponse = await fetch(`${apiUrl}/match`, {
+        const matchResponse = await fetch(`${apiUrl}/match/propose`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify(matchData)
         })
 
         if (!matchResponse.ok) {
           const error = await matchResponse.json()
-          throw new Error(`Error al crear el partido: ${error.message}`)
+          throw new Error(`Error al proponer el partido: ${error.message}`)
         }
 
         const matchResult = await matchResponse.json()
@@ -532,7 +546,10 @@ export default function MatchCreationPage() {
 
         const setResponse = await fetch(`${apiUrl}/set`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify(setData)
         })
 
@@ -542,28 +559,33 @@ export default function MatchCreationPage() {
         }
       }
 
-      // Paso 3: Calcular y actualizar el ganador
+      // Paso 3: Calcular ganador provisional y poner en estado 'Propuesto'
       const winnerInscriptionId = calculateWinner()
 
-      const updateResponse = await fetch(`${apiUrl}/match/${matchId}/result`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ winner_inscription_id: winnerInscriptionId })
+      const patchResponse = await fetch(`${apiUrl}/match/${matchId}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          status: 'Propuesto',
+          winner_inscription_id: winnerInscriptionId,
+        })
       })
 
-      if (!updateResponse.ok) {
-        const error = await updateResponse.json()
-        throw new Error(`Error al actualizar el ganador: ${error.message}`)
+      if (!patchResponse.ok) {
+        const error = await patchResponse.json()
+        throw new Error(`Error al proponer resultado: ${error.message}`)
       }
 
-      // Éxito - limpiar todo
+      // Éxito
       toast({
-        title: 'Éxito',
-        description: currentMatch.tournament_id === 2
-          ? '¡Set completado exitosamente!'
-          : '¡Partido completado exitosamente con todos sus sets!',
+        title: 'Resultado Propuesto',
+        description: 'El resultado fue enviado al rival para su aprobación. Recibirás una notificación cuando sea confirmado.',
+        variant: 'success'
       })
-      
+
       setTimeout(() => {
         setCurrentMatch(null)
         setSets([])
@@ -573,8 +595,8 @@ export default function MatchCreationPage() {
         setPlayer2('')
         setMatchTournament('')
         setSelectedPendingMatch('')
-        setPlayer1Password('')
-        setPlayer2Password('')
+        setProposerCI('')
+        setProposerPassword('')
         setPlayer1Search('')
         setPlayer2Search('')
         setMatchSearch('')
@@ -582,7 +604,7 @@ export default function MatchCreationPage() {
 
     } catch (error: any) {
       console.error('Error:', error)
-      toast({ title: 'Error', description: error.message || 'Error al confirmar el partido', variant: 'destructive' })
+      toast({ title: 'Error', description: error.message || 'Error al proponer el resultado', variant: 'destructive' })
     } finally {
       setIsSubmitting(false)
     }
@@ -614,8 +636,8 @@ export default function MatchCreationPage() {
     setSetCounter(1)
     setIsMatchPrepared(false)
     setSelectedPendingMatch('')
-    setPlayer1Password('')
-    setPlayer2Password('')
+    setProposerCI('')
+    setProposerPassword('')
     setPlayer1Search('')
     setPlayer2Search('')
     setMatchSearch('')
@@ -628,11 +650,25 @@ export default function MatchCreationPage() {
   const player2Data = players.find(p => p.ci === player2)
   const currentTournamentData = tournaments.find(t => t.tournament_id === parseInt(matchTournament))
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <div className="w-10 h-10 border-4 border-slate-600 border-t-purple-500 rounded-full animate-spin mb-4"></div>
         <p className="text-slate-400">Cargando datos...</p>
+      </div>
+    )
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center">
+        <div className="bg-slate-800/50 p-10 rounded-2xl border border-slate-700 max-w-md">
+          <h2 className="text-3xl font-bold text-white mb-4">Acceso Restringido</h2>
+          <p className="text-slate-400 mb-8">Debes tener una sesión abierta para poder registrar un partido.</p>
+          <Button variant="outstanding" className="w-full" onClick={() => window.location.href = '/login'}>
+            Ir al Login
+          </Button>
+        </div>
       </div>
     )
   }
@@ -812,7 +848,7 @@ export default function MatchCreationPage() {
               className="w-full p-3 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white"
             >
               <option value="">Selecciona un torneo</option>
-              {tournaments.map(tournament => (
+              {tournaments.filter(tournament => tournament.status === 'En Curso').map(tournament => (
                 <option key={tournament.tournament_id} value={tournament.tournament_id}>
                   {tournament.name} ({tournament.format})
                 </option>
@@ -879,10 +915,11 @@ export default function MatchCreationPage() {
                 filteredPlayerOptions={filteredPlayer1Options}
                 matchTournament={matchTournament}
                 isMatchPrepared={isMatchPrepared}
+                disabled={parseInt(matchTournament) === 1 || parseInt(matchTournament) === 2}
               />
 
               <PlayerSelection
-                label="Jugador 2"
+                label="Jugador 2 (Rival)"
                 playerSearch={player2Search}
                 onPlayerSearchChange={setPlayer2Search}
                 player={player2}
@@ -985,61 +1022,56 @@ export default function MatchCreationPage() {
 
       {/* Modal de Autenticación */}
       <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
-        <DialogContent className="sm:max-w-[500px] bg-[#2A2A3E] border-slate-700">
+        <DialogContent className="sm:max-w-[425px] bg-[#2A2A3E] border-slate-700">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-purple-400">Autenticación de Jugadores</DialogTitle>
+            <DialogTitle className="text-2xl text-purple-400">Proponer Resultado</DialogTitle>
             <DialogDescription className="text-slate-400">
-              Para confirmar el partido, ambos jugadores deben autenticarse con su contraseña.
+              Autentícate para proponer el resultado. El rival recibirá una notificación para aprobarlo.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 py-4">
-            {/* Jugador 1 */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                <h4 className="text-lg font-semibold text-white">
-                  {player1Data?.first_name} {player1Data?.last_name}
-                </h4>
+          <div className="space-y-4 py-4">
+            {/* Si el usuario ya está logueado, mostrar su nombre en lugar del campo de CI */}
+            {isLoggedIn && loggedPlayer ? (
+              <div className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-xl border border-slate-600">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-sm font-bold shrink-0">
+                  {loggedPlayer.first_name[0]}{loggedPlayer.last_name?.[0] ?? ''}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">{loggedPlayer.first_name} {loggedPlayer.last_name}</p>
+                  <p className="text-xs text-slate-400">CI: {loggedPlayer.ci}</p>
+                </div>
+                <span className="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Conectado</span>
               </div>
+            ) : (
+              /* CI del proponente (solo si no hay sesión) */
               <div className="space-y-2">
-                <Label htmlFor="player1-password" className="text-slate-300">
-                  Contraseña
-                </Label>
+                <Label htmlFor="proposer-ci" className="text-slate-300">Tu Cédula de Identidad</Label>
                 <Input
-                  id="player1-password"
-                  type="password"
-                  placeholder="Ingresa la contraseña"
-                  value={player1Password}
-                  onChange={(e) => setPlayer1Password(e.target.value)}
+                  id="proposer-ci"
+                  type="text"
+                  placeholder="Ej: 29944901"
+                  value={proposerCI}
+                  onChange={(e) => setProposerCI(e.target.value)}
                   disabled={isAuthenticating}
                   className="bg-slate-700 border-slate-600 text-white focus:border-purple-500"
                 />
               </div>
-            </div>
+            )}
 
-            {/* Jugador 2 */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <h4 className="text-lg font-semibold text-white">
-                  {player2Data?.first_name} {player2Data?.last_name}
-                </h4>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="player2-password" className="text-slate-300">
-                  Contraseña
-                </Label>
-                <Input
-                  id="player2-password"
-                  type="password"
-                  placeholder="Ingresa la contraseña"
-                  value={player2Password}
-                  onChange={(e) => setPlayer2Password(e.target.value)}
-                  disabled={isAuthenticating}
-                  className="bg-slate-700 border-slate-600 text-white focus:border-purple-500"
-                />
-              </div>
+            {/* Contraseña del proponente */}
+            <div className="space-y-2">
+              <Label htmlFor="proposer-password" className="text-slate-300">Tu Contraseña</Label>
+              <Input
+                id="proposer-password"
+                type="password"
+                placeholder="Ingresa tu contraseña"
+                value={proposerPassword}
+                onChange={(e) => setProposerPassword(e.target.value)}
+                disabled={isAuthenticating}
+                className="bg-slate-700 border-slate-600 text-white focus:border-purple-500"
+                onKeyDown={(e) => e.key === 'Enter' && handleAuthenticateAndSubmit()}
+              />
             </div>
 
             {/* Error de autenticación */}
@@ -1048,6 +1080,10 @@ export default function MatchCreationPage() {
                 {authError}
               </div>
             )}
+
+            <p className="text-xs text-slate-500">
+              💡 Solo necesitas autenticarte tú. El rival verá el resultado propuesto en su perfil y podrá aprobarlo o rechazarlo.
+            </p>
           </div>
 
           <DialogFooter className="gap-2">
@@ -1062,9 +1098,9 @@ export default function MatchCreationPage() {
             <Button
               variant="outstanding"
               onClick={handleAuthenticateAndSubmit}
-              disabled={isAuthenticating || !player1Password || !player2Password}
+              disabled={isAuthenticating || !proposerCI || !proposerPassword}
             >
-              {isAuthenticating ? 'Autenticando...' : 'Autenticar y Confirmar'}
+              {isAuthenticating ? 'Autenticando...' : 'Proponer Resultado'}
             </Button>
           </DialogFooter>
         </DialogContent>

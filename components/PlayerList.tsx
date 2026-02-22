@@ -9,6 +9,8 @@ import { usePlayers } from "@/hooks/usePlayers"
 import { Input } from "@/components/ui/input"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { ErrorMessage } from "@/components/ui/error-message"
+import { useBadges } from "@/hooks/useBadges"
+import { PlayerBadge } from "./PlayerBadge"
 
 interface PlayerListProps {
   limit?: number
@@ -18,7 +20,7 @@ interface PlayerListProps {
 }
 
 // El componente PlayerItem se mantiene igual
-const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player, rank }) => {
+const PlayerItem: React.FC<{ player: PlayerForList; rank: number; badges?: any[] }> = ({ player, rank, badges = [] }) => {
   const router = useRouter()
 
   // Get only the first word before any whitespace for first and last names
@@ -81,8 +83,17 @@ const PlayerItem: React.FC<{ player: PlayerForList; rank: number }> = ({ player,
             height={40}
             className="rounded-full object-cover"
           />
-          <div className="text-left">
-            <p className={`font-semibold ${nameColorClass}`}>{`${firstName} ${lastName}`.trim()}</p>
+          <div className="text-left flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className={`font-semibold ${nameColorClass}`}>{`${firstName} ${lastName}`.trim()}</p>
+              {badges.length > 0 && (
+                <div className="flex gap-1">
+                  {badges.map(badge => (
+                    <PlayerBadge key={badge.id} badge={badge} size="sm" />
+                  ))}
+                </div>
+              )}
+            </div>
             <p className={`text-xs ${detailsColorClass}`}>{player.career_name}</p>
           </div>
         </div>
@@ -104,6 +115,7 @@ const PlayerList: React.FC<PlayerListProps> = ({
   showTitle = true,
 }) => {
   const { players, loading, error } = usePlayers()
+  const { getBadgesForPlayer, loading: badgesLoading } = useBadges()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedSemester, setSelectedSemester] = useState<string | null>(null)
   const [selectedCareer, setSelectedCareer] = useState<string | null>(null)
@@ -224,7 +236,14 @@ const PlayerList: React.FC<PlayerListProps> = ({
 
       <div className="space-y-3">
         {playersOnPage.length > 0 ? (
-          playersOnPage.map((p, index) => <PlayerItem key={p.ci} player={p} rank={playerRankMap.get(p.ci)! - 1} />)
+          playersOnPage.map((p, index) => (
+            <PlayerItem 
+              key={p.ci} 
+              player={p} 
+              rank={playerRankMap.get(p.ci)! - 1} 
+              badges={getBadgesForPlayer(p.ci, []).filter((b: any) => b.type !== 'novato')}
+            />
+          ))
         ) : (
           <div className="text-center text-slate-400 py-8">No se encontraron jugadores.</div>
         )}

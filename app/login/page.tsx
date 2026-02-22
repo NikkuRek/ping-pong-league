@@ -1,24 +1,25 @@
-"use client" // Add this for client-side hooks
+"use client"
 
 import type React from "react"
-
 import { useState } from "react"
-import { useRouter } from "next/navigation" // Import useRouter
+import { useRouter } from "next/navigation"
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { useToast } from "@/components/ui/use-toast" // Import useToast
-import { getApiUrl } from "@/lib/api-config"
+import { useToast } from "@/components/ui/use-toast"
+import { useAuth } from "@/context/AuthContext"
+import { AppLogo } from "@/components/AppLogo"
 
 export default function LoginPage() {
   const [player_ci, setPlayerCi] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false) // Add loading state
-  const [failedAttempts, setFailedAttempts] = useState(0) // Track failed attempts
-  const router = useRouter() // Initialize useRouter
-  const { toast } = useToast() // Initialize useToast
+  const [loading, setLoading] = useState(false)
+  const [failedAttempts, setFailedAttempts] = useState(0)
+  const router = useRouter()
+  const { toast } = useToast()
+  const { login } = useAuth()
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -32,99 +33,83 @@ export default function LoginPage() {
       return
     }
 
-    setLoading(true) // Set loading to true
+    setLoading(true)
 
-    try {
-      const apiUrl = getApiUrl()
+    const result = await login(player_ci.trim(), password)
 
-      const response = await fetch(`${apiUrl}/credential/authenticate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ player_ci, password }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        console.log("Autenticación exitosa:", data)
-        setFailedAttempts(0) // Reset failed attempts on success
-        toast({
-          title: "Autenticación exitosa",
-          description: "Bienvenido. Redirigiendo a la pantalla de inicio...",
-          variant: "default",
-        })
-        // TODO: Save token or session information here if needed
-        router.push("/") // Redirect to home page
-      } else {
-        setFailedAttempts((prev) => prev + 1) // Increment failed attempts
-        let errorMessage = data.message || "Credenciales inválidas. Inténtalo de nuevo."
-
-        if (failedAttempts + 1 >= 3) {
-          // Check if this attempt makes it 3 or more
-          errorMessage = "Demasiados intentos fallidos. Por favor, contacta a un administrador."
-        } else {
-          errorMessage += ` Te quedan ${3 - (failedAttempts + 1)} intentos.`
-        }
-
-        toast({
-          title: "Error de autenticación",
-          description: errorMessage,
-          variant: "destructive",
-        })
-        console.error("Error en la autenticación:", data)
-      }
-    } catch (err) {
+    if (result.ok) {
+      setFailedAttempts(0)
       toast({
-        title: "Error de red",
-        description: "No se pudo conectar con el servidor. Verifica tu conexión.",
+        title: "¡Bienvenido!",
+        description: "Sesión iniciada correctamente.",
+      })
+      router.push("/profile")
+    } else {
+      const attempts = failedAttempts + 1
+      setFailedAttempts(attempts)
+
+      let errorMessage = result.message || "Credenciales inválidas."
+      if (attempts < 3) errorMessage += ` Te quedan ${3 - attempts} intento(s).`
+      if (attempts >= 3) errorMessage = "Demasiados intentos fallidos. Contacta a un administrador."
+
+      toast({
+        title: "Error de autenticación",
+        description: errorMessage,
         variant: "destructive",
       })
-      console.error("Error de red:", err)
-    } finally {
-      setLoading(false) // Set loading to false
     }
+
+    setLoading(false)
   }
 
   const isFormDisabled = loading || failedAttempts >= 3
 
   return (
     <div className="flex items-center justify-center min-h-[calc(90vh-64px)]">
-      {" "}
-      {/* Adjust min-h to account for header height */}
-      <Card className="w-full max-w-md bg-[#2A2A3E]">
-        <CardHeader className="text-center">
+      <Card className="w-full max-w-md bg-[#2A2A3E] border-slate-700">
+        <CardHeader className="text-center pb-2">
+          <div className="flex items-center justify-center">
+            <AppLogo />
+          </div>
           <h1 className="text-2xl text-purple-400 font-bold">Iniciar Sesión</h1>
-          <p className="text-slate-400 text-sm">Ingresa tus credenciales para acceder a tu cuenta.</p>
+          <p className="text-slate-400 text-sm">Ingresa tus credenciales para acceder.</p>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-4 pt-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2 text-slate-200">
-              <Label htmlFor="player_ci">Cédula</Label>
+              <Label htmlFor="player_ci">Cédula de Identidad</Label>
               <Input
                 id="player_ci"
                 type="text"
+                placeholder="Ej: 29944901"
                 required
                 value={player_ci}
                 onChange={(e) => setPlayerCi(e.target.value)}
                 disabled={isFormDisabled}
+                className="bg-slate-800 border-slate-600 text-white focus:border-purple-500"
               />
             </div>
-            <div className="space-y-2 text-slate-200 mt-4">
+            <div className="space-y-2 text-slate-200">
               <Label htmlFor="password">Contraseña</Label>
               <Input
                 id="password"
                 type="password"
+                placeholder="Tu contraseña"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isFormDisabled}
+                className="bg-slate-800 border-slate-600 text-white focus:border-purple-500"
               />
             </div>
+            {failedAttempts >= 3 && (
+              <p className="text-xs text-red-400 bg-red-900/20 border border-red-500/30 rounded p-2">
+                Cuenta bloqueada por demasiados intentos. Contacta a un administrador.
+              </p>
+            )}
             <Button
               type="submit"
-              className="cursor-pointer w-full gap-4 rounded-lg flex items-center justify-center mt-6"
+              className="w-full mt-2"
               variant="outstanding"
               disabled={isFormDisabled}
             >
@@ -132,9 +117,7 @@ export default function LoginPage() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col gap-2">
-          {" "}
-          {/* Moved CardFooter outside form */}
+        <CardFooter className="flex flex-col gap-2 pt-2 pb-5">
           <p className="text-sm text-slate-400">
             ¿No tienes una cuenta?{" "}
             <Link href="/player-registration" className="underline text-purple-400 hover:text-slate-50">

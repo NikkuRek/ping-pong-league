@@ -13,6 +13,7 @@ interface PlayerSelectionProps {
   filteredPlayerOptions: PlayerBackendResponse[]
   matchTournament: string
   isMatchPrepared: boolean
+  disabled?: boolean
 }
 
 export function PlayerSelection({
@@ -24,6 +25,7 @@ export function PlayerSelection({
   filteredPlayerOptions,
   matchTournament,
   isMatchPrepared,
+  disabled = false,
 }: PlayerSelectionProps) {
   return (
     <div>
@@ -34,13 +36,13 @@ export function PlayerSelection({
           value={playerSearch}
           onChange={(e) => onPlayerSearchChange(e.target.value)}
           placeholder={`Buscar ${label.toLowerCase()}`}
-          disabled={!matchTournament || isMatchPrepared}
+          disabled={disabled || !matchTournament || isMatchPrepared}
           className="w-full px-4 py-2 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
         />
         <select
           value={player}
           onChange={(e) => onPlayerChange(e.target.value)}
-          disabled={!matchTournament || isMatchPrepared}
+          disabled={disabled || !matchTournament || isMatchPrepared}
           className="w-full p-3 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none text-white disabled:opacity-50"
         >
           <option value="">{matchTournament ? 'Selecciona un jugador' : 'Primero selecciona un torneo'}</option>

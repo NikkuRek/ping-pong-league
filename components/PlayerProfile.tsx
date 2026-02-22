@@ -7,6 +7,9 @@ import { usePlayerMatches } from "@/hooks/usePlayerMatches"
 import type { PlayerProfile as PlayerProfileType, Career } from "@/types"
 import { getApiUrl } from "@/lib/api-config"
 import RemainingMatches from "./RemainingMatches"
+import { usePlayerBadges } from "@/hooks/usePlayerBadges"
+import { PlayerBadge } from "./PlayerBadge"
+import { usePlayerProfile } from "@/hooks/usePlayerProfile"
 
 interface PlayerProfileProps {
   ci: string
@@ -19,128 +22,7 @@ function getApiBase(): string {
   return getApiUrl()
 }
 
-/**
- * Hook que encapsula toda la lógica de carga de perfil, carreras y cálculo de victorias/derrotas.
- */
-function usePlayerProfile(ci: string) {
-  const [profile, setProfile] = useState<PlayerProfileType | null>(null)
-  const [careerMap, setCareerMap] = useState<Map<number, string>>(new Map())
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
-  const [rank, setRank] = useState<number>(0)
-
-  const { matches, loading: matchesLoading, error: matchesError } = usePlayerMatches(ci)
-
-  const apiBase = useMemo(() => getApiBase(), [])
-
-  useEffect(() => {
-    if (!ci) {
-      setError("CI de jugador no provisto.")
-      setLoading(false)
-      return
-    }
-    if (!apiBase) {
-      setError("URL de API no configurada.")
-      setLoading(false)
-      return
-    }
-
-    const controller = new AbortController()
-    const signal = controller.signal
-
-    async function fetchProfileAndCareers() {
-      setLoading(true)
-      setError(null)
-
-      try {
-        const profileResPromise = fetch(`${apiBase}/player/${ci}`, { signal }).catch((e) => {
-          if (e.name === "AbortError") throw e
-          return null
-        })
-
-        const careersResPromise = fetch(`${apiBase}/career`, { signal }).catch((e) => {
-          if (e.name === "AbortError") throw e
-          return null
-        })
-
-        const allPlayersResPromise = fetch(`${apiBase}/player/active`, { signal }).catch((e) => {
-          if (e.name === "AbortError") throw e
-          return null
-        })
-
-        const [profileRes, careersRes, allPlayersRes] = await Promise.all([
-          profileResPromise,
-          careersResPromise,
-          allPlayersResPromise,
-        ])
-
-        if (!profileRes) {
-          setError("No se pudo obtener el perfil del jugador.")
-          setProfile(null)
-        } else if (!profileRes.ok) {
-          setError("No se pudo cargar el perfil del jugador.")
-          setProfile(null)
-        } else {
-          const json = await profileRes.json()
-          const data = json?.data ?? json
-          setProfile(data as PlayerProfileType)
-        }
-
-        if (careersRes && careersRes.ok) {
-          const json = await careersRes.json()
-          const careersData: Career[] = json?.data ?? json ?? []
-          const map = new Map<number, string>()
-          careersData.forEach((c) => {
-            if (c?.career_id != null && c?.name_career) {
-              map.set(c.career_id, c.name_career)
-            }
-          })
-          setCareerMap(map)
-        }
-
-        if (allPlayersRes && allPlayersRes.ok) {
-          const json = await allPlayersRes.json()
-          const allPlayers = Array.isArray(json) ? json : (json?.data ?? [])
-          const sortedPlayers = allPlayers.sort((a: any, b: any) => (b.aura ?? 0) - (a.aura ?? 0))
-          const playerRank = sortedPlayers.findIndex((p: any) => p.ci === ci)
-          setRank(playerRank >= 0 ? playerRank + 1 : 0)
-        }
-      } catch (err: any) {
-        if (err.name === "AbortError") return
-        console.error(err)
-        setError("Ocurrió un error al cargar los datos.")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchProfileAndCareers()
-
-    return () => {
-      controller.abort()
-    }
-  }, [ci, apiBase])
-
-  const wins = useMemo(() => {
-    if (!matches) return 0
-    return matches.reduce((acc, m) => (m.result === "win" ? acc + 1 : acc), 0)
-  }, [matches])
-
-  const losses = useMemo(() => {
-    if (!matches) return 0
-    return matches.reduce((acc, m) => (m.result === "loss" ? acc + 1 : acc), 0)
-  }, [matches])
-
-  return {
-    profile,
-    careerMap,
-    wins,
-    losses,
-    rank,
-    loading: loading || matchesLoading,
-    error: error ?? matchesError?.message,
-  }
-}
+// usePlayerProfile logic was moved to @/hooks/usePlayerProfile.ts
 
 const parseNumber = (v: any) => {
   const n = Number(v ?? 0)
@@ -148,7 +30,8 @@ const parseNumber = (v: any) => {
 }
 
 const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
-  const { profile, careerMap, wins, losses, rank, loading, error } = usePlayerProfile(ci)
+  const { profile, careerMap, wins, losses, rank, rawMatches, loading, error } = usePlayerProfile(ci)
+  const { badges, loading: badgesLoading } = usePlayerBadges(ci, rawMatches || [], profile)
   const [copied, setCopied] = useState(false)
 
   if (loading) {
@@ -205,15 +88,13 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
               className="w-20 h-20 rounded-full"
               unoptimized
             />
-            <span className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center font-bold text-white rounded-full bg-purple-600 border-2 border-[#2A2A3E] text-xs">
-              #{rank}
-            </span>
           </div>
           <div>
             <h3 className="text-xl font-bold text-white">{fullName}</h3>
             <p className="text-sm text-slate-400 mt-1">
               {careerName} • {profile.semester}º Semestre
             </p>
+
             {profile.phone && (
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-sm text-slate-400">
@@ -259,6 +140,17 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
           <div className="ml-auto mr-5">
             <RemainingMatches ci={ci} />
           </div>
+        </div>
+
+        <div className="mt-4">
+          {/* Badges */}
+          {!badgesLoading && badges.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {badges.map((badge: any) => (
+                <PlayerBadge key={badge.id} badge={badge} />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="mt-4">
