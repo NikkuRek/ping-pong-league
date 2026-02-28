@@ -77,11 +77,12 @@ const PlayerItem: React.FC<{ player: PlayerForList; rank: number; badges?: any[]
         {/* Left side - Avatar and player info */}
         <div className="flex items-center gap-12 flex-1">
           <Image
-            src={player.avatar || "/placeholder.svg"}
+            src={player.avatar || `https://api.dicebear.com/9.x/avataaars/svg?seed=${player.ci}`}
             alt={`${firstName} ${lastName}`.trim()}
             width={40}
             height={40}
-            className="rounded-full object-cover"
+            className="rounded-full object-cover bg-slate-800"
+            unoptimized
           />
           <div className="text-left flex-1">
             <div className="flex items-center gap-2 flex-wrap">

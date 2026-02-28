@@ -162,10 +162,10 @@ const MatchHistory: React.FC<{ playerId?: string }> = ({ playerId }) => {
           {/* Player 1 */}
           <Link href={`/players/detail?ci=${match.player1Ci}`} className="grid grid-cols-[48px_1fr] gap-3 items-center hover:opacity-80 transition-opacity">
             <Image
-              src={match.player1Avatar || "/placeholder-user.jpg"}
+              src={match.player1Avatar || `https://api.dicebear.com/9.x/avataaars/svg?seed=${match.player1Ci}`}
               alt={match.player1Name}
               width={48} height={48}
-              className="rounded-full w-12 h-12 object-cover"
+              className="rounded-full w-12 h-12 object-cover bg-slate-800"
               unoptimized
             />
             <div className="min-w-0">
@@ -203,10 +203,10 @@ const MatchHistory: React.FC<{ playerId?: string }> = ({ playerId }) => {
               )}
             </div>
             <Image
-              src={match.player2Avatar || "/placeholder-user.jpg"}
+              src={match.player2Avatar || `https://api.dicebear.com/9.x/avataaars/svg?seed=${match.player2Ci}`}
               alt={match.player2Name}
               width={48} height={48}
-              className="rounded-full w-12 h-12 object-cover"
+              className="rounded-full w-12 h-12 object-cover bg-slate-800"
               unoptimized
             />
           </Link>

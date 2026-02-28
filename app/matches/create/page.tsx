@@ -580,6 +580,14 @@ export default function MatchCreationPage() {
       }
 
       // Éxito
+      if (typeof window !== 'undefined') {
+        const proposedMatches = JSON.parse(localStorage.getItem('proposedMatches') || '[]')
+        if (!proposedMatches.includes(matchId)) {
+          proposedMatches.push(matchId)
+          localStorage.setItem('proposedMatches', JSON.stringify(proposedMatches))
+        }
+      }
+
       toast({
         title: 'Resultado Propuesto',
         description: 'El resultado fue enviado al rival para su aprobación. Recibirás una notificación cuando sea confirmado.',

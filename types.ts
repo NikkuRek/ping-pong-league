@@ -97,6 +97,8 @@ export interface Match {
   status: 'Pendiente' | 'Propuesto' | 'Rechazado' | 'Finalizado' | string
   createdAt: string
   updatedAt: string
+  proposed_by_ci?: string | null
+  rejected_by_ci?: string | null
   rejection_reason?: string | null
   sets: Set[]
   // Optional nested inscriptions when the API returns full objects

@@ -12,12 +12,14 @@ import { LogOut, User, ChevronDown } from "lucide-react"
 
 const Header: React.FC = () => {
   const { isLoggedIn, player, logout, isLoading } = useAuth()
+  const [mounted, setMounted] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   // Close menu on outside click
   useEffect(() => {
+    setMounted(true)
     const handleClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false)
@@ -47,7 +49,7 @@ const Header: React.FC = () => {
 
         {/* Auth area */}
         <div className="flex items-center gap-2">
-          {isLoading ? (
+          {(!mounted || isLoading) ? (
             // Skeleton while restoring session
             <div className="w-8 h-8 rounded-full bg-slate-700 animate-pulse" />
           ) : isLoggedIn && player ? (
@@ -67,9 +69,14 @@ const Header: React.FC = () => {
                     unoptimized
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-xs font-bold">
-                    {player.first_name[0]}{player.last_name?.[0] ?? ""}
-                  </div>
+                  <Image
+                    src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${player.ci}`}
+                    alt={player.first_name}
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 rounded-full object-cover bg-slate-800"
+                    unoptimized
+                  />
                 )}
                 <span className="text-sm font-medium text-white hidden sm:block">
                   {player.first_name}
@@ -109,16 +116,16 @@ const Header: React.FC = () => {
           ) : (
             // Not logged in
             <div className="flex items-center gap-2">
-              <Link href="/login">
-                <Button variant="ghost" className="text-purple-400 cursor-pointer">
+              <Button variant="ghost" className="text-purple-400 cursor-pointer" asChild>
+                <Link href="/login">
                   Iniciar Sesión
-                </Button>
-              </Link>
-              <Link href="/player-registration">
-                <Button variant="outstanding" className="cursor-pointer hidden sm:flex">
+                </Link>
+              </Button>
+              <Button variant="outstanding" className="cursor-pointer hidden sm:flex" asChild>
+                <Link href="/player-registration">
                   Registrarse
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           )}
         </div>

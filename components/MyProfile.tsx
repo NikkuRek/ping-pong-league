@@ -10,6 +10,8 @@ import { Button } from "./ui/button"
 import { Settings, UserPen, ImagePlus, Award, LogOut, ExternalLink, X } from "lucide-react"
 import PlayerProfile from "./PlayerProfile"
 import ProfileTabs from "./ProfileTabs"
+import { LoginForm } from "@/components/LoginForm"
+
 
 // ── Gear menu (referential – to be implemented later) ──────────────
 const GEAR_OPTIONS = [
@@ -102,6 +104,11 @@ function GearMenu({ ci }: { ci: string }) {
 const MyProfile: React.FC = () => {
   const { player, isLoggedIn, isLoading, logout } = useAuth()
   const router = useRouter()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const handleLogout = () => {
     logout()
@@ -109,7 +116,7 @@ const MyProfile: React.FC = () => {
   }
 
   // Loading
-  if (isLoading) {
+  if (!isMounted || isLoading) {
     return (
       <section className="space-y-4">
         <div className="bg-[#2A2A3E] p-5 rounded-2xl border border-slate-700/50">
@@ -128,14 +135,18 @@ const MyProfile: React.FC = () => {
   // Not logged in
   if (!isLoggedIn || !player) {
     return (
-      <section className="bg-[#2A2A3E] p-8 rounded-2xl border border-slate-700/50 text-center space-y-4">
-        <div className="text-5xl mb-2">🏓</div>
-        <h3 className="text-xl font-bold text-white">Inicia sesión para ver tu perfil</h3>
-        <p className="text-slate-400 text-sm">Accede a tus estadísticas, partidos y configuración.</p>
-        <Link href="/login">
-          <Button variant="outstanding" className="mt-2">Iniciar Sesión</Button>
-        </Link>
-      </section>
+      
+      <LoginForm />
+
+
+      // <section className="bg-[#2A2A3E] p-8 rounded-2xl border border-slate-700/50 text-center space-y-4">
+      //   <div className="text-5xl mb-2">🏓</div>
+      //   <h3 className="text-xl font-bold text-white">Inicia sesión para ver tu perfil</h3>
+      //   <p className="text-slate-400 text-sm">Accede a tus estadísticas, partidos y configuración.</p>
+      //   <Link href="/login">
+      //     <Button variant="outstanding" className="mt-2">Iniciar Sesión</Button>
+      //   </Link>
+      // </section>
     )
   }
 

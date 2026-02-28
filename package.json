@@ -20,7 +20,7 @@
     "@radix-ui/react-accordion": "latest",
     "@radix-ui/react-alert-dialog": "latest",
     "@radix-ui/react-aspect-ratio": "latest",
-    "@radix-ui/react-avatar": "latest",
+    "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-checkbox": "latest",
     "@radix-ui/react-collapsible": "latest",
     "@radix-ui/react-context-menu": "latest",
@@ -64,7 +64,7 @@
     "recharts": "latest",
     "socket.io-client": "^4.8.3",
     "sonner": "latest",
-    "tailwind-merge": "^2.5.5",
+    "tailwind-merge": "^2.6.1",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "latest",
     "zod": "3.25.67"

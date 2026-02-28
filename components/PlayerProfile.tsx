@@ -60,7 +60,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
   }
 
   const fullName = `${profile.first_name} ${profile.last_name}`
-  const avatar = (profile as any).avatar ?? `https://picsum.photos/seed/player1/40/40`
+  const avatar = (profile as any).avatar || `https://api.dicebear.com/9.x/avataaars/svg?seed=${ci}`
   const careerName = (profile as any).career_name ?? careerMap.get(profile.career_id) ?? "Desconocida"
   const aura = profile.aura ?? 0
   const daysAvailable = profile.Days?.map((d: any) => d.day_id) ?? []
@@ -81,7 +81,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ ci }) => {
         <div className="flex items-center gap-4">
           <div className="relative">
             <Image
-              src={avatar || "/placeholder.svg"}
+              src={avatar}
               alt={fullName}
               width={80}
               height={80}

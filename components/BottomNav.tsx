@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { HomeIcon, TrophyIcon, UsersIcon, PlusIcon } from "@/components/icons"
@@ -9,6 +10,11 @@ import { useAuth } from "@/context/AuthContext"
 const BottomNav = () => {
   const pathname = usePathname()
   const { isLoggedIn } = useAuth()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const navItems = [
     { href: "/", label: "Inicio", icon: HomeIcon },
@@ -16,8 +22,8 @@ const BottomNav = () => {
     { href: "/players", label: "Jugadores", icon: UsersIcon },
     { href: "/matches/create", label: "Partido", icon: PlusIcon },
     {
-      href: isLoggedIn ? "/profile" : "/login",
-      label: isLoggedIn ? "Perfil" : "Sesión",
+      href: isMounted && isLoggedIn ? "/profile" : "/login",
+      label: isMounted && isLoggedIn ? "Perfil" : "Sesión",
       icon: User,
     },
   ]
