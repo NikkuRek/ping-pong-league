@@ -1,4 +1,4 @@
-package com.nkr.complements;
+package com.lpp.app;
 
 import com.getcapacitor.BridgeActivity;
 

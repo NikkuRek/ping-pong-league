@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lpp-iujo-v0.3';
+const CACHE_NAME = 'lpp-iujo-v2.0';
 const urlsToCache = [
   '/',
   '/manifest.json',
