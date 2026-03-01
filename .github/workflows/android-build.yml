@@ -25,10 +25,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
+          # Eliminamos la línea de cache para evitar errores si no hay lockfile
+          # cache: 'npm' 
 
       - name: Install Dependencies
-        run: npm ci
+        # Cambiamos 'npm ci' por 'npm install' para que sea menos estricto
+        run: npm install
 
       - name: Build Next.js
         run: npm run build
@@ -44,7 +46,7 @@ jobs:
 
       - name: Rename APK
         run: |
-          # Movemos y renombramos el archivo para que al descargarlo se llame LPP.apk
+          # Aseguramos que el nombre final sea LPP.apk
           mv android/app/build/outputs/apk/debug/app-debug.apk android/app/build/outputs/apk/debug/LPP.apk
 
       - name: Upload APK
